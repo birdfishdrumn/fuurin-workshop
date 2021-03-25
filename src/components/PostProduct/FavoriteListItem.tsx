@@ -14,7 +14,7 @@ import {  LIKE} from "../../types/likes";
 
 const useStyles = makeStyles({
   list: {
-    height: 128
+    // height: 128
   },
   image: {
     objectFit: "cover",
@@ -49,7 +49,6 @@ console.log(props.post.likesId)
 }
 
   return (
-
     <>
       <ListItem className={classes.list}>
 
@@ -67,7 +66,6 @@ console.log(props.post.likesId)
       </ListItem>
       <Divider/>
     </>
-
   )
 }
 

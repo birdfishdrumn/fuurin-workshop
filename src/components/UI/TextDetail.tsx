@@ -5,7 +5,10 @@ const useStyles = makeStyles({
     row: {
         display: 'flex',
         flexFlow: 'row wrap',
-        marginBottom: 16
+    marginBottom: 16,
+    background: "white",
+    padding: 16,
+        borderRadius:"5%"
     },
     label: {
         marginLeft: 0,

@@ -11,12 +11,22 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from "@material-ui/core/ListItemText";
 import { push } from "connected-react-router";
+import styled from "styled-components"
 
 interface Props {
   fullWidth: boolean;
-  style: string;
+  style?: boolean;
 }
 
+const SearchBoxWrapper = styled.div`
+position:relative;
+`
+const SearchResult = styled.div`
+margin:0 auto;
+text-align:center;
+   max-width: 500px;
+
+`
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -26,7 +36,7 @@ const useStyles = makeStyles((theme) =>
       backgroundColor: theme.palette.background.paper,
     position: 'absolute',
       overflow: 'auto',
-      top: 60,
+      top: 50,
       // left: 500,
    paddingBottom:0,
    paddingTop:0,
@@ -44,12 +54,14 @@ const useStyles = makeStyles((theme) =>
       },
         searchField: {
           alignItems: 'center',
-          justifyContent:"center",
+          justifyContent: "center",
+
           //   display: 'flex',
           //   marginRight: 32,
           textAlign: "center",
           //  position: 'relative',
           width: 500,
+                 margin:"0 auto",
           // borderRadius:20,
           //   focus:500
             [theme.breakpoints.down("sm")]: {
@@ -66,17 +78,21 @@ const useStyles = makeStyles((theme) =>
 const smStyles =makeStyles((theme) =>
   createStyles({
      root: {
-    width: '100%',
-    maxWidth: 500,
+      width: '100%',
+      margin:"0 auto",
+      maxWidth: "500px",
+    textAlign:"center",
       backgroundColor: theme.palette.background.paper,
     position: 'absolute',
       overflow: 'auto',
-      top: 120,
-      // left: 500,
+      top: 50,
+
    paddingBottom:0,
    paddingTop:0,
       maxHeight: 300,
       cursor: "pointer",
+      zIndex: 1,
+
 
     },
     searchText: {
@@ -103,6 +119,7 @@ const smStyles =makeStyles((theme) =>
 
     }),
 );
+
 const SearchBox:React.FC<Props> = (props) => {
   const classes = useStyles()
   const sm = smStyles()
@@ -138,6 +155,7 @@ console.log(search)
   }
 
   return (<>
+  <SearchBoxWrapper>
     <div className = {classes.searchField} >
                <TextInput
             fullWidth={props.fullWidth} label={"キーワードを入力"} multiline={false} onChange={inputKeyword} variant="outlined" required={false} rows={1} value={keyword} type={"text"}
@@ -150,7 +168,8 @@ console.log(search)
         }}
       />
 
-    </div>
+      </div>
+      <SearchResult>
     {search.length > 0 && <List className={props.style ? classes.root : sm.root}>
         {search.map((item) => (
              <>
@@ -162,7 +181,9 @@ console.log(search)
             <Divider  component="li" />
             </>
             ))}
-      </List>}
+        </List>}
+        </SearchResult>
+      </SearchBoxWrapper>
     </>
   )
 }

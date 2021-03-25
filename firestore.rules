@@ -13,6 +13,9 @@ service cloud.firestore {
   match /likes/{likesId}{
     allow read,write: if request.auth.uid == userId;
   }
+    match /likeUser/{likeUserId}{
+    allow read,write: if request.auth.uid == userId;
+  }
    match /message/{messageId}{
     allow read,write: if request.auth.uid == userId;
   }
@@ -22,6 +25,8 @@ service cloud.firestore {
   match /posts/{postId}{
     allow read;
     allow write: if request.auth.uid != null;
+     allow delete: if request.auth.uid == userId;
+    allow update: if request.auth.uid == userId;
 
      match /comments/{commentsId}{
     allow read,write: if request.auth.uid != null;
@@ -29,12 +34,12 @@ service cloud.firestore {
   }
 
     match /categories/{categoryId}{
-    allow read: if request.auth.uid != null;
+    allow read;
     allow write: if request.auth.uid != null;
   }
 
    match /tags/{tagsId}{
-    allow read: if request.auth.uid != null;
+    allow read;
     allow write: if request.auth.uid != null;
   }
   }

@@ -1,19 +1,22 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { makeStyles } from "@material-ui/core/styles";
 import { useDispatch,useSelector } from "react-redux";
-import { TextInput, SelectBox, PrimaryButton } from "../components/UI/index";
+import { TextInput, SelectBox, PrimaryButton,WindBellDialog } from "../components/UI/index";
 import { db } from "../firebase/index"
 import {savePost} from "../reducks/posts/operations"
-import { ImageArea,TagArea } from "../components/PostProduct";
+import { TagArea,ImageCropper } from "../components/PostProduct";
 import { getUsername, getUserAvatar, getUserId } from "../reducks/users/userSlice";
+import {PathItem} from "../types/posts"
 import FormLabel from "@material-ui/core/FormLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormHelperText from "@material-ui/core/FormHelperText";
+
 import Switch from "@material-ui/core/Switch";
 import HelpIcon from '@material-ui/icons/Help';
 import IconButton from "@material-ui/core/IconButton";
+import { SectionContainer,Title } from 'assets/GlobalLayoutStyle';
+import ULOCO from "assets/img/src/stripPattern/ULOCO.png"
 
 const useStyles = makeStyles((theme) => ({
 helpIcon:{
@@ -30,10 +33,19 @@ interface Categories {
   name: string;
 }
 
-const PostEdit = () => {
+
+
+interface PROPS {
+  dialog?: boolean;
+  handleClose: () => void
+
+}
+
+const PostEdit:React.FC<PROPS> = ({dialog,handleClose}) => {
     const dispatch = useDispatch();
-   const classes = useStyles()
-let id = window.location.pathname.split("/posts/edit")[1];
+  const classes = useStyles()
+
+let id =dialog ? "":window.location.pathname.split("/posts/edit")[1];
 
   if (id) {
     id = id.split("/")[1];
@@ -51,10 +63,19 @@ const uid =useSelector(getUserId)
     [postUid,setPostUid] = useState<string>(""),
     [tags, setTags] = useState<string[]>([]),
     // [tagMenu,setTagMenu] = useState([]),
-    [open,setOpen]=useState<boolean>(false),
+    [wishText,setWishText] = useState<string>(""),
+    [open, setOpen] = useState<boolean>(false),
+    [dialogOpen,setDialogOpen] = useState<boolean>(false),
     [categories, setCategories] = useState<Categories[]>([]),
-    [images, setImages] = useState< {[key:string]:string}[]>([]),
-    [allImages, setAllImages] = useState< {[key:string]:string}[]>([]),
+    [images, setImages] = useState<{ [key: string]: string }[]>([]),
+    [strip, setStrip] = useState<string>(""),
+      [windBellImage,setWindBellImage] = useState<string>(ULOCO),
+    [allImages, setAllImages] = useState<{ [key: string]: string }[]>([]),
+    [textLength,setTextLength] = useState(""),
+    [pathItem, setPathItem] = useState<PathItem>({
+         path: "M688,1C751.719-.152,809.922,9.067,860,21c58.438,13.925,111.4,22.5,162,44q21.495,12.5,43,25c32.74,19.182,66.97,34.722,97,57q21,19.5,42,39c31.81,25.535,66.5,56.454,91,89q21,33.5,42,67,21,32,42,64,7.005,25,14,50,15,56.994,30,114c16.01,75.327-1.79,185.669-17,245q-5.505,25-11,50c-22.11,55.387-56.8,101-90,145-17.76,23.54-35.16,53.59-58,72-38.34,30.9-73.75,67.04-117,93l-53,22q-10.995,7.005-22,14c-18.78,6.38-48.89-17.48-61-21q-14.5-1.005-29-2-12-3.495-24-7-38-1.005-76-2c-21.653-4.11-45.551-8.87-70-13q-19.5-.495-39-1c-37.7-6-84.771-5.64-121-12-26.9-4.72-55.842.96-80-3q-39.5,1.005-79,2-10-4.995-20-10-47.5-1.995-95-4c-18.584,0-68.783,13.64-74,12q-13.5-13.995-27-28c-36.374-16.87-78.458-67.09-103-98q-20.5-23-41-46C48.738,886.724-22.608,719.746,8,553l17-98C63.875,331.132,145.984,222.92,239,153,318.7,93.094,414.887,47.274,524,17c37.419-10.382,77.853-6.178,119-13ZM290,1152c2,0.33,4,.67,6,1C294,1152.67,292,1152.33,290,1152Z",
+    viewBox:"0 0 1430 1210"
+    }),
     [check, setCheck] = useState<boolean>(false);
 
 
@@ -75,6 +96,38 @@ const uid =useSelector(getUserId)
     },
     [setDescription]
   );
+  const inputWishText = useCallback(
+    (event:React.ChangeEvent<HTMLInputElement>) => {
+      setWishText(event.target.value);
+       const textLength = event.target.value.length
+
+    if (textLength >48) {
+      alert("文字は48字以内で入力してください")
+      event.preventDefault()
+    }
+       if (textLength <17) {
+      setTextLength("first")
+       } else if (16 < textLength  && textLength < 33) {
+         setTextLength("second")
+
+       }
+       else {
+         setTextLength("third")
+    }
+
+   if(12> textLength){
+         setTextLength("short")
+       }
+
+    },
+
+    [setWishText]
+  );
+
+    const closeDialog = useCallback(() => {
+    setDialogOpen(false);
+
+  },[]);
 
 
   useEffect(() => {
@@ -130,20 +183,34 @@ useEffect(() => {
         setPostUid(data.uid)
       })
     }
-  },[])
+  }, [])
+
+  const save = (id, name, description, category, images, allImages, username, avatar, uid, tags, check) => {
+
+dispatch(
+  savePost(
+              id,name,description,category,images,allImages,username,avatar,uid,tags,check
+                )
+)
+   handleClose && handleClose()
+  }
 
   if ( postUid === uid || !id ) {
     return (
     <div>
-      <section>
 
-          <div className="c-section-container">
-            <h2 className="u-text__headline u-text-center">作品の登録・編集</h2>
+
+          <SectionContainer>
+            {!dialog &&
+              <>
+            <Title>作品の登録・編集</Title>
             <div className={classes.helpIcon}>
               <IconButton onClick={()=>setOpen(!open)}>
                    <HelpIcon />
             </IconButton>
-</div>
+              </div>
+              </>
+            }
 {/* <HelpModal title="お気に入りに登録しました" open={open} setOpen={setOpen} /> */}
  <TextInput
           fullWidth={true}
@@ -185,12 +252,34 @@ useEffect(() => {
                    <div className="module-spacer--medium" />
           <div className="center">
 
-              <ImageArea images={images} setImages={setImages} />
+              {/* <ImageArea images={images} setImages={setImages} /> */}
+              <ImageCropper images={images} setImages={setImages}/>
               <div className="module-spacer--small" />
-              <h1>風鈴から短冊までの写真</h1>
+            <h1>風鈴から短冊までの写真</h1>
+                    <PrimaryButton onClick={()=>setDialogOpen(true)} label="風鈴メイカーを使う"/>
+              <WindBellDialog
+            textLength={textLength}
+                pathItem={pathItem}
+                setPathItem={setPathItem}
+                windBellImage={windBellImage}
+                setWindBellImage={setWindBellImage}
+              dialogOpen={dialogOpen}
+              handleClose={
+                closeDialog
+              }
+              strip={strip}
+              setStrip={setStrip}
+              wishText={wishText}
+              inputWishText={inputWishText}
+            />
+
                 <div className="module-spacer--medium" />
- <ImageArea images={allImages} setImages={setAllImages}  all="true" />
-              <div className="module-spacer--small" />
+ <ImageCropper images={allImages} setImages={setAllImages}  all/>
+            <div className="module-spacer--medium" />
+           <div style={{ textAlign: "left" }}>
+            <TagArea tags={tags} setTags={setTags}/>
+            </div>
+            <div className="module-spacer--medium" />
 
                <FormControl component="fieldset">
 
@@ -203,12 +292,10 @@ useEffect(() => {
               </FormControl>
 
             <PrimaryButton
-              disabled={name === "" || description==="" || category === "" || images.length === 0 }
+              disabled={name === "" || description==="" || category === "" || images.length === 0  || allImages.length === 0}
             label={"作品を投稿！"}
-            onClick={() =>
-              dispatch(
-                savePost(
-                  id,
+                onClick={() => save(
+                         id,
                   name,
                   description,
                   category,
@@ -220,12 +307,12 @@ useEffect(() => {
                   tags,
                   check
                 )
-              )
-            }
+                }
+
             />
             </div>
-        </div>
-      </section>
+        </SectionContainer>
+
     </div>
   )
   } else {
@@ -237,119 +324,3 @@ useEffect(() => {
 }
 
 export default PostEdit
-
-
-// import React, { useState, useCallback, useEffect } from 'react'
-// import { useDispatch } from "react-redux";
-// import { TextInput, SelectBox, PrimaryButton } from "../components/UI/index";
-// import {savePost} from "../reducks/postSlice"
-// import { db } from "../firebase/index"
-// import {ImageArea} from "../components/PostProduct";
-// const PostEdit: React.FC = () => {
-
-// let id = window.location.pathname.split("/posts/edit")[1];
-
-//   if (id !== "") {
-//     id = id.split("/")[1];
-//   }
-
-//  const dispatch = useDispatch();
-
-//   const [name, setName] = useState(""),
-//     [description, setDescription] = useState(""),
-//     [category, setCategory] = useState(""),
-//     // [categories, setCategories] = useState([]),
-//     [images, setImages] = useState([]);
-
-//  const inputName = useCallback(
-//     (event) => {
-//       setName(event.target.value);
-//     },
-//     [setName]
-//   );
-
-//   const inputDescription = useCallback(
-//     (event) => {
-//       setDescription(event.target.value);
-//     },
-//     [setDescription]
-//   );
-
-
-//    const categories = [
-//     { id: "cute", name: "可愛い系" },
-//     { id: "summer", name: "夏らしい" },
-//     { id: "fuji", name: "富士山" },
-//    ];
-
-//   useEffect(() => {
-//     if (id !== "") {
-//       db.collection("posts").doc(id).get()
-//         .then(snapshot => {
-//           const data: any = snapshot.data()
-//           setName(data.name);
-//           setImages(data.images);
-//           setCategory(data.category)
-//           setDescription(data.description)
-//       })
-//       }
-//   }, []);
-
-//   return (
-//     <div>
-//       <section>
-//         <h2 className="u-text__headline u-text-center">作品の登録・編集</h2>
-//         <div className="c-section-container">
-//  <TextInput
-//           fullWidth={true}
-//           label={"作品タイトル"}
-//           multiline={false}
-//           required={true}
-//           onChange={inputName}
-//           rows={1}
-//           value={name}
-//           type={"text"}
-//         />
-
-//         <TextInput
-//           fullWidth={true}
-//           label={"作品に込めた思い"}
-//           multiline={true}
-//           required={true}
-//           onChange={inputDescription}
-//           rows={5}
-//           value={description}
-//           type={"text"}
-//         />
-//         <SelectBox
-//           label={"カテゴリー"}
-//           required={true}
-//           options={categories}
-//           select={setCategory}
-//           value={category}
-//           />
-//           <div className="module-spacer--medium" />
-//           <div className="center">
-//              <ImageArea images={images} setImages={setImages} />
-//           <PrimaryButton
-//             label={"商品を登録"}
-//             onClick={() =>
-//               dispatch(
-//                 savePost(
-//                   id,
-//                   name,
-//                   description,
-//                   category,
-//                   images,
-//                 )
-//               )
-//             }
-//             />
-//             </div>
-//         </div>
-//       </section>
-//     </div>
-//   )
-// }
-
-// export default PostEdit

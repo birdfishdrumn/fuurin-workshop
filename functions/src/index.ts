@@ -1,4 +1,5 @@
-import { POST} from "./types/posts";
+import { POST } from "./types/posts";
+import { USER} from "./types/user";
 const functions = require('firebase-functions');
 // import algoliasearch from "algoliasearch"
 const algoliasearch = require("algoliasearch")
@@ -13,7 +14,6 @@ const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
 
 const index = client.initIndex("posts");
 
-
 exports.onWritePosts = functions
   .region("asia-northeast1")
   .firestore
@@ -22,16 +22,91 @@ exports.onWritePosts = functions
 
     const { postId } = context.params
     const posts = change.after.data() as POST
-    console.log(posts)
+    const oldData = change.before.data();
+    console.log(oldData)
     try {
+      if (!!posts) {
             index.saveObject({
         objectID: postId,
         ...posts
       })
+      } else if (!!oldData) {
+                index.deleteObject(postId)
+            }
+
     }catch(err) {
       console.log(err)
     }
   });
+
+  exports.onUpdateUser = functions
+  .region("asia-northeast1")
+  .firestore.document("users/{userId}")
+  .onUpdate(async (change: any, context: any) => {
+    const { userId } = context.params;
+    const newUser = change.after.data() as USER;
+
+    const db = admin.firestore();
+    try {
+      const snapshot = await db
+        .collection("posts")
+        .where("uid", "==", userId)
+        .get();
+
+      const batch = db.batch();
+
+      snapshot.docs.forEach((postDoc: any) => {
+        const username = newUser.username ;
+        console.log(postDoc)
+        const avatar = newUser.avatar
+        batch.update(postDoc.ref, { username,avatar });
+      });
+
+            const commentSnapshot = await db
+        .collectionGroup("comments")
+        .where("id", "==", userId)
+        .get();
+
+            commentSnapshot.docs.forEach((comDoc: any) => {
+        const username = newUser.username ;
+        console.log(comDoc)
+        const avatar = newUser.avatar
+        batch.update(comDoc.ref, { username,avatar });
+      });
+
+      await batch.commit();
+
+
+
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  // exports.onUpdateUser = functions
+  // .region("asia-northeast1")
+  // .firestore.document("users/{userId}")
+  // .onUpdate(async (change, context) => {
+  //   const { userId } = context.params;
+  //   const newUser = change.after.data() as User;
+
+  //   const db = admin.firestore();
+  //   try {
+  //     const snapshot = await db
+  //       .collectionGroup("reviews")
+  //       .where("user.id", "==", userId)
+  //       .get();
+
+  //     const batch = db.batch();
+  //     snapshot.docs.forEach((reviewDoc) => {
+  //       const user = { ...reviewDoc.data().user, name: newUser.name };
+  //       batch.update(reviewDoc.ref, { user });
+  //     });
+  //     await batch.commit();
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // });
 
 //  exports.onPushComment = functions
 //   .region("asia-northeast1")

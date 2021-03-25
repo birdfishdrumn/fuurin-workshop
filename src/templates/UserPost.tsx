@@ -9,7 +9,7 @@ import { getUserPosts } from "../reducks/posts/postSlice";
 import SentimentDissatisfiedOutlinedIcon from '@material-ui/icons/SentimentDissatisfiedOutlined';
 import { makeStyles } from "@material-ui/core/styles";
 import { getUserAvatar,getUserId } from "../reducks/users/userSlice";
-import { db } from "../firebase/index";
+
 // import Carousel from 'react-material-ui-carousel'
 const useStyles = makeStyles((theme) => ({
     root: {

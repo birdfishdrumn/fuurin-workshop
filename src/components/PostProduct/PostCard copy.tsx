@@ -5,12 +5,12 @@ import Avatar from '@material-ui/core/Avatar';
 
 import CardMedia from "@material-ui/core/CardMedia";
 import { useDispatch, useSelector } from "react-redux";
-import styles from "../../templates/module.css/Detail.module.css";
+
 import { POST } from "../../types/posts";
 import NoImage from "../../assets/img/src/no_image.png";
 import { push } from "connected-react-router"
 import IconButton from "@material-ui/core/IconButton";
-import Favorite from "./Favorite"
+import Favorite from "./Favorite/Favorite"
 // import {  LoginModal} from "../UI";
 import { addPostToFavorite } from "../../reducks/users/operations";
 import { getUserId, getPostsInFavorite } from "../../reducks/users/userSlice";

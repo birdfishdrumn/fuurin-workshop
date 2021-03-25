@@ -1,13 +1,15 @@
 import React, { useEffect,useState }  from 'react'
 import { useDispatch, useSelector } from "react-redux";
 import { PostCard} from "./index";
-
+import { GridList} from "assets/GlobalLayoutStyle";
 import { db} from "../../firebase";
 // import { getPosts } from "../reducks/posts/
 interface PROPS {
   randomTag: string;
   tags: string[];
   id: string;
+   changeRelation?:  (id: string) => void;
+
 }
 
 const RelationPost:React.FC<PROPS> = (props) => {
@@ -38,7 +40,7 @@ const RelationPost:React.FC<PROPS> = (props) => {
   return (
     <section>
       <div className="module-spacer--medium" />
-    <div className="p-grid__row">
+    <GridList>
       {relationPosts.length ?relationPosts.map((relation) => (
 
         <PostCard
@@ -52,13 +54,15 @@ const RelationPost:React.FC<PROPS> = (props) => {
           username={relation.username}
           avatar={relation.avatar}
           uid={relation.uid}
+          changeRelation={props.changeRelation}
+          // relation
           />
 
       )
 
       ):<></>
     }
-      </div>
+      </GridList>
       {relationPosts.length === 0 && <h1>関連作品はありません</h1>}
       </section>
   )

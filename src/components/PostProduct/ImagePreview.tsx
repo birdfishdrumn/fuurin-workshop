@@ -4,7 +4,7 @@ interface PROPS {
   id: string;
   path: string;
   delete: any
-  all: string
+  all?: boolean;
 }
 
 const ImagePreview: React.FC<PROPS> = (props) => {

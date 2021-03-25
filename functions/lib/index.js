@@ -16,14 +16,77 @@ exports.onWritePosts = functions
     .onWrite((change, context) => {
     const { postId } = context.params;
     const posts = change.after.data();
-    console.log(posts);
+    const oldData = change.before.data();
+    console.log(oldData);
     try {
-        index.saveObject(Object.assign({ objectID: postId }, posts));
+        if (!!posts) {
+            index.saveObject(Object.assign({ objectID: postId }, posts));
+        }
+        else if (!!oldData) {
+            index.deleteObject(postId);
+        }
     }
     catch (err) {
         console.log(err);
     }
 });
+exports.onUpdateUser = functions
+    .region("asia-northeast1")
+    .firestore.document("users/{userId}")
+    .onUpdate(async (change, context) => {
+    const { userId } = context.params;
+    const newUser = change.after.data();
+    const db = admin.firestore();
+    try {
+        const snapshot = await db
+            .collection("posts")
+            .where("uid", "==", userId)
+            .get();
+        const batch = db.batch();
+        snapshot.docs.forEach((postDoc) => {
+            const username = newUser.username;
+            console.log(postDoc);
+            const avatar = newUser.avatar;
+            batch.update(postDoc.ref, { username, avatar });
+        });
+        const commentSnapshot = await db
+            .collectionGroup("comments")
+            .where("id", "==", userId)
+            .get();
+        commentSnapshot.docs.forEach((comDoc) => {
+            const username = newUser.username;
+            console.log(comDoc);
+            const avatar = newUser.avatar;
+            batch.update(comDoc.ref, { username, avatar });
+        });
+        await batch.commit();
+    }
+    catch (err) {
+        console.log(err);
+    }
+});
+// exports.onUpdateUser = functions
+// .region("asia-northeast1")
+// .firestore.document("users/{userId}")
+// .onUpdate(async (change, context) => {
+//   const { userId } = context.params;
+//   const newUser = change.after.data() as User;
+//   const db = admin.firestore();
+//   try {
+//     const snapshot = await db
+//       .collectionGroup("reviews")
+//       .where("user.id", "==", userId)
+//       .get();
+//     const batch = db.batch();
+//     snapshot.docs.forEach((reviewDoc) => {
+//       const user = { ...reviewDoc.data().user, name: newUser.name };
+//       batch.update(reviewDoc.ref, { user });
+//     });
+//     await batch.commit();
+//   } catch (err) {
+//     console.log(err);
+//   }
+// });
 //  exports.onPushComment = functions
 //   .region("asia-northeast1")
 //   .firestore

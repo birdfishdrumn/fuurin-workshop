@@ -9,30 +9,17 @@ import styles from "../../templates/module.css/Detail.module.css";
 import { POST } from "../../../types/posts";
 import NoImage from "../../../assets/img/src/no_image.png"
 import { push } from "connected-react-router"
-
-import Favorite from "../Favorite"
+import {ProductDialog} from "components/UI/index"
+import Favorite from "../Favorite/Favorite"
 // import {  LoginModal} from "../UI";
 import { addPostToFavorite } from "../../../reducks/users/operations";
-import { getUserId, getPostsInFavorite } from "../../../reducks/users/userSlice";
+import { getUserId, getPostsInFavorite } from "reducks/users/userSlice";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    margin:"0 auto",
-    // width:"200px"
-    // [theme.breakpoints.down("sm")]: {
-    //   margin: "0px auto",
-    //   width: "187.5px",
-    // },
-    // [theme.breakpoints.up("md")]: {
-    //   margin: "24px",
-    //   width: "280px",
+    margin: "0 auto",
+             display: "inlineBlock"
 
-    // },
-    //     [theme.breakpoints.between("sm","md")]: {
-    //   margin: "16px",
-    //   width: "210px",
-
-    // }
   },
   content: {
     display: "flex",
@@ -72,19 +59,19 @@ const changeStyles = makeStyles((theme) => ({
   root: {
     [theme.breakpoints.down("sm")]: {
       margin: "8px",
-      width: "130px",
-      height: "360px",
+      width: "200px",
+      height: "500px",
          display: "inlineBlock"
 
     },
     [theme.breakpoints.up("md")]: {
       margin: "10px",
-      width: "130px",
+      width: "200px",
 
     },
     [theme.breakpoints.between("sm", "md")]: {
       margin: 5,
-      width: "120px",
+      width: "200px",
     }
   },
   content: {
@@ -96,37 +83,26 @@ const changeStyles = makeStyles((theme) => ({
     },
   },
   media: {
-    height: 360,
-    width:130,
+    height: 500,
+    width:200,
     paddingTop: "100%",
     position: "relative"
   },
 
 }));
 
-// interface PROPS{
-//   post: any
-//   images: any;
-//   allImages: string[];
-//   id: string;
-//   name: string;
-//   avatar: string;
-//   description
-// }
-
 
 
 const PostCard:React.FC<POST> = (props) => {
   const classes = useStyles();
   const changeClass = changeStyles()
-  // const sizes = props.sizes;
   const dispatch = useDispatch();
-
   const uid = useSelector(getUserId)
    const [open,setOpen] =useState(false)
   const id = props.id
   const change =props.change
-
+  const name = props.name
+  console.log(props.images)
  const postInFavorite =useSelector(getPostsInFavorite);
 console.log(postInFavorite)
   const likesId= postInFavorite.map((post: any) =>
@@ -141,6 +117,27 @@ console.log(postInFavorite)
   const images = props.images.length > 0 ? props.images : [{ path: NoImage }];
   const allImages =  props.allImages.length ?  props.allImages : [{ path: NoImage }]
 
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+
+
+  const handleClickOpen = useCallback(() => {
+    setDialogOpen(true);
+
+  },[]);
+
+
+  const handleClose = useCallback(() => {
+    setDialogOpen(false);
+
+  },[]);
+
+  const modalOpen = (id) => {
+    props.changeRelation ? props.changeRelation(id) :
+        handleClickOpen()
+
+}
+
+
   return (
     <div>
  <Card className={change ? changeClass.root : classes.root}>
@@ -148,9 +145,12 @@ console.log(postInFavorite)
           // 複数登録した画像のうちの最初のものを選択
           className={change ? changeClass.media : classes.media}
           image={change ? allImages[0].path : images[0].path}
-          onClick = {()=>dispatch(push("/post/" + props.id))}
+
+          // onClick = {()=>dispatch(push("/post/" + props.id))}
+        onClick={()=>modalOpen(props.id)}
         >
-          { !change &&
+
+          { !props.favorite && !change &&
             <>
               <Avatar src={props.avatar} aria-label="recipe" className={classes.avatar} />
                  <div className={classes.favorite}>
@@ -163,6 +163,9 @@ console.log(postInFavorite)
         </CardMedia>
 
       </Card>
+        {/* {props.images.length >= 2 && <h1>aflfjkaljflka</h1>} */}
+      {/* @ts-ignore */}
+      <ProductDialog dialogId={props.id} name={name} dialogOpen={dialogOpen} handleClickOpen={handleClickOpen} handleClose={handleClose}/>
       {/* <LoginModal open={open} setOpen={setOpen}/> */}
     </div>
   )

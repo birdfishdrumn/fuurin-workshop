@@ -18,7 +18,8 @@ const ImageSwiper: React.FC<PROPS> = (props) => {
       nextEl: ".swiper-button-next",
       prevEl: ".swiper-button-prev"
     },
-    loop: true
+    loop: true,
+    rebuildOnUpdate: true,
   })
 
   const images= props.images

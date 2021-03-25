@@ -98,10 +98,16 @@ export const savePost = (id: string, name: string, description: string, category
 
 
          }
-        dispatch(hideLoadingAction());
-         dispatch(snackbarOpenAction("作品を登録しました"))
+
+
         dispatch(push("/"))
-      }).catch((error) => {
+dispatch(hideLoadingAction());
+
+      }).then(() => {
+
+        dispatch(snackbarOpenAction({ text:"作品を登録しました",type:true}))
+      }
+      ).catch((error) => {
        dispatch(hideLoadingAction())
         throw new Error(error)
       })

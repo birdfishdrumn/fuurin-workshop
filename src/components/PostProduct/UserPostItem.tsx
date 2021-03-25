@@ -3,9 +3,9 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import  Favorite  from "./Favorite";
+import  Favorite  from "./Favorite/Favorite";
 import { makeStyles } from "@material-ui/core/styles";
-import { Dialog } from "../UI";
+import { DeleteDialog } from "../UI";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from '@material-ui/icons/Edit';
 import IconButton from "@material-ui/core/IconButton";
@@ -15,15 +15,15 @@ import { deletePost } from "../../reducks/posts/operations";
 import { db } from "../../firebase/index"
 import {push } from "connected-react-router"
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   list: {
     height: 128
   },
   image: {
     objectFit: "cover",
-    margin: 16,
-    height: 96,
-    width: 96,
+    marginRight: 20,
+    height: 106,
+    width: 106,
     cursor: "pointer"
 
   },
@@ -32,10 +32,15 @@ const useStyles = makeStyles({
 
     position: "relative"
   },
-    favorite: {
-     position: "absolute",
-    bottom: 5,
-    right: 10
+  favorite: {
+      position: "absolute",
+      bottom: -5,
+      right: 30,
+    [theme.breakpoints.down("sm")]: {
+      position: "absolute",
+      bottom: -5,
+      right: -35
+    }
 
   },
   text: {
@@ -45,7 +50,7 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection:"column"
   }
-})
+}))
 
 const UserPostItem = (props) => {
   const classes = useStyles()
@@ -93,7 +98,7 @@ const id = props.post.id
         </IconButton>
         </div>
 
-        {openModal && <Dialog title="作品を本当に削除しますか？"  handleClose={handleClose} id={id} uid={uid}/>}
+        <DeleteDialog title="作品を本当に削除しますか？" openModal={openModal} handleClose={handleClose} id={id} uid={uid}/>
 
       </ListItem>
       <Divider/>

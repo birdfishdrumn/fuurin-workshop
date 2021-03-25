@@ -16,7 +16,7 @@ const Loading: React.FC<CHILDREN> = ({children}) => {
         <>
             {(isBeingLoaded) && (
                 <section className="c-section__loading">
-                    <CircularProgress/>
+                    <CircularProgress color="inherit"/>
                     <p>{loadingText}</p>
                 </section>
             )}

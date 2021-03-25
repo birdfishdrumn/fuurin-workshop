@@ -23,13 +23,17 @@ export const userSlice = createSlice({
       avatar: "",
       username: "",
       isSignedIn: false,
+      profile: "",
+      url:"",
       role: "",
       email: "",
-      name: ""
+      name: "",
+
     },
     like: {
       likes: []
-    }
+    },
+    error:false
   },
   reducers: {
     //  actionsに相当する箇所　actionとpayloadが統合している。
@@ -37,21 +41,28 @@ export const userSlice = createSlice({
       state.user = action.payload;
       state.user.isSignedIn = true
     },
+
     logout: state => {
-      state.user = { uid: "", avatar: "", username: "", isSignedIn: false, role: "", email: "", name: "" }
+      state.user = { uid: "", avatar: "", username: "", isSignedIn: false, role: "", email: "", name: "",profile:"",url:""}
+    },
+    updateUserAction: (state, action) => {
+      state.user = action.payload;
+      state.user.isSignedIn = true
     },
     fetchPostsInFavoriteAction: (state, action:PayloadAction<string[]>) => {
-      //  const newLikes = action.payload
-      // state.like.likes = action.payload
-      // この書き方で成功！！！
-      // action.payloadを展開して渡してるから、展開しないと全てが入ってしまう。
-        // state.like.likes = [state.like.likes,...action.payload]だと最初にから配列が一つ入ってしまうので
+
       state.like.likes = [...action.payload]
+    },
+    openError: state => {
+      state.error = true
+    },
+        closeError: state => {
+      state.error = true
     }
   },
 });
 
-export const { login, logout,fetchPostsInFavoriteAction } = userSlice.actions;
+export const { login, logout,fetchPostsInFavoriteAction,openError,closeError,updateUserAction} = userSlice.actions;
 // userの中にuserというオブジェクトが入っている。stateはinitialState,userはname:"user"に該当する。
 
 export const selectUser = (state: RootState )=> state.user.user;
@@ -61,7 +72,10 @@ export const getUserAvatar = (state: RootState) => state.user.user.avatar;
 export const getUserId = (state: RootState) => state.user.user.uid;
 export const getEmail = (state: RootState) => state.user.user.email;
 export const getPostsInFavorite = (state: RootState) => state.user.like.likes
+export const getUserProfile = (state: RootState) => state.user.user.profile
+export const getUserUrl= (state: RootState) => state.user.user.url
 export const getRoute = (state: RootState) => state.router
+export const getError = (state: RootState) => state.user.error
 
 
 // export const getUsername = createSelector(

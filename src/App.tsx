@@ -7,20 +7,25 @@ import { Footer,BottomNavigator} from "./components/Footer"
 import { Header } from "./components/Header"
 import { Loading,ScrollTop,Snackbar} from "./components/UI"
 import Auth from "./Auth";
+import { Main  } from "assets/GlobalLayoutStyle";
 const App = () => {
   return (
     <Loading>
       <Header />
       <ScrollTop>
-        <main className="c-main">
+        <Main>
           <Router />
                <Snackbar/>
-        </main>
+        </Main>
       </ScrollTop>
 
-        <Footer />
-        <Auth>
-            <BottomNavigator/>
+
+        <Auth notUseEffect>
+        <BottomNavigator />
+        <div className="mobile_only">
+         <Footer />
+        </div>
+
         </Auth>
       </Loading>
   )

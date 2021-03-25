@@ -4,6 +4,7 @@ import TextField from "@material-ui/core/TextField";
 const TextInput = (props) => {
   return (
     <TextField
+      style={{background:"white"}}
       fullWidth={props.fullWidth}
       label={props.label}
       margin="dense"

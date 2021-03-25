@@ -2,7 +2,7 @@ import React, { useState,useCallback } from "react";
 import {makeStyles} from "@material-ui/styles"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
-import logo from "../../assets/img/icons/logo2.png"
+import logo from "assets/img/icons/logo2.png"
 import { useSelector,useDispatch } from "react-redux";
 import { getIsSignedIn } from "../../reducks/users/userSlice"
 import { useHistory } from "react-router-dom";

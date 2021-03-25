@@ -8,13 +8,15 @@ export const snackbarSlice = createSlice({
   initialState: {
     snackbar:{
         state: false,
-    text: ""
+      text: "",
+      type:false
     }
   },
   reducers: {
 
      snackbarOpenAction: (state,action) => {
-      state.snackbar.text = action.payload;
+      state.snackbar = action.payload;
+      //  state.snackbar.type = action.payload;
       state.snackbar.state = true;
   // state.snackbar.text = "snackbar...";
     },
@@ -33,7 +35,7 @@ export const {snackbarOpenAction,snackbarCloseAction} = snackbarSlice.actions;
 export const getSnackbarState = (state: RootState )=> state.snackbar.snackbar.state;
 
 export const getSnackbarText = (state: RootState )=> state.snackbar.snackbar.text;
-
+export const getSnackbarType = (state: RootState )=> state.snackbar.snackbar.type;
 // export const getsnackbarname = createSelector(
 //   [selectsnackbar],
 //   state => state.snackbarname

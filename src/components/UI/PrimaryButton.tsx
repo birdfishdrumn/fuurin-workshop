@@ -5,11 +5,12 @@ import { makeStyles } from "@material-ui/styles";
 const useStyles = makeStyles({
   button: {
     backgroundColor: "#4dd0e1",
-    color: "#000",
+    color: "#fff",
     fontSize: 16,
+    fontWeight:"bold",
     height: 48,
     marginButton: 20,
-    width: 256,
+    width: 220,
     marginTop: 20,
   },
 });
@@ -19,6 +20,7 @@ const PrimaryButton = (props) => {
     <Button
       className={classes.button}
       variant="contained"
+        disabled={props.disabled}
       onClick={() => props.onClick()}
     >
       {props.label}

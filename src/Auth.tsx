@@ -9,8 +9,9 @@ import {useHistory} from "react-router-dom"
 
 interface AppProps {
   children?: any
+  notUseEffect?: boolean;
 }
-const Auth: React.FC<AppProps> = ({ children } ) => {
+const Auth: React.FC<AppProps> = ({ children,notUseEffect } ) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const isSignedIn = useSelector(getIsSignedIn);
@@ -18,7 +19,7 @@ const Auth: React.FC<AppProps> = ({ children } ) => {
 
 
   useEffect(() => {
-   if (!isSignedIn) {
+   if (!notUseEffect && !isSignedIn) {
       // もしサインインしてなければ、listenAuthStateを呼び出し、ログイン画面に遷移させる。
       dispatch(listenAuthState());
     }

@@ -7,6 +7,7 @@ import { immutableStateInvariant,serializableStateInvariant } from "redux-immuta
 import userReducer from './reducks/users/userSlice';
 import postReducer from './reducks/posts/postSlice';
 import snackbarReducer from './reducks/snackbar/snackbarSlice';
+import modalReducer from './reducks/modal/modalSlice';
 import loadingReducer from './reducks/loadingSlice';
 import thunk from "redux-thunk";
 
@@ -20,7 +21,9 @@ export const store = configureStore({
     //  like: likesReducer,
     snackbar:snackbarReducer,
     loading: loadingReducer,
+    modal:modalReducer,
     // @ts-ignore
+
      router: connectRouter(history),
   },
 

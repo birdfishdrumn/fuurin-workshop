@@ -26,15 +26,7 @@ ReactDOM.render(
 
         <App/>
 
-{/*
-        <Route exact path="/signin" component={SignIn} />
-        <Route exact path="/signup" component={SignUp} />
-          <Route exact path="/signin/reset" component={Reset} />
-             <Auth>
-          <Route exact path="/" component={PostList} />
-           <Route exact path="/post/:id" component={PostDetail} />
-          <Route  path={"/posts/edit(/:id)?"} component={PostEdit} />
-       </Auth> */}
+
 
         </MuiThemeProvider>
         </ConnectedRouter>
