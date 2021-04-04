@@ -8,15 +8,16 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import { deletePost } from "../../reducks/posts/operations";
+import {WindBellMakerHelp,AddProductHelp,SearchHelp,ProfileHelp,FavoriteHelp} from "components/HelpComponents/index"
 import {useSelector,useDispatch} from "react-redux";
-import { snackbarOpenAction } from "reducks/snackbar/snackbarSlice";
+import { makeStyles } from "@material-ui/core/styles";
 
 const styles = (theme: Theme) =>
   createStyles({
     root: {
       margin: 0,
-      padding: theme.spacing(2),
+      padding: theme.spacing(3),
+      width:"100%"
     },
     closeButton: {
       position: 'absolute',
@@ -26,10 +27,21 @@ const styles = (theme: Theme) =>
     },
   });
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+
+    // display: "inlineBlock"
+
+
+
+  },
+}))
+
 export interface DialogTitleProps extends WithStyles<typeof styles> {
   id: string;
   children: React.ReactNode;
   onClose: () => void;
+
 }
 
 const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
@@ -48,7 +60,7 @@ const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
 
 const DialogContent = withStyles((theme: Theme) => ({
   root: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(3),
   },
 }))(MuiDialogContent);
 
@@ -60,59 +72,42 @@ const DialogActions = withStyles((theme: Theme) => ({
 }))(MuiDialogActions);
 
 interface PROPS {
-  title?: string;
-  id?: string;
-  uid?: string;
-  handleClose: () => void
-  product?: boolean;
-  openModal: boolean;
-  handleModalClose?: () => void;
+  helpDialogClose: () => void;
+  helpDialogOpen: boolean;
+  title: string;
+  type: string;
 }
 
- const  CustomDialog:React.FC<PROPS> = (props) =>{
-  // const [open, setOpen] =useState(true);
-   const dispatch = useDispatch()
+ const  CustomDialog:React.FC<PROPS> = ({helpDialogClose,helpDialogOpen,  title,type}) =>{
+
+ const classes = useStyles()
 
 
-   const id = props.id;
-   const uid = props.uid
-
-   const handleDelete = async(id:string,uid:string) => {
-     dispatch(deletePost(id, uid))
-     props.handleClose()
-     await dispatch(snackbarOpenAction({ text:"作品を削除しました。",type:true}))
-   }
-
-   const handleChange = () => {
-     props.handleClose()
-     props.handleModalClose()
-   }
   return (
     <div>
 
-      <Dialog onClose={props.handleClose} aria-labelledby="customized-dialog-title" open={props.openModal}>
-        <DialogTitle id="customized-dialog-title" onClose={props.product ? props.handleModalClose : props.handleClose}>
-          {props.product ?
-          "登録の破棄":"作品の削除"
-        }
-
+      <Dialog className={classes.root} onClose={helpDialogClose} aria-labelledby="customized-dialog-title" open={helpDialogOpen}>
+             <DialogTitle id="customized-dialog-title" onClose={helpDialogClose}>
+         {title}
         </DialogTitle>
-        <DialogContent dividers>
-          <Typography gutterBottom>
-            削除されたデータは復元できません。削除してよろしいですか？
-          </Typography>
+        <DialogContent >
+          <div className="center">
+            {type === "windBellMaker" &&
+                  <WindBellMakerHelp />
+            }
+            {type === "register" &&
+              <AddProductHelp/>
+            }
+              {type === "search" &&
+              <SearchHelp/>
+            }
+            {type === "profile" &&
+            <ProfileHelp/>}
+               {type === "favorite" &&
+            <FavoriteHelp/>}
+          </div>
         </DialogContent>
         <DialogActions>
-          {props.product ?
-            <Button onClick={handleChange} color="primary">
-            削除する
-          </Button>
- :
-
-     <Button  onClick={()=>handleDelete(id,uid)} color="primary">
-            削除する
-          </Button>
-}
 
 </DialogActions>
       </Dialog>

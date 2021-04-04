@@ -20,6 +20,10 @@
     height: 48px
 }
 
+.module-spacer--xl {
+    height: 96px
+}
+
 .pointer {
     cursor: pointer;
 }
@@ -28,7 +32,7 @@
 /*********** Section ***********/
 
 body {
-    background-color: #F5F5F5;
+    background-color: #FFF5EE;
 }
 
 .c-main {
@@ -367,4 +371,14 @@ body {
 
 .react-tagsinput-input {
     width: 200px;
+}
+
+.MuiPaper-elevation4 {
+    box-shadow: none !important;
+}
+
+@media(max-width:768px) {
+    .MuiBox-root {
+        padding: 10px !important;
+    }
 }

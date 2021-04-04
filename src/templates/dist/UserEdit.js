@@ -39,7 +39,6 @@ exports.__esModule = true;
 var react_1 = require("react");
 var react_redux_1 = require("react-redux");
 var index_1 = require("../components/UI/index");
-var SignUp_module_css_1 = require("./module.css/SignUp.module.css");
 var index_2 = require("../firebase/index");
 var userSlice_1 = require("../reducks/users/userSlice");
 var core_1 = require("@material-ui/core");
@@ -56,26 +55,33 @@ var useStyles = styles_1.makeStyles(function (theme) { return ({
         width: theme.spacing(15),
         height: theme.spacing(15),
         margin: "auto"
+    },
+    hideIcon: {
+        textAlign: "center",
+        display: "none"
     }
 }); });
 var UserEdit = function () {
     var dispatch = react_redux_1.useDispatch();
     var classes = useStyles();
     var currentUsername = react_redux_1.useSelector(userSlice_1.getUsername);
-    var currentEmail = react_redux_1.useSelector(userSlice_1.getEmail);
+    var currentUrl = react_redux_1.useSelector(userSlice_1.getUserUrl);
     var currentAvatar = react_redux_1.useSelector(userSlice_1.getUserAvatar);
     var currentProfile = react_redux_1.useSelector(userSlice_1.getUserProfile);
     var uid = react_redux_1.useSelector(userSlice_1.getUserId);
-    var _a = react_1.useState(currentUsername || ""), username = _a[0], setUsername = _a[1], _b = react_1.useState(currentEmail || ""), email = _b[0], setEmail = _b[1], _c = react_1.useState(currentProfile || ""), profile = _c[0], setProfile = _c[1], _d = react_1.useState(currentAvatar || ""), avatar = _d[0], setAvatar = _d[1], _e = react_1.useState(""), url = _e[0], setUrl = _e[1];
+    var _a = react_1.useState(currentUsername || ""), username = _a[0], setUsername = _a[1], _b = react_1.useState(currentProfile || ""), profile = _b[0], setProfile = _b[1], _c = react_1.useState(currentAvatar || ""), avatar = _c[0], setAvatar = _c[1], _d = react_1.useState(false), error = _d[0], setError = _d[1], _e = react_1.useState(currentUrl || ""), url = _e[0], setUrl = _e[1];
     console.log(uid);
     var inputUsername = react_1.useCallback(function (event) {
         setUsername(event.target.value);
     }, [setUsername]);
-    var inputEmail = react_1.useCallback(function (event) {
-        setEmail(event.target.value);
-    }, [setEmail]);
     var inputProfile = react_1.useCallback(function (event) {
         setProfile(event.target.value);
+        if (event.target.value.length > 200) {
+            setError(true);
+        }
+        else {
+            setError(false);
+        }
     }, [setProfile]);
     var inputUrl = react_1.useCallback(function (event) {
         setUrl(event.target.value);
@@ -116,7 +122,7 @@ var UserEdit = function () {
             }
         });
     }); };
-    var updateUser = function (avatar, username, email, profile, url) { return __awaiter(void 0, void 0, void 0, function () {
+    var updateUser = function (avatar, username, profile, url) { return __awaiter(void 0, void 0, void 0, function () {
         var timestamp, userInitialData, user;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -124,7 +130,6 @@ var UserEdit = function () {
                     dispatch(loadingSlice_1.showLoadingAction("ユーザー情報を更新"));
                     timestamp = index_2.FirebaseTimestamp.now();
                     userInitialData = {
-                        email: email,
                         updated_at: timestamp,
                         username: username,
                         avatar: avatar,
@@ -133,27 +138,16 @@ var UserEdit = function () {
                         url: url
                     };
                     user = index_2.auth.currentUser;
-                    console.log(user);
                     user.updateProfile({
                         displayName: username,
                         photoURL: avatar
                     }).then(function () {
                         console.log("success");
                     })["catch"](function (error) {
-                        // An error happened.
+                        console.log("処理に失敗");
                     });
-                    //     user.updateEmail(email).then(function() {
-                    //   console.log("success")
-                    // }).catch(function(error) {
-                    //   // An error happened.
-                    // });
                     return [4 /*yield*/, dispatch(userSlice_1.updateUserAction(userInitialData))];
                 case 1:
-                    //     user.updateEmail(email).then(function() {
-                    //   console.log("success")
-                    // }).catch(function(error) {
-                    //   // An error happened.
-                    // });
                     _a.sent();
                     // user情報を書き換えた後に、過去の情報が全て書き換えられる処理
                     return [4 /*yield*/, index_2.db.collection("users").doc(uid).set(userInitialData, { merge: true }).then(function () {
@@ -172,13 +166,6 @@ var UserEdit = function () {
             }
         });
     }); };
-    //     const commentUser = db.collection("posts").doc(allId).collection("comments")
-    //               commentUser.get().then((querySnapshot) => {
-    //                 querySnapshot.forEach((doc) => {
-    //                   const comId = doc.data().id;
-    //                   console.log(comId)
-    //     })
-    //  })
     return (react_1["default"].createElement("div", null,
         react_1["default"].createElement(GlobalLayoutStyle_1.SectionContainer, null,
             react_1["default"].createElement(GlobalLayoutStyle_1.Title, null, "\u30E6\u30FC\u30B6\u30FC\u60C5\u5831\u306E\u767B\u9332\u30FB\u7DE8\u96C6"),
@@ -187,17 +174,17 @@ var UserEdit = function () {
                     react_1["default"].createElement(IconButton_1["default"], null,
                         react_1["default"].createElement("label", null,
                             react_1["default"].createElement(core_1.Avatar, { className: classes.large, src: avatar }),
-                            react_1["default"].createElement("input", { className: SignUp_module_css_1["default"].login_hiddenIcon, type: "file", onChange: onChangeImageHandler }))),
+                            react_1["default"].createElement("input", { className: classes.hideIcon, type: "file", onChange: onChangeImageHandler }))),
                     react_1["default"].createElement("p", null, "\u30A2\u30D0\u30BF\u30FC\u3092\u30BF\u30C3\u30D7\u3057\u3066\u5909\u66F4")),
                 react_1["default"].createElement("div", { className: "module-spacer--medium" }),
-                react_1["default"].createElement(index_1.TextInput, { fullWidth: true, label: "お名前", multiline: false, required: true, onChange: inputUsername, rows: 1, value: username, type: "text" }),
-                react_1["default"].createElement(index_1.TextInput, { fullWidth: true, label: "メールアドレス", multiline: false, required: true, onChange: inputEmail, rows: 1, value: email, type: "email" }),
-                react_1["default"].createElement(index_1.TextInput, { fullWidth: true, label: "紹介文", multiline: true, required: true, onChange: inputProfile, rows: 5, value: profile, type: "text" }),
-                react_1["default"].createElement(index_1.TextInput, { fullWidth: true, label: "活動しているsns,webサイトのurl", multiline: false, required: true, onChange: inputUrl, rows: 1, value: url, type: "text" }),
+                react_1["default"].createElement(index_1.TextInput, { fullWidth: true, label: "お名前", multiline: false, required: true, onChange: inputUsername, rows: 1, value: username, variant: "outlined", type: "text" }),
+                react_1["default"].createElement(index_1.TextInput, { fullWidth: true, label: "紹介文", multiline: true, required: true, onChange: inputProfile, rows: 12, variant: "outlined", value: profile.slice(0, 200), type: "text" }),
+                error && react_1["default"].createElement(GlobalLayoutStyle_1.BoldText, { color: "red" }, "\u26A0\uFE0F\u6587\u5B57\u306F200\u5B57\u4EE5\u5185\u3067\u304A\u9858\u3044\u3057\u307E\u3059\u3002"),
+                react_1["default"].createElement(index_1.TextInput, { fullWidth: true, label: "活動しているsns,webサイトのurl", multiline: false, required: true, onChange: inputUrl, variant: "outlined", rows: 1, value: url, type: "text" }),
                 react_1["default"].createElement("div", { className: "module-spacer--medium" }),
                 react_1["default"].createElement("div", { className: "center" },
                     react_1["default"].createElement(index_1.PrimaryButton, { label: "ユーザー情報を更新", onClick: function () {
-                            return updateUser(avatar, username, email, profile, url);
+                            return updateUser(avatar, username, profile, url);
                         } }))))));
 };
 exports["default"] = UserEdit;

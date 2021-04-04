@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react'
+import React,{useEffect,useState,useCallback} from 'react'
 import IconButton from "@material-ui/core/IconButton"
 import  Badge  from "@material-ui/core/Badge"
 // import { fetchProductsInCart } from "../../reducks/users/operations"
@@ -7,14 +7,16 @@ import {makeStyles,createStyles} from '@material-ui/core/styles';
 // import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder"
 import SearchIcon from "@material-ui/icons/Search";
-import { getUserId } from "../../reducks/users/userSlice";
+import { getIsSignedIn, getUserId } from "../../reducks/users/userSlice";
 import {getPostsInFavorite} from "../../reducks/users/userSlice"
 import { fetchPostsInFavorite} from "../../reducks/users/operations";
 import MenuIcon from "@material-ui/icons/Menu"
 import { SearchBox } from "../UI";
 import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone';
-import {db} from "../../firebase/index"
-
+import { db } from "../../firebase/index"
+import PushList from "./PushList"
+import Popover from '@material-ui/core/Popover';
+import { PopperWrapper}from "./style"
 import { push } from "connected-react-router";
 
 
@@ -53,6 +55,14 @@ const useStyles = makeStyles((theme) =>
           borderRadius:20,
             focus:500
     },
+          popRoot: {
+      width: 500,
+    },
+    typography: {
+      padding: theme.spacing(2),
+    },
+
+
 
 
 
@@ -69,69 +79,120 @@ const HeaderMenus: React.FC<PROPS> = (props) => {
   const isSP = window.matchMedia('screen and (max-width: 767px)').matches;
   const dispatch = useDispatch()
   const uid = useSelector(getUserId)
+  const isSignedIn =useSelector(getIsSignedIn)
   const classes = useStyles()
     const likesPost = useSelector(getPostsInFavorite)
-  let postInFavorite: string[] =  []
+  let postInFavorite: string[] = []
+    // const [open, setOpen] = useState<boolean>(false)
+
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const [pushLength,setPushLength] = useState<number>(0)
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
+
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   console.log(postInFavorite)
 
-   useEffect(() => {
-    db.collection("users").doc(uid).collection("likes").onSnapshot((snapshot) => {
-    snapshot.docChanges().forEach(change=>{
-      const post: any = change.doc.data()
-      console.log(post)
+  useEffect(() => {
+    if (isSignedIn) {
+      db.collection("users").doc(uid).collection("likes").onSnapshot((snapshot) => {
 
-      const changeType = change.type;
-      switch(changeType){
-        case "added":
-          // Object.preventExtensions(postInFavorite)
+        snapshot.docChanges().forEach(change => {
+          const post: any = change.doc.data()
+          console.log(post)
 
-            postInFavorite.push(post)
+          const changeType = change.type;
+          switch (changeType) {
+            case "added":
+              // Object.preventExtensions(postInFavorite)
 
-          break;
-        case "modified":
-          const index = postInFavorite.findIndex((post:any) => post.likesId === change.doc.id)
-          postInFavorite[index] = post
-          break;
-        case "removed":
-          postInFavorite = postInFavorite.filter((post:any) => post.likesId !== change.doc.id);
-          break;
-          default:
+              postInFavorite.push(post)
+
               break;
-      }
+            case "modified":
+              const index = postInFavorite.findIndex((post: any) => post.likesId === change.doc.id)
+              postInFavorite[index] = post
+              break;
+            case "removed":
+              postInFavorite = postInFavorite.filter((post: any) => post.likesId !== change.doc.id);
+              break;
+            default:
+              break;
+          }
 
+        })
+        dispatch(fetchPostsInFavorite(postInFavorite))
+
+      })
+
+    }
+  }, []);
+
+  useEffect(() => {
+    db.collection("message").where("check", "==", false).onSnapshot((snapshot) => {
+     setPushLength(snapshot.size)
     })
-      dispatch(fetchPostsInFavorite(postInFavorite))
+  }, [])
 
-  })
-
-}, []);
   return (
     <div className={classes.headerMenu}>
-             {isSP?
-            <>
+           <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+      >
+        <PopperWrapper>
+          <PushList  handleClose={handleClose}/>
+      </PopperWrapper>
+      </Popover>
+
+
                <IconButton>
-              <SearchIcon onClick={ ()=>dispatch(push("/search"))}/>
+              <SearchIcon style={{fontSize:"30px"}} onClick={ ()=>dispatch(push("/search"))}/>
               </IconButton>
-              </>
-          :
-<SearchBox fullWidth={true} style/>
- }
-      <IconButton onClick={()=>dispatch(push("/push"))}>
-           <Badge badgeContent="1"color="error">
-                  <NotificationsNoneIcon/>
+
+
+      {isSignedIn &&
+        <>
+            <IconButton onClick={handleClick}>
+           <Badge badgeContent={pushLength && pushLength} color="error">
+                  <NotificationsNoneIcon style={{fontSize:"28px"}}/>
         </Badge>
       </IconButton>
       <div className="mobile_only" >
             <IconButton onClick={()=>dispatch(push("/likes"))}>
            <Badge badgeContent={likesPost && likesPost.length} color="error">
-                  <FavoriteBorderIcon/>
+                  <FavoriteBorderIcon style={{fontSize:"28px"}}/>
         </Badge>
         </IconButton>
         </div>
       <IconButton  onClick = {(event)=>props.handleDrawerToggle(event)}>
-        <MenuIcon/>
-      </IconButton>
+        <MenuIcon style={{fontSize:"28px"}}/>
+        </IconButton>
+        </>
+
+
+      }
+
     </div>
   )
 }

@@ -19,9 +19,10 @@ const useStyles = makeStyles((theme) => ({
   root: {
     zIndex:999,
     [theme.breakpoints.down("sm")]: {
-         width: "100%",
+         maxWidth: "100%",
     position: "fixed !important",
       bottom: 0,
+          width: "100%"
 
     },
     [theme.breakpoints.up("sm")]: {

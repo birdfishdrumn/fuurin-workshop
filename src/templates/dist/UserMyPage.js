@@ -19,7 +19,8 @@ var useStyles = styles_1.makeStyles(function (theme) { return ({
         marginBottom: 16,
         background: "white",
         padding: 16,
-        borderRadius: "5%"
+        borderRadius: "10px",
+        boxShadow: "0 0px 10px rgba(0,0,0,0.2)"
     }
 }); });
 var UserMyPage = function (props) {
@@ -30,6 +31,8 @@ var UserMyPage = function (props) {
     var email = react_redux_1.useSelector(userSlice_1.getEmail);
     var avatar = react_redux_1.useSelector(userSlice_1.getUserAvatar);
     var profile = react_redux_1.useSelector(userSlice_1.getUserProfile);
+    var url = react_redux_1.useSelector(userSlice_1.getUserUrl);
+    console.log(url);
     var transition = react_1.useCallback(function (path) {
         history.push(path);
     }, []);
@@ -39,11 +42,13 @@ var UserMyPage = function (props) {
         react_1["default"].createElement(core_1.Avatar, { className: classes.large, src: avatar }),
         react_1["default"].createElement("div", { className: "module-spacer--medium" }),
         react_1["default"].createElement(UI_1.TextDetail, { label: "\u30E6\u30FC\u30B6\u30FC\u540D", value: username }),
-        react_1["default"].createElement(UI_1.TextDetail, { label: "email", value: email }),
+        react_1["default"].createElement("div", { className: classes.profile },
+            "Url",
+            react_1["default"].createElement(GlobalLayoutStyle_1.BoldText, { left: true, style: { marginTop: "10px", fontWeight: 600 } }, url)),
         react_1["default"].createElement("div", { className: "center" },
             react_1["default"].createElement("div", { className: classes.profile },
                 "\u7D39\u4ECB\u6587",
-                react_1["default"].createElement("p", { style: { marginTop: "10px", fontWeight: 600 } }, profile)),
+                react_1["default"].createElement(GlobalLayoutStyle_1.BoldText, { style: { marginTop: "10px", fontWeight: 600 } }, profile)),
             react_1["default"].createElement("div", { className: "center" }),
             react_1["default"].createElement(UI_1.PrimaryButton, { label: "投稿した作品", onClick: function () { return transition('/user/post'); } }),
             react_1["default"].createElement(UI_1.PrimaryButton, { label: "プロフィールを編集する", onClick: function () { return transition('/user/edit'); } }),

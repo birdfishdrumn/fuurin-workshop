@@ -2,7 +2,9 @@ import React,{useEffect,useState} from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme,Theme, createStyles  } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import {SvgContainer,Svg,ImageContainer,ImagePallet,Flex,Image,Text,StyledText,StyleProps,Color} from "./style"
+import { SvgContainer, Svg, ImageContainer, ImagePallet, Flex, Image, Text, StyledText, StyleProps, Color } from "./style"
+import { useDispatch,useSelector } from "react-redux";
+import firebase from "firebase/app"
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {TextInput} from "components/UI/index"
 import Typography from '@material-ui/core/Typography';
@@ -11,8 +13,7 @@ import IconButton from '@material-ui/core/IconButton';
 import WindBellCropper from "./WindBellCropper"
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import MailIcon from '@material-ui/icons/Mail';
-import styled from "styled-components"
+
 import Fuurin from "assets/img/src/shape/smart.png"
 import PropTypes from 'prop-types';
 import TreeView from '@material-ui/lab/TreeView';
@@ -20,17 +21,12 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Label from '@material-ui/icons/Label';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
-import ColorFlower from "assets/img/src/stripPattern/colorFlower.jpg"
-import Takasi from "assets/img/src/stripPattern/takasistatte.jpg"
-import ULOCO from "assets/img/src/stripPattern/ULOCO.png"
-import Seigaiha from "assets/img/src/stripPattern/wagara/seigaiha.png"
-import Wood from "assets/img/src/stripPattern/wood.jpg"
-import Check from "assets/img/src/stripPattern/check.png"
-import Momiji from "assets/img/src/stripPattern/Momiji.png"
 import {PrimaryButton} from "components/UI/index";
-import Taiko from "assets/img/src/stripPattern/Taiko.png"
+import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import TreeItem, { TreeItemProps } from '@material-ui/lab/TreeItem';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
+import { db, storage } from "firebase/index"
+import Button from "@material-ui/core/Button"
 
 let  drawerWidth = 165;
 
@@ -58,7 +54,6 @@ declare module 'react' {
 type StyledTreeItemProps = TreeItemProps & {
   bgColor?: string;
   color?: string;
-  labelIcon: React.ElementType<SvgIconProps>;
   labelInfo?: string;
   labelText: string;
 };
@@ -126,17 +121,19 @@ function StyledTreeItem(props: StyledTreeItemProps) {
   const {
     bgColor,
     color,
-    labelIcon: LabelIcon,
     labelInfo,
     labelText,
     ...other
   } = props;
 
+
+
+
   return (
     <TreeItem
       label={
         <div className={classes.labelRoot}>
-          <LabelIcon color="inherit" className={classes.labelIcon} />
+
           <Typography variant="body2" className={classes.labelText}>
             {labelText}
           </Typography>
@@ -227,11 +224,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function PersistentDrawerRight({textLength,strip,setStrip,pathItem,windBellImage,setPathItem,setWindBellImage,wishText,inputWishText}) {
+interface STRIP {
+  title: string;
+  category: string;
+  created_at: firebase.firestore.Timestamp;
+  images: {
+    path: string;
+    id: string;
+  }
+}
+
+// ---------------------ここからが関数---------------------------
+
+
+export default function PersistentDrawerRight({textLength,strip,setStrip,pathItem,windBellImage,setPathItem,setWindBellImage,wishText,inputWishText,uploadImage}) {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [textColor,setTextColor] = useState("default")
+  const [textColor, setTextColor] = useState("default")
+  const [patterns, setPatterns] = useState<STRIP[]>([])
+  const [textFont, setTextFont] = useState<string>("default")
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -250,6 +263,45 @@ export default function PersistentDrawerRight({textLength,strip,setStrip,pathIte
   },[setPathItem])
 
 
+
+  // 短冊の非同期処理
+  useEffect(() => {
+        db.collection("tanzaku").get().then((snapshot) => {
+      const list = []
+      snapshot.forEach((doc) => {
+        const data = doc.data()
+        list.push(data)
+      })
+          setPatterns(list)
+          console.log(list)
+
+        })
+  }, [])
+
+
+
+  const flowerList = patterns.filter((pattern) => {
+    return (pattern.category === '花柄');
+});
+
+  const washiList = patterns.filter((pattern) => {
+    return (pattern.category === '和紙・布');
+});
+
+  const wagaraList = patterns.filter((pattern) => {
+    return (pattern.category === '和柄');
+});
+
+const classicList = patterns.filter((pattern) => {
+    return (pattern.category === 'クラシック');
+});
+
+  const woodList = patterns.filter((pattern) => {
+    return (pattern.category === '木目調');
+});
+  const summerList = patterns.filter((pattern) => {
+    return (pattern.category === '夏の柄');
+});
 
   return (
     <div className={classes.root}>
@@ -307,17 +359,19 @@ export default function PersistentDrawerRight({textLength,strip,setStrip,pathIte
          <img src={Fuurin} alt="クリッピングサンプル"/>
             </ImageContainer>
        {/*  風鈴の願い事*/}
-            <NormalText textstyle={textColor} textLength={textLength}>{wishText.slice(0, 48)}</NormalText>
+            <NormalText textstyle={textColor} fontstyle={textFont} textLength={textLength}>{wishText.slice(0, 48)}</NormalText>
             {/* 風鈴の願い事 */}
         </SvgContainer>
 
-          <PrimaryButton
+
+     <WindBellCropper pathItem={pathItem} setPathItem={setPathItem} imageUrl={windBellImage} setImageUrl={setWindBellImage} />
+        </div>
+
+            <PrimaryButton
           label="風鈴をカスタマイズする"
            onClick={handleDrawerOpen}
           />
-     <WindBellCropper pathItem={pathItem} setPathItem={setPathItem} imageUrl={windBellImage} setImageUrl={setWindBellImage} />
-        </div>
-      {/* {wishText.includes("死ね" || "アホ") && <p>だめです</p>} */}
+        <div className="module-spacer--medium" />
 
                    <TextInput
           fullWidth={true}
@@ -357,48 +411,78 @@ export default function PersistentDrawerRight({textLength,strip,setStrip,pathIte
       defaultExpandIcon={<ArrowRightIcon />}
       defaultEndIcon={<div style={{ width: 24 }} />}
     >
-          <StyledTreeItem nodeId="1" labelText="和紙・布" labelIcon={MailIcon} />
+          <StyledTreeItem nodeId="1" labelText="和紙・布" >
+                <Flex>
+            {washiList.map((item) => (
+               <ImagePallet onClick={()=>setStrip(item.images.path)}>
+          <Image src={item.images.path} />
+              </ImagePallet>
+            ))}
+               </Flex>
+          </StyledTreeItem>
+          <StyledTreeItem nodeId="2" labelText="和柄" >
+               <Flex>
+            {wagaraList.map((item) => (
+               <ImagePallet onClick={()=>setStrip(item.images.path)}>
+          <Image src={item.images.path} />
+              </ImagePallet>
+            ))}
+               </Flex>
+      </StyledTreeItem>
+          <StyledTreeItem nodeId="3" labelText="クラシック"
+         >
+                      <Flex>
+            {classicList.map((item) => (
 
-          <StyledTreeItem nodeId="2" labelText="和柄" labelIcon={DeleteIcon}>
-          <Flex>
-                  <ImagePallet onClick={()=>setStrip(ColorFlower)}>
-          <Image src={ColorFlower} />
-
-        </ImagePallet>
-          <ImagePallet onClick={()=>setStrip(Takasi)}>
-          <Image src={Takasi} />
-
-        </ImagePallet>
-          <ImagePallet onClick={()=>setStrip(ULOCO)}>
-          <Image src={ULOCO} />
-
-        </ImagePallet>
-          <ImagePallet onClick={()=>setStrip(Wood)}>
-          <Image src={Wood} />
+               <ImagePallet onClick={()=>setStrip(item.images.path)}>
+          <Image src={item.images.path} />
 
               </ImagePallet>
+            ))}
+               </Flex>
+          </StyledTreeItem>
+          <StyledTreeItem nodeId="4" labelText="花柄">
+            <Flex>
+            {flowerList.map((item) => (
+               <ImagePallet onClick={()=>setStrip(item.images.path)}>
+          <Image src={item.images.path} />
+              </ImagePallet>
+            ))}
+                      </Flex>
+            </StyledTreeItem>
 
-          <ImagePallet onClick={()=>setStrip(Seigaiha)}>
-          <Image src={Seigaiha} />
+          <StyledTreeItem nodeId="5" labelText="木目調"  >
+                  <Flex>
+            {woodList.map((item) => (
+               <ImagePallet onClick={()=>setStrip(item.images.path)}>
+          <Image src={item.images.path} />
+              </ImagePallet>
+            ))}
+               </Flex>
+          </StyledTreeItem>
+          {/* <StyledTreeItem nodeId="6" labelText="アップロード" labelIcon={PhotoCameraIcon}/> */}
+               <IconButton >
+                    <label>
+                        <PhotoCameraIcon />
+                        <input className="u-display-none" type="file" id="image" onChange={uploadImage}/>
+                    </label>
+                </IconButton>
 
-        </ImagePallet>
 
-        </Flex>
-      </StyledTreeItem>
-        <StyledTreeItem nodeId="4" labelText="クラシック" labelIcon={MailIcon} />
-          <StyledTreeItem nodeId="4" labelText="花柄" labelIcon={Label} />
-          <StyledTreeItem nodeId="5" labelText="木目調" labelIcon={Label} />
-           <StyledTreeItem nodeId="6" labelText="夏の柄" labelIcon={MailIcon} />
           <Divider />
           文字のスタイル
-          <StyledTreeItem nodeId="5" labelText="書式" labelIcon={Label} />
+          <StyledTreeItem nodeId="6" labelText="書式" labelIcon={Label} >
+            <Button onClick={() => setTextFont("Mincho")}>明朝</Button>
+            <Button onClick={() => setTextFont("StdN")}>ヒラギノ角ゴシックStdN</Button>
+            <Button onClick={() => setTextFont("Hannotate")}>Hannotate SC</Button>
+              <Button onClick={() => setTextFont("Wawati")}>Wawati</Button>
+          </StyledTreeItem>
           <StyledTreeItem nodeId="7" labelText="文字の色" labelIcon={Label}>
             <Flex>
              <Color color="black" onClick={() => setTextColor("default")}/>
               <Color color="white" onClick={() => setTextColor("white")}/>
               <Color color="blue" onClick={() => setTextColor("blue")} />
                <Color color="pink" onClick={() => setTextColor("pink")}/>
-
 
         </Flex>
                       </StyledTreeItem>

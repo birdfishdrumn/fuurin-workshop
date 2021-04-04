@@ -9,7 +9,8 @@ var useStyles = styles_1.makeStyles({
         marginBottom: 16,
         background: "white",
         padding: 16,
-        borderRadius: "5%"
+        borderRadius: "10px",
+        boxShadow: "0 0px 10px rgba(0,0,0,0.2)"
     },
     label: {
         marginLeft: 0,

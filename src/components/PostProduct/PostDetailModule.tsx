@@ -3,29 +3,28 @@ import Avatar from '@material-ui/core/Avatar';
 import { useSelector,useDispatch } from "react-redux";
 import {
   db,FirebaseTimestamp
-} from "../firebase/index"
+} from "firebase/index"
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles ,createStyles} from "@material-ui/core/styles";
 import HTMLReactParser from "html-react-parser"
-import { ImageSwiper,RelationPost,Comment,Favorite } from "../components/PostProduct/index";
-import styles from "./module.css/Detail.module.css";
+import { ImageSwiper,RelationPost,Comment,Favorite } from "components/PostProduct/index";
 import IconButton from '@material-ui/core/IconButton';
 // import {addProductToCart} from "../reducks/users/operations"
 import { push } from "connected-react-router";
+import { getPostsInFavorite,getUserId,getUserAvatar,getUsername } from "reducks/users/userSlice";
 
-import { addPostToFavorite } from "../reducks/users/operations";
-import { getPostsInFavorite,getUserId } from "../reducks/users/userSlice";
-import {useHistory} from "react-router-dom"
 import moment from 'moment'  // #1
 import 'moment/locale/ja'
 import { Share } from "components/UI/index"
-import LocalOfferOutlinedIcon from '@material-ui/icons/LocalOfferOutlined';
-import { DetailWrapper,PostTag,Detail } from "./template_style"
+import { DetailWrapper,PostTag } from "templates/template_style"
 import styled from "styled-components"
 import { showLoadingAction,hideLoadingAction } from "reducks/loadingSlice";
 import Divider from '@material-ui/core/Divider';
-import { Flex, SectionWrapper,Title,GridLow } from "assets/GlobalLayoutStyle"
+import { Flex, SectionWrapper,Title,GridLow,BackgroundWhite,BoldText,StyledBoldText } from "assets/GlobalLayoutStyle"
 import CircularProgress from '@material-ui/core/CircularProgress';
+import SentimentDissatisfiedOutlinedIcon from '@material-ui/icons/SentimentDissatisfiedOutlined';
+import {returnCodeToBr} from "functions/function"
+import {USER} from "types/user"
 
 const AvatarTitle = styled(Avatar)`
 display:inline-block;
@@ -38,16 +37,7 @@ const Username = styled.div`
 const NoComment = styled.div`
  margin-top:20px;
 `
-
-const Swiper = styled.div`
-@media(max-width:1024px){
-/* s */
-/* height:100%; */
-}
-
-
-
-`
+// iconButtonを右端に寄せるcss
 const TitleContainer = styled.div`
  position:relative;
  >div:last-child{
@@ -94,57 +84,51 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const returnCodeToBr = (text) => {
-  if(text === "") {
-    return text
-  } else {
-    // 改行コードをhtmlで使える<br>タグに変換する。
-    return HTMLReactParser(text.replace(/\r?\n/g,"<br/>"))
-  }
-};
 
 
+interface PROPS {
+  productId?: string;
+  onClose?: () => void;
+  template?: boolean;
 
-const PostDetail = ({ productId, onClose }) => {
+}
+
+const PostDetailModule:React.FC<PROPS> = ({ productId, onClose,template }) => {
 
   const classes = useStyles()
   const dispatch = useDispatch()
-  // const path = selector.router.location.pathname;
-// const id = window.location.pathname.split("/post/")[1];
-  const history = useHistory();
-  console.log(history)
   const postInFavorite = useSelector(getPostsInFavorite);
 
   // お気に入りした作品数
   const likesId = postInFavorite.map(post =>
     post.postId)
 
+  const username = useSelector(getUsername)
+  const avatar = useSelector(getUserAvatar)
 
   const uid = useSelector(getUserId)
   // idは新たに定義されたidである事を忘れない
+  // idの扱いが違う
   const [id, setId] = useState<string>(productId);
   const [post, setPost] = useState(null)
-  const [user, setUser] = useState("")
-  const [open, setOpen] = useState(false)
+  const [postUid,setPostUid] = useState("")
   const [tags,setTags] = useState([])
 
-  const [openModal,setOpenModal] =useState(false)
 
 
 // 作品のidを持った作品をとってくる。
   useEffect(() => {
     // 個別の商品情報の取得なのでdoc(id)と引数にidを忘れない
-    // if (id) {
-
-    // }
     if (id)  {
       const unSub = db.collection("posts").doc(id).onSnapshot(doc => {
 
         const data = doc.data()
           if (data) {
-          const tags = data.tags
+            const tags = data.tags
+            const postUid =data.uid
           setPost(data)
-          setTags(tags)
+            setTags(tags)
+            setPostUid(postUid)
         }
       })
       return () => {
@@ -155,43 +139,34 @@ const PostDetail = ({ productId, onClose }) => {
 
   }, [id]);
 
+  console.log(postUid)
 
-  useEffect(() => {
-    if (uid) {
-      db.collection("users").doc(uid).get().then(doc => {
-        const data: any = doc.data()
-        setUser(data)
-        console.log(data)
-      })
-    }
-}, []);
+
 console.log(tags)
   const random = Math.floor(Math.random() * tags.length);
   const randomTag = tags[random]
-//   const scroll = () => {
-//     var element = document.getElementById("title");
-//     	var rect = element.getBoundingClientRect();
-// 	var x = rect.left;
-// 	var y = rect.top;
+  // ーーーーーーーモジュールにしかないーーーーーーーーーーーー
+  // 関連作品をクリックすると、どうダイアログないで表示を切り替える。
 
-// }
+    const changeRelation = useCallback((id) => {
+      dispatch(showLoadingAction("loading"))
 
-  // 関連する作品のidをセットする
-  const changeRelation = useCallback((id) => {
-    dispatch(showLoadingAction("loading"))
+      setTimeout(() => {
+        setId(id);
+        window.location.href = "#title"
+        dispatch(hideLoadingAction())
+      }, 200);
 
-    setTimeout(() => {
-       setId(id);
-      window.location.href = "#title"
-       dispatch(hideLoadingAction())
-    }, 200);
+    }, [setId])
 
-  }, [setId])
+  // ーーーーーーーモジュールにしかないーーーーーーーーーーーー
 
   const searchTag = (tag) => {
     dispatch(push(`/?tags=${tag}`))
-    onClose()
+   onClose && onClose()
   }
+
+
   return (
      <SectionWrapper>
       {post ? (
@@ -199,20 +174,20 @@ console.log(tags)
           <TitleContainer>
             <Title id="title" >{post.name}</Title>
             <div>
-
-                 <IconButton onClick={()=>onClose()} ><CloseIcon/></IconButton>
+              {!template &&
+                <IconButton onClick={() => onClose()} >
+                  <CloseIcon />
+                </IconButton>}
             </div>
-
-
           </TitleContainer>
 
           <Divider />
              <div style={{height:"5vh"}}/>
         <GridLow >
             <div className={classes.sliderBox}>
-              <Swiper>
+
                  <ImageSwiper images={post.images} />
-              </Swiper>
+
 
               <div className="module-spacer--small" />
               <Flex between>
@@ -229,22 +204,22 @@ console.log(tags)
               < NoComment >
 
                 {post.check !== true ?
-                  <Comment id={id} user={user} uid={uid}/>:
-                <h1>コメントは非表示になっています。</h1>
+                  <Comment postUid={postUid} id={id} username={username} avatar={avatar} uid={uid}/>:
+                <StyledBoldText>コメントは非表示になっています。</StyledBoldText>
                 }
               </ NoComment>
             </div>
 
 
           <DetailWrapper>
-              <Detail>
+
                 <Divider className="downMd" />
-                <div className="downMd" style={{height:"5vh"}}/>
+                <div className="downMd" style={{ height: "5vh" }} />
+                <BackgroundWhite>
             <h1 className="center u-text__title">作品の説明</h1>
-
             {/* 説明欄に改行を可能にする。 */}
-
-              <p>{returnCodeToBr(post.description)}</p>
+                  <p>{returnCodeToBr(post.description)}</p>
+                  </BackgroundWhite>
               <div className="module-spacer--small" />
    <div className={classes.media}>
                      <img src={post.allImages[0].path}/>
@@ -253,20 +228,16 @@ console.log(tags)
 
             {/* タグ一覧 */}
             <PostTag>
-                     <LocalOfferOutlinedIcon/>
-               {post.tags && post.tags.map((t,index) => (
+
+               {post.tags.length ? post.tags.map((t,index) => (
               <li key={index} onClick={()=>searchTag(t)}>#{t}</li>
-            ))}
+               ))
+                    :
+                    <BoldText><SentimentDissatisfiedOutlinedIcon style={{fontSize:"30px",marginBottom:"-8px",marginRight:"10px"}}/>タグがありません</BoldText>
+              }
             </PostTag>
 
-
-
-
-
-
-             </Detail>
             </DetailWrapper>
-
           </GridLow>
           <div style={{ height: "5vh" }} />
              {/* <button onClick ={scroll}>top</button> */}
@@ -286,9 +257,8 @@ console.log(tags)
         <div style={{
             height: "100vh",
           width:"1024px",
-            backgroundColor:"#F5F5F5"
+            // backgroundColor:"#F5F5F5"
         }}>
-            {/* <ReactLoading type="spinningBubbles"  /> */}
             <CircularProgress color="inherit"  style={{ marginTop: "20vh" }}/>
           </div>
       )
@@ -299,4 +269,4 @@ console.log(tags)
 };
 
 
-export default PostDetail
+export default PostDetailModule

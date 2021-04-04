@@ -12,10 +12,11 @@ import {signOut} from "../../reducks/users/operations";
 import Avatar from "@material-ui/core/Avatar"
 import SearchIcon from "@material-ui/icons/Search";
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import HistoryIcon from '@material-ui/icons/History';
+import MenuBookIcon from '@material-ui/icons/MenuBook';
 import PersonIcon from '@material-ui/icons/Person';
-import Switch from "@material-ui/core/Switch";
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import HelpIcon from '@material-ui/icons/Help';
+import HttpsIcon from '@material-ui/icons/Https';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder"
 import { db } from "../../firebase";
@@ -74,9 +75,6 @@ const ClosableDrawer: React.FC<PROPS> = (props) => {
     // 選択したらドロワーが閉じる
     props.onClose(event,false)
 }
- const [filters, setFilters] = useState<FILTER[]>([
-    { func: selectMenu, label: "すべて", id: "all", value: "/" }]
-)
 
 
   const menus = [
@@ -85,31 +83,13 @@ const ClosableDrawer: React.FC<PROPS> = (props) => {
      { func: selectMenu, label: "絵付け道場", icon: <BrushIcon />, id: "paint", value: "/dojo" },
         { func: selectMenu, label: "お気に入りリスト", icon: <FavoriteBorderIcon />, id: "history", value: "/likes"},
     { func: selectMenu, label: "プロフィール", icon: <PersonIcon />, id: "profile", value: "/user/mypage" },
-                { func: selectMenu, label: "ヘルプ", icon: <HelpIcon />, id: "help", value: "/help"}
+
+    { func: selectMenu, label: "体験キットのご購入", icon: <ShoppingCartIcon />, id: "workshop", value: "/workshopkit" },
+    { func: selectMenu, label: "ヘルプ", icon: <HelpIcon />, id: "help", value: "/help" },
+    { func: selectMenu, label: "利用規約", icon: <MenuBookIcon />, id: "terms", value: "/terms" },
+                           { func: selectMenu, label: "プライバシーポリシー", icon: <HttpsIcon />, id: "policy", value: "/policy" },
   ]
-  useEffect(() => {
-  if (isSignedIn) {
-    db.collection("categories")
-      .orderBy("order", "asc")
-      .get()
-      .then((snapshots) => {
-        const list = [];
-        snapshots.forEach((snapshot) => {
-          const data = snapshot.data();
-           console.log(data)
-          list.push({
-            func: selectMenu,
-            label: data.name,
-            id: data.id,
-            value: `/?category=${data.id}`,
-          });
-        });
 
-        setFilters((prevState) => [...prevState, ...list]);
-
-      });
-  }
-  }, [isSignedIn]); 
 
   return (
     <nav className ={classes.drawer}>
@@ -157,16 +137,8 @@ const ClosableDrawer: React.FC<PROPS> = (props) => {
 
             </ListItem>
           </List>
-          <Divider />
-       <List>
-     {filters.map(filter => (
-              <ListItem button key={filter.id}
-              onClick={(e)=>filter.func(e,filter.value)}
-              >
-                <ListItemText primary = {filter.label}/>
-              </ListItem>
-            ))}
-          </List>
+
+
 </div>
 </Drawer>
     </nav>

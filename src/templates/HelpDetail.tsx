@@ -7,7 +7,9 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import {AddProductHelp,EdofuurinHelp,FavoriteHelp,ProfileHelp,SearchHelp,WindBellMakerHelp,} from "components/HelpComponents/index"
+import { AddProductHelp, EdofuurinHelp, FavoriteHelp, ProfileHelp, SearchHelp, WindBellMakerHelp, } from "components/HelpComponents/index"
+import { SiteMapNav } from "components/UI/index"
+import NotPushAuth from "NotPushAuth"
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -55,7 +57,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 const HelpDetail = (props) => {
   const classes = useStyles();
     const stateValue = props.location.state
-  const [value, setValue] = React.useState(stateValue);
+  const [value, setValue] = React.useState(stateValue || 0);
 
 console.log(props.location.state)
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -64,9 +66,10 @@ console.log(props.location.state)
 
   return (
     <div>
+      <NotPushAuth/>
+    <SiteMapNav/>
+      <SectionWrapping large>
 
-      <SectionWrapping>
-            <Title>ヘルプ</Title>
      <div className={classes.root}>
       <AppBar position="static" color="default">
         <Tabs

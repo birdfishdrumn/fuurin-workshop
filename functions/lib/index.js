@@ -65,126 +65,78 @@ exports.onUpdateUser = functions
         console.log(err);
     }
 });
-// exports.onUpdateUser = functions
-// .region("asia-northeast1")
-// .firestore.document("users/{userId}")
-// .onUpdate(async (change, context) => {
-//   const { userId } = context.params;
-//   const newUser = change.after.data() as User;
-//   const db = admin.firestore();
-//   try {
-//     const snapshot = await db
-//       .collectionGroup("reviews")
-//       .where("user.id", "==", userId)
-//       .get();
-//     const batch = db.batch();
-//     snapshot.docs.forEach((reviewDoc) => {
-//       const user = { ...reviewDoc.data().user, name: newUser.name };
-//       batch.update(reviewDoc.ref, { user });
-//     });
-//     await batch.commit();
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
-//  exports.onPushComment = functions
-//   .region("asia-northeast1")
-//   .firestore
-//     .document("posts/{postId}/comments/{commentId}")
-//    .onWrite((async (change, context) => {
-//        const db = admin.firestore();
-//       const { commentId } = context.params
-//      const comment = change.after.data()
-//      const comUid = comment.id
-//      console.log(comment)
-//     //  コメントしたユーザーの情報を取得
-//       const username = comment.username
-//      const userAvatar = comment.avatar
-//      const postId = comment.postId
-//     //  コメントした作品のデータ
-//      const postData = await db.collection("posts").doc(postId).get().then((snapshot) => {
-//        const data = snapshot.data()
-//        console.log(data)
-//        return {
-//          uid: data.uid,
-//          image: data.images[0].path
-//        }
-//      })
-//      const postUid = postData.uid
-//        const postImage = postData.image
-//      try {
-//         const userRef = db.collection("users").doc(postUid)
-//        const id = userRef.collection("message").doc().id
-//        if (comUid !== postUid) {
-//          userRef.collection("message").doc(id).set({
-//            message: `${username}があなたの作品にコメントしました`,
-//            id: id,
-//            timeLimit: 7,
-//            createdAt: admin.firestore.FieldValue.serverTimestamp(),
-//            // username: username,
-//            avatar: userAvatar,
-//            image: postImage,
-//            postId: postId
-//          })
-//        }
-//      } catch (err) {
-//        console.log(err)
-//       }
-//    }))
-//   exports.onPushLike = functions
-//   .region("asia-northeast1")
-//   .firestore
-//     .document("users/{userId}/likes/{likeId}")
-//     .onWrite((async (change, context) => {
-//          const db = admin.firestore();
-//       const { likeId } = context.params
-//       const like = change.after.data()
-//       const likesPost = like.postId
-//       const likesUid = like.uid
-//         const likeUser =  await db.collection("users").doc(likesUid).get().then((snapshot) => {
-//            const data = snapshot.data()
-//           return {
-//             username: data.username,
-//             avatar: data.avatar
-//             }
-//           })
-//       const username = likeUser.username
-//       const userAvatar = likeUser.avatar
-//       // いいねされた作品のidを取得
-//       // console.log(likesPost)
-//       try {
-//         // そのpostのuidを取得する。
-//         const postRef = db.collection("posts").doc(likesPost);
-//         // 作品投稿者のuid
-//         const postData = await postRef.get().then((snapshot) => {
-//           const data = snapshot.data()
-//           const json = JSON.stringify(data)
-//           const newData = JSON.parse(json)
-//           return {
-//             uid: newData.uid,
-//             image: newData.images[0].path
-//             }
-//           // console.log(newData)
-//         })
-//         const uid = postData.uid
-//         const image =postData.image
-//         console.log(uid)
-//         const userRef = db.collection("users").doc(uid)
-//         if (uid !== likesUid) {
-//           const id =userRef.collection("message").doc().id
-//           userRef.collection("message").doc(id).set({
-//             message: `${username}があなたの作品をお気に入りに登録しました`,
-//             id: id,
-//             timeLimit: 7,
-//             createdAt: admin.firestore.FieldValue.serverTimestamp(),
-//             // username: username,
-//             avatar: userAvatar,
-//             image: image,
-//             postId:likesPost
-//           })
-//         }
-//       } catch (err) {
-//         console.log(err)
-//      }
-//   }))
+exports.onDeleteUser = functions
+    .region("asia-northeast1")
+    .firestore.document("users/{userId}")
+    .onDelete(async (snap, context) => {
+    const deletedDocument = snap.data();
+    if (!deletedDocument) {
+        return;
+    }
+    const userId = context.params.userId;
+    const firebaseTools = require('firebase-tools');
+    try {
+        // お気に入りの作品を削除する。
+        await firebaseTools.firestore
+            .delete(`users/${userId}/likes`, {
+            project: process.env.GCLOUD_PROJECT,
+            recursive: true,
+            yes: true,
+            token: functions.config().fb.token
+        });
+        // お気に入りしたuserのサブコレクションを削除する。
+        await firebaseTools.firestore
+            .delete(`users/${userId}/likeUser`, {
+            project: process.env.GCLOUD_PROJECT,
+            recursive: true,
+            yes: true,
+            token: functions.config().fb.token
+        });
+        // お気に入りされたユーザーから自分を削除する。
+        const db = admin.firestore();
+        const batch = db.batch();
+        const likeUser = await db
+            .collectionGroup("likeUser")
+            .where("uid", "==", userId)
+            .get();
+        likeUser.docs.forEach((doc) => {
+            batch.delete(doc.ref);
+        });
+        // 投稿した作品を全て削除
+        const postSnapshot = await db
+            .collection("posts")
+            .where("uid", "==", userId)
+            .get();
+        postSnapshot.docs.forEach((postDoc) => {
+            batch.delete(postDoc.ref);
+        });
+        await batch.commit();
+    }
+    catch (err) {
+        console.error(err);
+    }
+});
+exports.onDeletePost = functions
+    .region("asia-northeast1")
+    .firestore.document("posts/{postId}")
+    .onDelete(async (snap, context) => {
+    const deletedDocument = snap.data();
+    if (!deletedDocument) {
+        return;
+    }
+    const postId = context.params.postId;
+    const firebaseTools = require('firebase-tools');
+    try {
+        await firebaseTools.firestore
+            .delete(`posts/${postId}/comments`, {
+            project: process.env.GCLOUD_PROJECT,
+            recursive: true,
+            yes: true,
+            token: functions.config().fb.token
+        });
+    }
+    catch (err) {
+        console.error(err);
+    }
+});
 //# sourceMappingURL=index.js.map

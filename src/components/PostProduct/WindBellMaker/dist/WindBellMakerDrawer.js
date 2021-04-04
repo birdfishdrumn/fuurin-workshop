@@ -35,21 +35,17 @@ var IconButton_1 = require("@material-ui/core/IconButton");
 var WindBellCropper_1 = require("./WindBellCropper");
 var ChevronLeft_1 = require("@material-ui/icons/ChevronLeft");
 var ChevronRight_1 = require("@material-ui/icons/ChevronRight");
-var Mail_1 = require("@material-ui/icons/Mail");
 var smart_png_1 = require("assets/img/src/shape/smart.png");
 var prop_types_1 = require("prop-types");
 var TreeView_1 = require("@material-ui/lab/TreeView");
-var Delete_1 = require("@material-ui/icons/Delete");
 var Label_1 = require("@material-ui/icons/Label");
 var ArrowDropDown_1 = require("@material-ui/icons/ArrowDropDown");
 var ArrowRight_1 = require("@material-ui/icons/ArrowRight");
-var colorFlower_jpg_1 = require("assets/img/src/stripPattern/colorFlower.jpg");
-var takasistatte_jpg_1 = require("assets/img/src/stripPattern/takasistatte.jpg");
-var ULOCO_png_1 = require("assets/img/src/stripPattern/ULOCO.png");
-var seigaiha_png_1 = require("assets/img/src/stripPattern/wagara/seigaiha.png");
-var wood_jpg_1 = require("assets/img/src/stripPattern/wood.jpg");
 var index_2 = require("components/UI/index");
+var PhotoCamera_1 = require("@material-ui/icons/PhotoCamera");
 var TreeItem_1 = require("@material-ui/lab/TreeItem");
+var index_3 = require("firebase/index");
+var Button_1 = require("@material-ui/core/Button");
 var drawerWidth = 165;
 if (window.matchMedia("(min-width: 768px)").matches) {
     drawerWidth = 250;
@@ -111,9 +107,8 @@ var useTreeItemStyles = styles_1.makeStyles(function (theme) {
 });
 function StyledTreeItem(props) {
     var classes = useTreeItemStyles();
-    var bgColor = props.bgColor, color = props.color, LabelIcon = props.labelIcon, labelInfo = props.labelInfo, labelText = props.labelText, other = __rest(props, ["bgColor", "color", "labelIcon", "labelInfo", "labelText"]);
+    var bgColor = props.bgColor, color = props.color, labelInfo = props.labelInfo, labelText = props.labelText, other = __rest(props, ["bgColor", "color", "labelInfo", "labelText"]);
     return (react_1["default"].createElement(TreeItem_1["default"], __assign({ label: react_1["default"].createElement("div", { className: classes.labelRoot },
-            react_1["default"].createElement(LabelIcon, { color: "inherit", className: classes.labelIcon }),
             react_1["default"].createElement(Typography_1["default"], { variant: "body2", className: classes.labelText }, labelText),
             react_1["default"].createElement(Typography_1["default"], { variant: "caption", color: "inherit" }, labelInfo)), style: {
             '--tree-view-color': color,
@@ -182,13 +177,16 @@ var useStyles = styles_1.makeStyles(function (theme) {
         }
     });
 });
+// ---------------------ここからが関数---------------------------
 function PersistentDrawerRight(_a) {
     var _b;
-    var textLength = _a.textLength, strip = _a.strip, setStrip = _a.setStrip, pathItem = _a.pathItem, windBellImage = _a.windBellImage, setPathItem = _a.setPathItem, setWindBellImage = _a.setWindBellImage, wishText = _a.wishText, inputWishText = _a.inputWishText;
+    var textLength = _a.textLength, strip = _a.strip, setStrip = _a.setStrip, pathItem = _a.pathItem, windBellImage = _a.windBellImage, setPathItem = _a.setPathItem, setWindBellImage = _a.setWindBellImage, wishText = _a.wishText, inputWishText = _a.inputWishText, uploadImage = _a.uploadImage;
     var classes = useStyles();
     var theme = styles_1.useTheme();
     var _c = react_1["default"].useState(false), open = _c[0], setOpen = _c[1];
     var _d = react_1.useState("default"), textColor = _d[0], setTextColor = _d[1];
+    var _e = react_1.useState([]), patterns = _e[0], setPatterns = _e[1];
+    var _f = react_1.useState("default"), textFont = _f[0], setTextFont = _f[1];
     var handleDrawerOpen = function () {
         setOpen(true);
     };
@@ -202,6 +200,36 @@ function PersistentDrawerRight(_a) {
         });
         console.log("@p");
     }, [setPathItem]);
+    // 短冊の非同期処理
+    react_1.useEffect(function () {
+        index_3.db.collection("tanzaku").get().then(function (snapshot) {
+            var list = [];
+            snapshot.forEach(function (doc) {
+                var data = doc.data();
+                list.push(data);
+            });
+            setPatterns(list);
+            console.log(list);
+        });
+    }, []);
+    var flowerList = patterns.filter(function (pattern) {
+        return (pattern.category === '花柄');
+    });
+    var washiList = patterns.filter(function (pattern) {
+        return (pattern.category === '和紙・布');
+    });
+    var wagaraList = patterns.filter(function (pattern) {
+        return (pattern.category === '和柄');
+    });
+    var classicList = patterns.filter(function (pattern) {
+        return (pattern.category === 'クラシック');
+    });
+    var woodList = patterns.filter(function (pattern) {
+        return (pattern.category === '木目調');
+    });
+    var summerList = patterns.filter(function (pattern) {
+        return (pattern.category === '夏の柄');
+    });
     return (react_1["default"].createElement("div", { className: classes.root },
         react_1["default"].createElement(CssBaseline_1["default"], null),
         react_1["default"].createElement("main", { className: clsx_1["default"](classes.content, (_b = {},
@@ -224,9 +252,10 @@ function PersistentDrawerRight(_a) {
                             react_1["default"].createElement("image", { xlinkHref: strip, width: "100%", height: "100%", style: { marginRight: "20px", boxShadow: "2px 2px" }, preserveAspectRatio: "xMidYMid slice", clipPath: "url(#clip02)" }))),
                     react_1["default"].createElement(style_1.ImageContainer, null,
                         react_1["default"].createElement("img", { src: smart_png_1["default"], alt: "\u30AF\u30EA\u30C3\u30D4\u30F3\u30B0\u30B5\u30F3\u30D7\u30EB" })),
-                    react_1["default"].createElement(NormalText, { textstyle: textColor, textLength: textLength }, wishText.slice(0, 48))),
-                react_1["default"].createElement(index_2.PrimaryButton, { label: "\u98A8\u9234\u3092\u30AB\u30B9\u30BF\u30DE\u30A4\u30BA\u3059\u308B", onClick: handleDrawerOpen }),
+                    react_1["default"].createElement(NormalText, { textstyle: textColor, fontstyle: textFont, textLength: textLength }, wishText.slice(0, 48))),
                 react_1["default"].createElement(WindBellCropper_1["default"], { pathItem: pathItem, setPathItem: setPathItem, imageUrl: windBellImage, setImageUrl: setWindBellImage })),
+            react_1["default"].createElement(index_2.PrimaryButton, { label: "\u98A8\u9234\u3092\u30AB\u30B9\u30BF\u30DE\u30A4\u30BA\u3059\u308B", onClick: handleDrawerOpen }),
+            react_1["default"].createElement("div", { className: "module-spacer--medium" }),
             react_1["default"].createElement(index_1.TextInput, { fullWidth: true, label: "願い事", multiline: true, required: true, onChange: inputWishText, rows: 5, value: wishText, type: "text", variant: "outlined" })),
         react_1["default"].createElement(Drawer_1["default"], { className: classes.drawer, variant: "persistent", anchor: "right", open: open, classes: {
                 paper: classes.drawerPaper
@@ -236,26 +265,32 @@ function PersistentDrawerRight(_a) {
             "\u77ED\u518A\u306E\u6A21\u69D8",
             react_1["default"].createElement(Divider_1["default"], null),
             react_1["default"].createElement(TreeView_1["default"], { "aria-label": "gmail", className: classes.treeRoot, defaultExpanded: ['3'], defaultCollapseIcon: react_1["default"].createElement(ArrowDropDown_1["default"], null), defaultExpandIcon: react_1["default"].createElement(ArrowRight_1["default"], null), defaultEndIcon: react_1["default"].createElement("div", { style: { width: 24 } }) },
-                react_1["default"].createElement(StyledTreeItem, { nodeId: "1", labelText: "\u548C\u7D19\u30FB\u5E03", labelIcon: Mail_1["default"] }),
-                react_1["default"].createElement(StyledTreeItem, { nodeId: "2", labelText: "\u548C\u67C4", labelIcon: Delete_1["default"] },
-                    react_1["default"].createElement(style_1.Flex, null,
-                        react_1["default"].createElement(style_1.ImagePallet, { onClick: function () { return setStrip(colorFlower_jpg_1["default"]); } },
-                            react_1["default"].createElement(style_1.Image, { src: colorFlower_jpg_1["default"] })),
-                        react_1["default"].createElement(style_1.ImagePallet, { onClick: function () { return setStrip(takasistatte_jpg_1["default"]); } },
-                            react_1["default"].createElement(style_1.Image, { src: takasistatte_jpg_1["default"] })),
-                        react_1["default"].createElement(style_1.ImagePallet, { onClick: function () { return setStrip(ULOCO_png_1["default"]); } },
-                            react_1["default"].createElement(style_1.Image, { src: ULOCO_png_1["default"] })),
-                        react_1["default"].createElement(style_1.ImagePallet, { onClick: function () { return setStrip(wood_jpg_1["default"]); } },
-                            react_1["default"].createElement(style_1.Image, { src: wood_jpg_1["default"] })),
-                        react_1["default"].createElement(style_1.ImagePallet, { onClick: function () { return setStrip(seigaiha_png_1["default"]); } },
-                            react_1["default"].createElement(style_1.Image, { src: seigaiha_png_1["default"] })))),
-                react_1["default"].createElement(StyledTreeItem, { nodeId: "4", labelText: "\u30AF\u30E9\u30B7\u30C3\u30AF", labelIcon: Mail_1["default"] }),
-                react_1["default"].createElement(StyledTreeItem, { nodeId: "4", labelText: "\u82B1\u67C4", labelIcon: Label_1["default"] }),
-                react_1["default"].createElement(StyledTreeItem, { nodeId: "5", labelText: "\u6728\u76EE\u8ABF", labelIcon: Label_1["default"] }),
-                react_1["default"].createElement(StyledTreeItem, { nodeId: "6", labelText: "\u590F\u306E\u67C4", labelIcon: Mail_1["default"] }),
+                react_1["default"].createElement(StyledTreeItem, { nodeId: "1", labelText: "\u548C\u7D19\u30FB\u5E03" },
+                    react_1["default"].createElement(style_1.Flex, null, washiList.map(function (item) { return (react_1["default"].createElement(style_1.ImagePallet, { onClick: function () { return setStrip(item.images.path); } },
+                        react_1["default"].createElement(style_1.Image, { src: item.images.path }))); }))),
+                react_1["default"].createElement(StyledTreeItem, { nodeId: "2", labelText: "\u548C\u67C4" },
+                    react_1["default"].createElement(style_1.Flex, null, wagaraList.map(function (item) { return (react_1["default"].createElement(style_1.ImagePallet, { onClick: function () { return setStrip(item.images.path); } },
+                        react_1["default"].createElement(style_1.Image, { src: item.images.path }))); }))),
+                react_1["default"].createElement(StyledTreeItem, { nodeId: "3", labelText: "\u30AF\u30E9\u30B7\u30C3\u30AF" },
+                    react_1["default"].createElement(style_1.Flex, null, classicList.map(function (item) { return (react_1["default"].createElement(style_1.ImagePallet, { onClick: function () { return setStrip(item.images.path); } },
+                        react_1["default"].createElement(style_1.Image, { src: item.images.path }))); }))),
+                react_1["default"].createElement(StyledTreeItem, { nodeId: "4", labelText: "\u82B1\u67C4" },
+                    react_1["default"].createElement(style_1.Flex, null, flowerList.map(function (item) { return (react_1["default"].createElement(style_1.ImagePallet, { onClick: function () { return setStrip(item.images.path); } },
+                        react_1["default"].createElement(style_1.Image, { src: item.images.path }))); }))),
+                react_1["default"].createElement(StyledTreeItem, { nodeId: "5", labelText: "\u6728\u76EE\u8ABF" },
+                    react_1["default"].createElement(style_1.Flex, null, woodList.map(function (item) { return (react_1["default"].createElement(style_1.ImagePallet, { onClick: function () { return setStrip(item.images.path); } },
+                        react_1["default"].createElement(style_1.Image, { src: item.images.path }))); }))),
+                react_1["default"].createElement(IconButton_1["default"], null,
+                    react_1["default"].createElement("label", null,
+                        react_1["default"].createElement(PhotoCamera_1["default"], null),
+                        react_1["default"].createElement("input", { className: "u-display-none", type: "file", id: "image", onChange: uploadImage }))),
                 react_1["default"].createElement(Divider_1["default"], null),
                 "\u6587\u5B57\u306E\u30B9\u30BF\u30A4\u30EB",
-                react_1["default"].createElement(StyledTreeItem, { nodeId: "5", labelText: "\u66F8\u5F0F", labelIcon: Label_1["default"] }),
+                react_1["default"].createElement(StyledTreeItem, { nodeId: "6", labelText: "\u66F8\u5F0F", labelIcon: Label_1["default"] },
+                    react_1["default"].createElement(Button_1["default"], { onClick: function () { return setTextFont("Mincho"); } }, "\u660E\u671D"),
+                    react_1["default"].createElement(Button_1["default"], { onClick: function () { return setTextFont("StdN"); } }, "\u30D2\u30E9\u30AE\u30CE\u89D2\u30B4\u30B7\u30C3\u30AFStdN"),
+                    react_1["default"].createElement(Button_1["default"], { onClick: function () { return setTextFont("Hannotate"); } }, "Hannotate SC"),
+                    react_1["default"].createElement(Button_1["default"], { onClick: function () { return setTextFont("Wawati"); } }, "Wawati")),
                 react_1["default"].createElement(StyledTreeItem, { nodeId: "7", labelText: "\u6587\u5B57\u306E\u8272", labelIcon: Label_1["default"] },
                     react_1["default"].createElement(style_1.Flex, null,
                         react_1["default"].createElement(style_1.Color, { color: "black", onClick: function () { return setTextColor("default"); } }),

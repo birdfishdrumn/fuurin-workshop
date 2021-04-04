@@ -1,9 +1,11 @@
 import { AppThunk, RootState } from '../../store';
 import { useDispatch } from "react-redux";
 // import { history } from "../store";
+import firebase from "firebase/app"
+
 import { db, auth, FirebaseTimestamp,provider,twitterProvider } from "../../firebase/index";
 import { hideLoadingAction, showLoadingAction } from "../loadingSlice";
-import {login,logout,fetchPostsInFavoriteAction,getUserId,openError,closeError} from "./userSlice"
+import {login,logout,fetchPostsInFavoriteAction,getUserId} from "./userSlice"
 import { push } from "react-router-redux";
 import { snackbarOpenAction } from "../snackbar/snackbarSlice"
 import { modalOpenAction } from "reducks/modal/modalSlice";
@@ -11,7 +13,7 @@ import { modalOpenAction } from "reducks/modal/modalSlice";
 export const signIn = (email: string, password: string): AppThunk => {
 
   return async (dispatch) => {
-   dispatch(closeError())
+
           dispatch(showLoadingAction("サインインしています..."));
     if (email === "" || password === "") {
         dispatch(hideLoadingAction());
@@ -52,7 +54,8 @@ export const signIn = (email: string, password: string): AppThunk => {
                 uid: uid,
                 username: data.username,
                 profile: data.profile,
-                 avatar: data.avatar
+                 avatar: data.avatar,
+                 url:data.url
               }))
 
   //
@@ -70,44 +73,6 @@ export const signIn = (email: string, password: string): AppThunk => {
   }
 }
 
-
-// export const signUp = (username: string, email: string, password: string, confirmPassword: string): AppThunk  => {
-//   return async (dispatch) => {
-//         dispatch(showLoadingAction("アカウントを登録しています..."));
-//     if (username === "" || email === "" || password === "" || confirmPassword === "") {
-//       alert("必須項目が未入力です。")
-//       return false
-//     }
-//     if (password !== confirmPassword) {
-//       alert("パスワードが一致しません。もう一度お試しください。")
-//       return false
-//     }
-//     return auth.createUserWithEmailAndPassword(email, password)
-//       .then(result => {
-//         const user = result.user
-
-//         if (user) {
-//           const uid = user.uid
-//           const timestamp = FirebaseTimestamp.now()
-
-//           const userInitialData= {
-//             created_at: timestamp,
-//             email: email,
-//             role: "customer",
-//             uid: uid,
-//             updated_at: timestamp,
-//             username: username
-//           }
-
-//           db.collection("users").doc(uid).set(userInitialData)
-//             .then(() => {
-//               dispatch(hideLoadingAction());
-//                 dispatch(push("/"));
-//           })
-//          }
-//     })
-//   }
-// }
 
 export const signUp = (username: string, email: string, password: string, confirmPassword: string): AppThunk  => {
   return async (dispatch) => {
@@ -143,7 +108,9 @@ export const signUp = (username: string, email: string, password: string, confir
               uid: uid,
               updated_at: timestamp,
               username: username,
-              first:false
+              first: false,
+              avatar:"",
+              url:""
             }
               // auth.signOut()
             // 確認のE-Mail送信に成功
@@ -197,7 +164,9 @@ export const listenAuthState = ():AppThunk => {
             .then(snapshot => {
 
               const data: any = snapshot.data()
+              // if文がないとエラーが出る
               if (data) {
+                console.log("huuta")
                 console.log(data)
                 dispatch(login({
                   isSignedIn: true,
@@ -206,7 +175,8 @@ export const listenAuthState = ():AppThunk => {
                   email: data.email,
                   username: data.username,
                   avatar: data.avatar,
-                 profile: data.profile
+                 profile: data.profile,
+                 url:data.url
                 }))
               }
 
@@ -220,6 +190,36 @@ export const listenAuthState = ():AppThunk => {
 
   }
 }
+
+export const  listenAuthNotState= ():AppThunk => {
+  return async (dispatch) => {
+    return auth.onAuthStateChanged(user => {
+      if (user) {
+ const uid = user.uid
+          db.collection("users").doc(uid).get()
+            .then(snapshot => {
+
+              const data: any = snapshot.data()
+              // if文がないとエラーが出る
+
+                console.log(data)
+                dispatch(login({
+                  isSignedIn: true,
+                  role: data.role,
+                  uid: uid,
+                  email: data.email,
+                  username: data.username,
+                  avatar: data.avatar,
+                 profile: data.profile,
+                 url:data.url
+                }))
+            })
+      }
+    })
+
+  }
+}
+
 
 
 export const addPostToFavorite = (addedPost: any,uid:string):AppThunk => {
@@ -295,7 +295,8 @@ export const googleSignIn = ():AppThunk => {
                 avatar: user.photoURL,
                 username: user.displayName,
                 email: user.email,
-                 profile: data.profile
+                 profile: data.profile,
+                 url:data.url
                 // likes:data.likes
               }))
               //   dispatch(hideLoadingAction());
@@ -312,6 +313,7 @@ export const googleSignIn = ():AppThunk => {
             updated_at: timestamp,
             username: user.displayName,
             email: user.email,
+
             // first:false
             // profile:user.profile
           }
@@ -327,63 +329,6 @@ export const googleSignIn = ():AppThunk => {
     })
   }
 }
-
-
-// googleでログイン
-// export const googleSignIn = ():AppThunk => {
-//   return async (dispatch) => {
-//     auth.signInWithPopup(provider).then(async result => {
-//       const user = result.user
-
-
-//       if (user) {
-//         const uid = user.uid
-//         const timestamp = FirebaseTimestamp.now()
-//         const role = await db.collection("users").doc(uid).get()
-
-//         if (role.exists) {
-//           return db.collection("users").doc(uid).get().then(snapshot => {
-//             const data = snapshot.data();
-//             dispatch(login({
-//               isSignedIn: true,
-//                 avatar: user.photoURL,
-//               role: data.role,
-//               uid: uid,
-//               username: user.displayName,
-//               email: user.email,
-//                profile: data.profile
-//               // likes:data.likes
-//             }))
-
-
-
-
-//             const userInitialData = {
-//               created_at: timestamp,
-//               avatar: user.photoURL,
-//               role: "customer",
-//               uid: uid,
-//               updated_at: timestamp,
-//               username: user.displayName,
-//               email: user.email,
-
-//               // profile:user.profile
-//             }
-
-//             db.collection("users").doc(uid).set(userInitialData,{merge:true})
-//           }).then(() => {
-//             dispatch(hideLoadingAction());
-//             dispatch(snackbarOpenAction({ text: "googleアカウントでの認証に成功しました！", type: true }))
-//             dispatch(push("/"))
-
-//           })
-
-
-//         }
-//       }
-//     })
-//   }
-// }
 
 
 
@@ -411,6 +356,7 @@ export const twitterSignIn = (): AppThunk => {
             email: user.email,
             avatar: user.photoURL,
             username: user.displayName,
+            url:data.url
 
             //  profile: user.profile
             // likes:data.likes
@@ -427,6 +373,7 @@ export const twitterSignIn = (): AppThunk => {
             updated_at: timestamp,
             username: user.displayName,
             email: user.email
+
           }
 
           db.collection("users").doc(uid).set(userInitialData, { merge: true })
@@ -449,5 +396,54 @@ export const twitterSignIn = (): AppThunk => {
 export const fetchPostsInFavorite = (posts: string[]):AppThunk => {
   return async (dispatch) => {
     dispatch(fetchPostsInFavoriteAction(posts))
+  }
+}
+
+
+export const userDelete = (uid):AppThunk => {
+  return async (dispatch) => {
+          dispatch(showLoadingAction("退会処理をしています..."))
+    const user = auth.currentUser;
+    console.log(user)
+    // 順番の注意　先にいuser.deleteした後だと処理が完了しない。
+     await db.collection("users").doc(uid).delete()
+     user.delete().then(() => {
+
+        dispatch(logout())
+      dispatch(hideLoadingAction());
+        dispatch(snackbarOpenAction({ text: "退会しました！またのお越しをお待ちしております。", type: true }))
+      dispatch(push("/signin"))
+
+     }).catch((error) => {
+       dispatch(hideLoadingAction());
+         dispatch(snackbarOpenAction({ text: "処理に失敗しました。再ログインして再度お試しください。", type: false }))
+})
+
+  }
+}
+
+export const changePasswordAction = (currentPassword,newPassword): AppThunk => {
+  return async (dispatch) => {
+             dispatch(showLoadingAction("パスワードを変更しています..."))
+        const user = auth.currentUser;
+      var credential = firebase.auth.EmailAuthProvider.credential(
+      user.email,
+      currentPassword
+);
+   user.reauthenticateWithCredential(credential).then(function() {
+     user.updatePassword(newPassword).then(function () {
+     dispatch(hideLoadingAction());
+    dispatch(snackbarOpenAction({ text: "パスワードを変更しました！", type: true }))
+
+     }).catch(function (error) {
+   dispatch(hideLoadingAction());
+    dispatch(snackbarOpenAction({ text: "処理に失敗しました。再ログインして再度お試しください。", type: false }))
+});
+   }).catch(function (error) {
+      dispatch(hideLoadingAction());
+    dispatch(snackbarOpenAction({ text: "処理に失敗しました。再ログインして再度お試しください。", type: false }))
+
+
+});
   }
 }

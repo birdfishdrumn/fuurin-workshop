@@ -5,7 +5,7 @@ export const DetailWrapper = styled.div`
  height: auto;
 @media(max-width:1024px){
   margin-top:80px;
-  width: 100%;
+  width: 90%;
 }
 `
 export const PostTag = styled.ul`
@@ -36,11 +36,7 @@ export const PostTag = styled.ul`
 }
 }
   `
-export const Detail = styled.div`
-@media(max-width:1024px){
 
-margin:0;
-}
-`
+
 
 // .post_tag

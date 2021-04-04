@@ -11,8 +11,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import IconButton from "@material-ui/core/IconButton";
 import {useSelector,useDispatch} from "react-redux";
 import { getUserId,getPostsInFavorite } from "../../reducks/users/userSlice";
-import { deletePost } from "../../reducks/posts/operations";
-import { db } from "../../firebase/index"
+import {WhiteIcon} from "assets/GlobalLayoutStyle"
 import {push } from "connected-react-router"
 
 const useStyles = makeStyles((theme) => ({
@@ -90,12 +89,12 @@ const id = props.post.id
         </div>
         {/* props.post.likesIdは削除する商品のid */}
         <div className={classes.icon}>
-             <IconButton onClick={() =>dispatch(push(`/posts/edit/${id}`))} >
+             <WhiteIcon noMargin onClick={() =>dispatch(push(`/posts/edit/${id}`))} >
           <EditIcon/>
-        </IconButton>
-           <IconButton onClick={()=>setOpenModal(true)} >
+        </WhiteIcon>
+           <WhiteIcon noMargin onClick={()=>setOpenModal(true)} >
           <DeleteIcon/>
-        </IconButton>
+        </WhiteIcon>
         </div>
 
         <DeleteDialog title="作品を本当に削除しますか？" openModal={openModal} handleClose={handleClose} id={id} uid={uid}/>

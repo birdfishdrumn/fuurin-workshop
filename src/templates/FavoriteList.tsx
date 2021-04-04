@@ -1,21 +1,15 @@
 import React,{useState,useEffect} from 'react'
 import { useDispatch, useSelector } from "react-redux";
-import { db } from "../firebase/index";
-import List from "@material-ui/core/List";
+
 import { getPostsInFavorite,getUserId } from "../reducks/users/userSlice";
 import { FavoriteListItem,PostCard,FavoriteUserList } from "../components/PostProduct"
 import styles from "./module.css/PostList.module.css";
 import { makeStyles } from "@material-ui/core/styles";
-import ListIcon from '@material-ui/icons/List';
-import ViewColumnIcon from '@material-ui/icons/ViewColumn';
-import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder"
-import Avatar from "@material-ui/core/Avatar"
-import GridOnIcon from '@material-ui/icons/GridOn';
-import Tooltip from '@material-ui/core/Tooltip';
-import { SectionWrapper, ScrollItem, Title, GridList, IconFlex } from "assets/GlobalLayoutStyle"
-import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
-import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
 
+import { SectionWrapper, ScrollItem, Title, GridList, HelpButtonWrapper} from "assets/GlobalLayoutStyle"
+
+import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
+import { FavoriteNav, ImageStyleChangeIcon, HelpButton} from "components/UI/index"
 // import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 const reorder = (
@@ -59,7 +53,7 @@ const FavoriteList = () => {
   const postInFavorite = useSelector(getPostsInFavorite);
   const [sortPost, setSortPost] = useState({ items: postInFavorite })
   console.log(postInFavorite)
-  const [favoriteUser, setFavoriteUser] = useState([])
+
   const [isActive,setIsActive] = useState(false)
   const onDragEnd = result => {
     if (!result.destination) {
@@ -80,43 +74,21 @@ const FavoriteList = () => {
 
   };
 
- useEffect(() => {
-  db.collection("users").doc(uid).collection("likeUser").get().then((snapshot)=>{
-    const list = []
-    snapshot.forEach((doc)=>{
-      const data = doc.data()
-      console.log(data)
-      list.push(data)
 
-    })
-      setFavoriteUser(list)
-  })
- }, [])
-console.log(favoriteUser)
+
   return (
 
-      <section className="c-section-wrapin">
+      <SectionWrapper>
+           <HelpButtonWrapper>
+           <HelpButton type="favorite" name="お気に入りシステムについて"/>
         <Title>お気に入りリスト</Title>
-          <IconFlex>
-        <div  onClick={()=>setIsActive(false)} >
-          <FavoriteBorderIcon style={{fontSize:"45px"}}/>
-          <p>作品</p>
-        </div>
-          <div onClick={()=>setIsActive(true)}>
-          <PeopleAltIcon style={{ fontSize: "45px" }} />
-          <p>ユーザー</p>
-       </div>
-      </IconFlex>
-      {!isActive ?
+        </HelpButtonWrapper>
+      <FavoriteNav/>
+
         <>
-              <ul className={classes.listIcon}>
-          <Tooltip title="グリッド" interactive>
-           <li><GridOnIcon fontSize="large" onClick={() =>setChange(false) } /></li>
-        </Tooltip>
-        <Tooltip title="短冊まで" interactive>
-            <li onClick={()=>setChange(true)} ><ViewColumnIcon  fontSize="large" /></li>
-        </Tooltip>
-        </ul>
+        <ImageStyleChangeIcon setChange={setChange} />
+
+           <div className="module-spacer--small" />
            <GridList change={change}>
           {postInFavorite.length > 0 && (
               postInFavorite.map(post =>
@@ -141,34 +113,10 @@ console.log(favoriteUser)
           )}
           </GridList>
           </>
-        :
-        <div className="center">
-        {favoriteUser.map((user=>(
-          <>
-
-            <FavoriteUserList avatar={user.avatar}
-              username={user.username}
-              profile={user.profile}
-              uid={user.uid}
-            />
-            </>
-
-        )
-
-        ))}
-           </div>
-
-
-}
-
-
-
-
-
 
 
       <div style={{height:"25vh"}}/>
-      </section>
+      </SectionWrapper>
   )
 }
 

@@ -1,4 +1,4 @@
-import React,{ReactHTMLElement, useEffect,useState}  from 'react'
+import React,{useState}  from 'react'
 import algoliasearch from 'algoliasearch';
 import {TextInput} from ".";
 import { makeStyles, createStyles } from '@material-ui/core/styles';

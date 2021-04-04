@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from 'react'
-import { db, FirebaseTimestamp } from "../firebase/index"
+import { db, auth } from "../firebase/index"
 import firebase from "firebase/app"
-import { SectionWrapper,GridList,ScrollItem,Title ,Text} from "assets/GlobalLayoutStyle"
+import { SectionWrapper,GridList,ScrollItem,Title ,Text,BoldText,WhiteIcon,IconFlex} from "assets/GlobalLayoutStyle"
 import Avatar from '@material-ui/core/Avatar';
 import styled from "styled-components"
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
@@ -9,19 +9,21 @@ import Button from '@material-ui/core/Button';
 import { addUserPost } from "../reducks/posts/operations";
 import { getUserPosts } from "../reducks/posts/postSlice";
 import { PostCard } from "components/PostProduct";
-import { getUserId } from "../reducks/users/userSlice";
+import { getUserId,getIsSignedIn,login,getUserUrl } from "../reducks/users/userSlice";
 import { useDispatch, useSelector } from "react-redux"
-import Tooltip from '@material-ui/core/Tooltip';
-import ViewColumnIcon from '@material-ui/icons/ViewColumn';
-import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder"
+import {returnCodeToBr} from "functions/function"
+import LanguageIcon from '@material-ui/icons/Language';
 import GridOnIcon from '@material-ui/icons/GridOn';
-import { PrimaryButton } from 'components/UI';
+import { PrimaryButton,ImageStyleChangeIcon } from 'components/UI';
 import CheckIcon from '@material-ui/icons/Check';
 import FavoriteIcon from '@material-ui/icons/Favorite';
+import { Snackbar } from '@material-ui/core';
 const ProfileColumn = styled.div`
 display:flex;
-
-max-width:700px;
+ box-shadow: 2px 2px 4px gray;
+max-width:90%;
+background:white;
+padding:40px 20px;
 margin:50px auto;
 >div:first-child{
   flex-basis:40%;
@@ -40,8 +42,8 @@ margin:50px auto;
   flex-direction:column;
 
 }
-
 `
+
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -59,7 +61,13 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     button:{
       marginTop: "20px",
-      fontWeight:"bold"
+      fontWeight: "bold",
+
+    },
+    whiteButton: {
+       marginTop: "20px",
+      fontWeight: "bold",
+      color:"white"
     },
       listIcon: {
     margin:"auto",
@@ -79,6 +87,7 @@ const UserPage = () => {
   const dispatch = useDispatch()
   const posts = useSelector(getUserPosts);
   // 自分のuserId
+  const isSignedIn = useSelector(getIsSignedIn)
   const myUserId = useSelector(getUserId)
   console.log(myUserId)
   const classes = useStyles();
@@ -86,21 +95,26 @@ const UserPage = () => {
   const [avatar, setAvatar] = useState<string>("")
   const [profile, setProfile] = useState<string>("")
   const [favoriteUserArray,setFavoriteUserArray] = useState([])
-    const [change, setChange] = useState<boolean>(false)
+  const [change, setChange] = useState<boolean>(false)
+  const [url,setUrl] = useState<string>("")
   let uid = window.location.pathname.split("/users/")[1];
   useEffect(() => {
-    db.collection("users").doc(uid).get().then((snapshot) => {
-      if (snapshot.data()) {
-        const data = snapshot.data()
-        console.log(data)
-        const username = data.username
-        const avatar = data.avatar
-        const profile = data.profile
-        setUsername(username)
-        setAvatar(avatar)
-        setProfile(profile)
-      }
-    })
+
+      db.collection("users").doc(uid).get().then((snapshot) => {
+        if (snapshot.data()) {
+          const data = snapshot.data()
+          console.log(data)
+          const username = data.username
+          const avatar = data.avatar
+          const profile = data.profile
+          const url = data.url
+          setUsername(username)
+          setAvatar(avatar)
+          setProfile(profile)
+          setUrl(url)
+        }
+      })
+
   }, [])
 
   useEffect(() => {
@@ -109,83 +123,100 @@ const UserPage = () => {
   console.log(posts)
 
   useEffect(() => {
-
-    const unSub = db.collection("users").doc(myUserId).onSnapshot((snapshot) => {
-      const data = snapshot.data()
-      const Userfavorite  = data.favoriteUser
-      setFavoriteUserArray(Userfavorite)
-         console.log(Userfavorite)
-    })
-    return ()=> {
-      unSub()
+    if (isSignedIn) {
+      const unSub = db.collection("users").doc(myUserId).onSnapshot((snapshot) => {
+        const data = snapshot.data()
+        const Userfavorite = data.favoriteUser
+        setFavoriteUserArray(Userfavorite)
+        console.log(Userfavorite)
+      })
+      return () => {
+        unSub()
+      }
     }
 
   }, [])
 console.log(favoriteUserArray)
 
   const addFavoriteUser = async() => {
-    const favoriteRef =  await db.collection("users").doc(myUserId).collection("likeUser").doc();
+    const userRef =  await db.collection("users")
     const id = uid
 
 if(favoriteUserArray &&  favoriteUserArray.includes(uid)){
-           db.collection("users").doc(myUserId).collection("likeUser").doc(id).delete().then(()=>{
+            db.collection("users").doc(myUserId).collection("likeUser").doc(id).delete().then(()=>{
                 db.collection("users").doc(myUserId).update({
             favoriteUser: firebase.firestore.FieldValue.arrayRemove(uid),
 
           })
-         })
+            })
+  // お気に入りされたuserにiカウントする
+   await userRef.doc(uid).update({
+               userFavoriteCount: firebase.firestore.FieldValue.increment(-1)
+            })
+
 }else{
 
-     db.collection("users").doc(myUserId).collection("likeUser").doc(id).set({
+      db.collection("users").doc(myUserId).collection("likeUser").doc(id).set({
       username: username,
       uid: uid,
       avatar:avatar,
-      // favoriteUserId: id,
-      profile:profile
+      profile:profile ||""
     }, {
       merge:true
     }).then(() => {
           db.collection("users").doc(myUserId).update({
             favoriteUser: firebase.firestore.FieldValue.arrayUnion(uid)
             // count: firebase.firestore.FieldValue.increment(-1)
+
           })
 
+
+
     })
+   // お気に入りされたuserにiカウントする
+  await userRef.doc(uid).set({
+               userFavoriteCount: firebase.firestore.FieldValue.increment(1)
+            },{merge:true})
     console.log("huuta")
 }
   }
   return (
     <SectionWrapper>
+
+      {/* <BackgroundWhite> */}
       <ProfileColumn>
         <div>
           <Avatar style={{ margin: "0 auto" }} className={classes.large} src={avatar} />
-          {myUserId !== uid &&
+
+          {isSignedIn && myUserId !== uid &&
                   <Button
               startIcon={favoriteUserArray &&  favoriteUserArray.includes(uid) ? <CheckIcon/> :<FavoriteIcon/>}
           variant={favoriteUserArray &&  favoriteUserArray.includes(uid) ? "contained":"outlined"}
           onClick={addFavoriteUser}
-          className={classes.button}
+          className={favoriteUserArray &&  favoriteUserArray.includes(uid) ? classes.whiteButton : classes.button}
           color="primary">{favoriteUserArray &&  favoriteUserArray.includes(uid) ? "お気に入り済":"ユーザーをお気に入り"}</Button>
           }
+
+          <div className="module-spacer--extra-small" />
+          {url && <>
+              <BoldText>{username}さんの活動</BoldText>
+          <BoldText><a href={url} target="_blank" rel="noopener noreferrer"><LanguageIcon style={{fontSize:"40px"}}/></a></BoldText>
+            </>
+           }
 
         </div>
 
         <div>
-          <Title left min>{username}</Title>
-          {profile  ? <Text left>{profile}</Text> : "プロフィールが記述されていません。"}
+          <Title left black>{username ? username : "noname"}</Title>
+          {profile  ? <Text left>{returnCodeToBr(profile)}</Text> : "プロフィールが記述されていません。"}
        </div>
-      </ProfileColumn>
+        </ProfileColumn>
+        {/* </BackgroundWhite> */}
       <div className="module-spacer--large" />
       <Title>{username}さんの作品</Title>
-              <ul className={classes.listIcon}>
 
-          <Tooltip title="グリッド" interactive>
-           <li><GridOnIcon fontSize="large" onClick={() =>setChange(false) } /></li>
-        </Tooltip>
-        <Tooltip title="短冊まで" interactive>
-            <li onClick={()=>setChange(true)} ><ViewColumnIcon  fontSize="large" /></li>
-        </Tooltip>
-        </ul>
+      <ImageStyleChangeIcon setChange={setChange}/>
+
       <GridList change={change}>
 
         {posts.length > 0 ?

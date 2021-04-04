@@ -76,8 +76,10 @@ var core_1 = require("@material-ui/core");
 var blueimp_load_image_1 = require("blueimp-load-image");
 var react_cropper_1 = require("react-cropper");
 require("cropperjs/dist/cropper.css");
+var GlobalLayoutStyle_1 = require("assets/GlobalLayoutStyle");
 var IconButton_1 = require("@material-ui/core/IconButton");
-var AddPhotoAlternate_1 = require("@material-ui/icons/AddPhotoAlternate");
+var AddToPhotos_1 = require("@material-ui/icons/AddToPhotos");
+var PhotoCamera_1 = require("@material-ui/icons/PhotoCamera");
 var ImagePreview_1 = require("./ImagePreview");
 var useStyles = styles_1.makeStyles(function (theme) {
     return styles_1.createStyles({
@@ -95,6 +97,17 @@ var useStyles = styles_1.makeStyles(function (theme) {
         },
         content: {
             padding: 0
+        },
+        iconFlex: {
+            borderRadius: "50%",
+            margin: "10px",
+            border: "3px solid #5D99FF",
+            justifyContent: "center",
+            display: "inline-block",
+            width: "65px",
+            height: "65px",
+            background: "white",
+            padding: "7px"
         }
     });
 });
@@ -237,18 +250,17 @@ var UpLoadTest = function (_a) {
         });
     }); }, [images]);
     return (react_1["default"].createElement("div", null,
-        "upload",
-        error && react_1["default"].createElement("div", null, error),
-        react_1["default"].createElement("h2", null),
-        react_1["default"].createElement(IconButton_1["default"], null,
-            react_1["default"].createElement("label", null,
-                react_1["default"].createElement(AddPhotoAlternate_1["default"], null),
-                react_1["default"].createElement("input", { className: "u-display-none", type: "file", id: "image", onChange: handleImage }))),
+        react_1["default"].createElement("div", { className: classes.iconFlex },
+            error && react_1["default"].createElement("div", null, error),
+            react_1["default"].createElement(IconButton_1["default"], { style: { padding: "0px", cursor: "pointer" } },
+                react_1["default"].createElement("label", null,
+                    react_1["default"].createElement(AddToPhotos_1["default"], { style: { fontSize: "40px" } }),
+                    react_1["default"].createElement("input", { className: "u-display-none", type: "file", id: "image", onChange: handleImage })))),
         react_1["default"].createElement("div", null,
             react_1["default"].createElement("div", { className: "p-grid__list-images" }, images.length > 0 ? (images.map(function (image) { return react_1["default"].createElement(ImagePreview_1["default"], { "delete": deleteImage, id: image.id, path: image.path, key: image.id, all: all }); }))
                 : react_1["default"].createElement("div", { className: "center border gray" },
-                    react_1["default"].createElement(AddPhotoAlternate_1["default"], null),
-                    react_1["default"].createElement("p", null, "\u3053\u3061\u3089\u306B\u753B\u50CF\u304C\u8868\u793A\u3055\u308C\u307E\u3059")))),
+                    react_1["default"].createElement(PhotoCamera_1["default"], null),
+                    react_1["default"].createElement(GlobalLayoutStyle_1.BoldText, { left: true }, "\u753B\u50CF\u306F2\u679A\u4EE5\u4E0A\u767B\u9332\u3059\u308B\u3053\u3068\u304C\u53EF\u80FD\u3067\u3059\u3002")))),
         react_1["default"].createElement(core_1.Dialog, { "aria-labelledby": "transition-modal-title", "aria-describedby": "transition-modal-description", className: classes.modal, open: open, fullScreen: fullScreen, maxWidth: "xl", onClose: handleClose, closeAfterTransition: true, BackdropComponent: core_1.Backdrop, BackdropProps: {
                 timeout: 500
             } },

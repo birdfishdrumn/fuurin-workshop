@@ -1,14 +1,14 @@
 import React,{useState,useEffect} from 'react'
-import { SearchBox } from "../components/UI";
-import { db } from "../firebase/index";
+import { SearchBox,SearchPopulationNav,HelpButton } from "../components/UI";
+import { db,auth } from "../firebase/index";
 import styled from "styled-components"
 import {useDispatch} from "react-redux"
-import {SectionWrapper,Title,GridList,IconFlex} from "assets/GlobalLayoutStyle"
+import {SectionWrapper,Title,GridList,IconFlex,HelpButtonWrapper} from "assets/GlobalLayoutStyle"
 import { PostTag } from "./template_style"
+import NotPushAuth from "NotPushAuth"
 import kingyo from "assets/img/src/marukingyo_svg.jpg"
 import { push } from "connected-react-router";
-import SearchIcon from '@material-ui/icons/Search';
-import FavoriteIcon from '@material-ui/icons/Favorite';
+
 import PopulatePost from "./PopulatePost"
 const CategoryImageWrapper = styled.div`
  position:relative;
@@ -41,7 +41,7 @@ object-fit:cover;
 const Search = () => {
 
   const [tags, setTags] = useState([]);
-  const [isActive,setIsActive] = useState<boolean>(false)
+
   const [categories,setCategories] = useState([])
    const dispatch = useDispatch()
   useEffect(() => {
@@ -72,23 +72,15 @@ const Search = () => {
   }, [])
 
 
-
   console.log(categories)
   return (
     <SectionWrapper>
-      <IconFlex>
-        <div  onClick={()=>setIsActive(false)} >
-          <SearchIcon style={{fontSize:"45px"}}/>
-          <p>検索</p>
-        </div>
-          <div onClick={()=>setIsActive(true)}>
-          <FavoriteIcon style={{ fontSize: "45px" }} />
-          <p>人気リスト</p>
-       </div>
-      </IconFlex>
-      {!isActive ?
-        <>
-            <Title>キーワードから検索</Title>
+   <NotPushAuth/>
+   <SearchPopulationNav
+      />
+      <HelpButtonWrapper><HelpButton name="検索システムについて" type="search"/>
+            <Title>キーワードから検索</Title></HelpButtonWrapper>
+
       <SearchBox fullWidth={true} />
       <div className="module-spacer--medium"/>
       <Title>カテゴリーから検索</Title>
@@ -113,14 +105,9 @@ const Search = () => {
              <li key={t.id} onClick={()=>dispatch(push(`/?tags=${t.tag}`))}>#{t.tag}</li>
            ))}
           </PostTag>
-          </>
 
-        :
 
-        <>
-        <PopulatePost/>
-          </>
-    }
+
 
   </SectionWrapper>
 

@@ -22,10 +22,12 @@ import { PrimaryButton } from "components/UI";
 import loadImage from 'blueimp-load-image';
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
-
+import {BoldText} from "assets/GlobalLayoutStyle"
 import IconButton from "@material-ui/core/IconButton";
-import AddPhotoAlternateIcon from "@material-ui/icons/AddPhotoAlternate"
+import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
+import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import ImagePreview from "./ImagePreview";
+
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -44,7 +46,22 @@ const useStyles = makeStyles((theme) =>
     },
     content: {
       padding:0,
-    }
+    },
+    iconFlex: {
+      borderRadius: "50%",
+      margin: "10px",
+     border:"3px solid #5D99FF",
+      justifyContent: "center",
+      display: "inline-block",
+      width: "65px",
+      height: "65px",
+      background: "white",
+      padding: "7px",
+
+      // boxShadow:"1px 1px 1px dimgray"
+
+    },
+
   })
 );
 
@@ -219,37 +236,27 @@ const UpLoadTest:React.FC<PROPS> = ({ images, setImages,all }) => {
     }, [images])
   return (
     <div>
-      upload
+      <div className={classes.iconFlex}>
+
       {error && <div>{error}</div>}
-      <h2>
-
-      </h2>
-
-
-                   <IconButton >
+                   <IconButton style={{padding:"0px", cursor:"pointer"}} >
                     <label>
-                        <AddPhotoAlternateIcon />
+                        <AddToPhotosIcon style={{fontSize:"40px"}} />
                         <input className="u-display-none" type="file" id="image" onChange={handleImage}/>
                     </label>
-      </IconButton>
+        </IconButton>
+          {/* <BoldText min>投稿</BoldText> */}
+        </div>
 
        <div>
             <div className="p-grid__list-images" >
 
                 {images.length > 0 ? (
                     images.map(image => <ImagePreview delete={deleteImage} id={image.id} path={image.path} key={image.id} all={all}  />))
-                 : <div className="center border gray"><AddPhotoAlternateIcon /><p>こちらに画像が表示されます</p></div>
+                 : <div className="center border gray"><PhotoCameraIcon /><BoldText left>画像は2枚以上登録することが可能です。</BoldText></div>
                 }
             </div>
-            {/* <div className="u-text-right">
-          <span>{images.length > 0? "作品画像を追加する"　: "作品画像を登録する"}</span>
-                <IconButton className={classes.icon}>
-                    <label>
-                        <AddPhotoAlternateIcon />
-                        <input className="u-display-none" type="file" id="image" onChange={e => uploadImage(e)}/>
-                    </label>
-                </IconButton>
-            </div> */}
+
         </div>
       <Dialog
         aria-labelledby="transition-modal-title"

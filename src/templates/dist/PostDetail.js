@@ -71,6 +71,7 @@ var returnCodeToBr = function (text) {
 var PostDetail = function (_a) {
     var classes = useStyles();
     var dispatch = react_redux_1.useDispatch();
+    var isSignedIn = react_redux_1.useSelector(userSlice_1.getIsSignedIn);
     // const path = selector.router.location.pathname;
     var id = window.location.pathname.split("/post/")[1];
     var postInFavorite = react_redux_1.useSelector(userSlice_1.getPostsInFavorite);
@@ -79,23 +80,17 @@ var PostDetail = function (_a) {
         return post.postId;
     });
     var uid = react_redux_1.useSelector(userSlice_1.getUserId);
+    var username = react_redux_1.useSelector(userSlice_1.getUsername);
+    var avatar = react_redux_1.useSelector(userSlice_1.getUserAvatar);
     // idは新たに定義されたidである事を忘れない
     // const [id, setId] = useState(productId);/s
     var _b = react_1.useState(null), post = _b[0], setPost = _b[1];
-    var _c = react_1.useState(""), user = _c[0], setUser = _c[1];
-    var _d = react_1.useState(false), open = _d[0], setOpen = _d[1];
-    var _e = react_1.useState([]), tags = _e[0], setTags = _e[1];
+    // const [username, setUser] = useState<USER>(null)
+    var _c = react_1.useState(false), open = _c[0], setOpen = _c[1];
+    var _d = react_1.useState([]), tags = _d[0], setTags = _d[1];
+    var _e = react_1.useState(""), postUid = _e[0], setPostUid = _e[1];
     console.log(id);
     var _f = react_1.useState(false), openModal = _f[0], setOpenModal = _f[1];
-    //   const changeRelation = useCallback((id) => {
-    //   dispatch(showLoadingAction("loading"))
-    //   setTimeout(() => {
-    //      setId(id);
-    //     window.location.href = "#title"
-    //      dispatch(hideLoadingAction())
-    //   }, 200);
-    // }, [setId])
-    // 作品のidを持った作品をとってくる。
     react_1.useEffect(function () {
         // 個別の商品情報の取得なのでdoc(id)と引数にidを忘れない
         // if (id) {
@@ -107,6 +102,7 @@ var PostDetail = function (_a) {
                     var tags_1 = data.tags;
                     setPost(data);
                     setTags(tags_1);
+                    setPostUid(postUid);
                 }
             });
             return function () {
@@ -115,22 +111,41 @@ var PostDetail = function (_a) {
         }
     }, [id]);
     react_1.useEffect(function () {
-        index_1.db.collection("users").doc(uid).get().then(function (doc) {
-            var data = doc.data();
-            setUser(data);
-            console.log(data);
+        //  listenAuthNotState()
+        return index_1.auth.onAuthStateChanged(function (user) {
+            if (user) {
+                var uid_1 = user.uid;
+                index_1.db.collection("users").doc(uid_1).get()
+                    .then(function (snapshot) {
+                    var data = snapshot.data();
+                    // if文がないとエラーが出る
+                    if (data) {
+                        dispatch(userSlice_1.login({
+                            isSignedIn: true,
+                            role: data.role,
+                            uid: uid_1,
+                            email: data.email,
+                            username: data.username,
+                            avatar: data.avatar,
+                            profile: data.profile
+                        }));
+                    }
+                });
+            }
         });
     }, []);
+    //   useEffect(() => {
+    //     if (isSignedIn) {
+    //       db.collection("users").doc(uid).get().then(doc => {
+    //         const data: any = doc.data()
+    //         setUser(data)
+    //         console.log(data)
+    //       })
+    //     }
+    // }, []);
     console.log(tags);
     var random = Math.floor(Math.random() * tags.length);
     var randomTag = tags[random];
-    //   const scroll = () => {
-    //     var element = document.getElementById("title");
-    //     	var rect = element.getBoundingClientRect();
-    // 	var x = rect.left;
-    // 	var y = rect.top;
-    // }
-    // 関連する作品のidをセットする
     var searchTag = function (tag) {
         dispatch(connected_react_router_1.push("/?tags=" + tag));
         // onClose()
@@ -151,7 +166,7 @@ var PostDetail = function (_a) {
                     react_1["default"].createElement(index_2.Favorite, { id: id, uid: uid, likesId: likesId, post: post })),
                 react_1["default"].createElement(Divider_1["default"], null),
                 react_1["default"].createElement(NoComment, null, post.check !== true ?
-                    react_1["default"].createElement(index_2.Comment, { id: id, user: user, uid: uid }) :
+                    react_1["default"].createElement(index_2.Comment, { postUid: postUid, id: id, username: username, avatar: avatar, uid: uid }) :
                     react_1["default"].createElement("h1", null, "\u30B3\u30E1\u30F3\u30C8\u306F\u975E\u8868\u793A\u306B\u306A\u3063\u3066\u3044\u307E\u3059\u3002"))),
             react_1["default"].createElement(template_style_1.DetailWrapper, null,
                 react_1["default"].createElement(template_style_1.Detail, null,

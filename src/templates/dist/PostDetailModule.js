@@ -19,18 +19,20 @@ var userSlice_1 = require("../reducks/users/userSlice");
 var react_router_dom_1 = require("react-router-dom");
 require("moment/locale/ja");
 var index_3 = require("components/UI/index");
-var LocalOfferOutlined_1 = require("@material-ui/icons/LocalOfferOutlined");
 var template_style_1 = require("./template_style");
 var styled_components_1 = require("styled-components");
 var loadingSlice_1 = require("reducks/loadingSlice");
 var Divider_1 = require("@material-ui/core/Divider");
 var GlobalLayoutStyle_1 = require("assets/GlobalLayoutStyle");
 var CircularProgress_1 = require("@material-ui/core/CircularProgress");
+var SentimentDissatisfiedOutlined_1 = require("@material-ui/icons/SentimentDissatisfiedOutlined");
 var AvatarTitle = styled_components_1["default"](Avatar_1["default"])(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\ndisplay:inline-block;\n"], ["\ndisplay:inline-block;\n"])));
 var Username = styled_components_1["default"].div(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n margin-top:10px;\n margin-left:20px;\n\n"], ["\n margin-top:10px;\n margin-left:20px;\n\n"])));
-var NoComment = styled_components_1["default"].div(templateObject_3 || (templateObject_3 = __makeTemplateObject(["\n margin-top:20px;\n"], ["\n margin-top:20px;\n"])));
-var Swiper = styled_components_1["default"].div(templateObject_4 || (templateObject_4 = __makeTemplateObject(["\n@media(max-width:1024px){\n/* s */\n/* height:100%; */\n}\n\n\n\n"], ["\n@media(max-width:1024px){\n/* s */\n/* height:100%; */\n}\n\n\n\n"])));
-var TitleContainer = styled_components_1["default"].div(templateObject_5 || (templateObject_5 = __makeTemplateObject(["\n position:relative;\n >div:last-child{\n   position:absolute;\n   top:0;\n   right:0;\n }\n"], ["\n position:relative;\n >div:last-child{\n   position:absolute;\n   top:0;\n   right:0;\n }\n"])));
+var NoComment = styled_components_1["default"].div(templateObject_3 || (templateObject_3 = __makeTemplateObject(["\n margin-top:20px;\n"], ["\n margin-top:20px;\n"
+    // iconButtonを右端に寄せるcss
+])));
+// iconButtonを右端に寄せるcss
+var TitleContainer = styled_components_1["default"].div(templateObject_4 || (templateObject_4 = __makeTemplateObject(["\n position:relative;\n >div:last-child{\n   position:absolute;\n   top:0;\n   right:0;\n }\n"], ["\n position:relative;\n >div:last-child{\n   position:absolute;\n   top:0;\n   right:0;\n }\n"])));
 var useStyles = styles_1.makeStyles(function (theme) {
     var _a;
     return ({
@@ -77,8 +79,6 @@ var PostDetail = function (_a) {
     var productId = _a.productId, onClose = _a.onClose;
     var classes = useStyles();
     var dispatch = react_redux_1.useDispatch();
-    // const path = selector.router.location.pathname;
-    // const id = window.location.pathname.split("/post/")[1];
     var history = react_router_dom_1.useHistory();
     console.log(history);
     var postInFavorite = react_redux_1.useSelector(userSlice_1.getPostsInFavorite);
@@ -86,14 +86,15 @@ var PostDetail = function (_a) {
     var likesId = postInFavorite.map(function (post) {
         return post.postId;
     });
+    var username = react_redux_1.useSelector(userSlice_1.getUsername);
+    var avatar = react_redux_1.useSelector(userSlice_1.getUserAvatar);
     var uid = react_redux_1.useSelector(userSlice_1.getUserId);
     // idは新たに定義されたidである事を忘れない
     var _b = react_1.useState(productId), id = _b[0], setId = _b[1];
     var _c = react_1.useState(null), post = _c[0], setPost = _c[1];
-    var _d = react_1.useState(""), user = _d[0], setUser = _d[1];
-    var _e = react_1.useState(false), open = _e[0], setOpen = _e[1];
-    var _f = react_1.useState([]), tags = _f[0], setTags = _f[1];
-    var _g = react_1.useState(false), openModal = _g[0], setOpenModal = _g[1];
+    var _d = react_1.useState(""), postUid = _d[0], setPostUid = _d[1];
+    var _e = react_1.useState([]), tags = _e[0], setTags = _e[1];
+    var _f = react_1.useState(false), openModal = _f[0], setOpenModal = _f[1];
     // 作品のidを持った作品をとってくる。
     react_1.useEffect(function () {
         // 個別の商品情報の取得なのでdoc(id)と引数にidを忘れない
@@ -104,8 +105,10 @@ var PostDetail = function (_a) {
                 var data = doc.data();
                 if (data) {
                     var tags_1 = data.tags;
+                    var postUid_1 = data.uid;
                     setPost(data);
                     setTags(tags_1);
+                    setPostUid(postUid_1);
                 }
             });
             return function () {
@@ -113,15 +116,7 @@ var PostDetail = function (_a) {
             };
         }
     }, [id]);
-    react_1.useEffect(function () {
-        if (uid) {
-            index_1.db.collection("users").doc(uid).get().then(function (doc) {
-                var data = doc.data();
-                setUser(data);
-                console.log(data);
-            });
-        }
-    }, []);
+    console.log(postUid);
     console.log(tags);
     var random = Math.floor(Math.random() * tags.length);
     var randomTag = tags[random];
@@ -154,8 +149,7 @@ var PostDetail = function (_a) {
         react_1["default"].createElement("div", { style: { height: "5vh" } }),
         react_1["default"].createElement(GlobalLayoutStyle_1.GridLow, null,
             react_1["default"].createElement("div", { className: classes.sliderBox },
-                react_1["default"].createElement(Swiper, null,
-                    react_1["default"].createElement(index_2.ImageSwiper, { images: post.images })),
+                react_1["default"].createElement(index_2.ImageSwiper, { images: post.images }),
                 react_1["default"].createElement("div", { className: "module-spacer--small" }),
                 react_1["default"].createElement(GlobalLayoutStyle_1.Flex, { between: true },
                     react_1["default"].createElement(GlobalLayoutStyle_1.Flex, null,
@@ -166,23 +160,26 @@ var PostDetail = function (_a) {
                         react_1["default"].createElement(index_2.Favorite, { id: id, uid: uid, likesId: likesId, post: post }))),
                 react_1["default"].createElement(Divider_1["default"], null),
                 react_1["default"].createElement(NoComment, null, post.check !== true ?
-                    react_1["default"].createElement(index_2.Comment, { id: id, user: user, uid: uid }) :
+                    react_1["default"].createElement(index_2.Comment, { postUid: postUid, id: id, username: username, avatar: avatar, uid: uid }) :
                     react_1["default"].createElement("h1", null, "\u30B3\u30E1\u30F3\u30C8\u306F\u975E\u8868\u793A\u306B\u306A\u3063\u3066\u3044\u307E\u3059\u3002"))),
             react_1["default"].createElement(template_style_1.DetailWrapper, null,
                 react_1["default"].createElement(template_style_1.Detail, null,
                     react_1["default"].createElement(Divider_1["default"], { className: "downMd" }),
                     react_1["default"].createElement("div", { className: "downMd", style: { height: "5vh" } }),
-                    react_1["default"].createElement("h1", { className: "center u-text__title" }, "\u4F5C\u54C1\u306E\u8AAC\u660E"),
-                    react_1["default"].createElement("p", null, returnCodeToBr(post.description)),
+                    react_1["default"].createElement(GlobalLayoutStyle_1.BackgroundWhite, null,
+                        react_1["default"].createElement("h1", { className: "center u-text__title" }, "\u4F5C\u54C1\u306E\u8AAC\u660E"),
+                        react_1["default"].createElement("p", null, returnCodeToBr(post.description))),
                     react_1["default"].createElement("div", { className: "module-spacer--small" }),
                     react_1["default"].createElement("div", { className: classes.media },
                         react_1["default"].createElement("img", { src: post.allImages[0].path })),
                     react_1["default"].createElement("div", { className: "module-spacer--small" }),
-                    react_1["default"].createElement(template_style_1.PostTag, null,
-                        react_1["default"].createElement(LocalOfferOutlined_1["default"], null),
-                        post.tags && post.tags.map(function (t, index) { return (react_1["default"].createElement("li", { key: index, onClick: function () { return searchTag(t); } },
-                            "#",
-                            t)); }))))),
+                    react_1["default"].createElement(template_style_1.PostTag, null, post.tags.length ? post.tags.map(function (t, index) { return (react_1["default"].createElement("li", { key: index, onClick: function () { return searchTag(t); } },
+                        "#",
+                        t)); })
+                        :
+                            react_1["default"].createElement(GlobalLayoutStyle_1.BoldText, null,
+                                react_1["default"].createElement(SentimentDissatisfiedOutlined_1["default"], { style: { fontSize: "30px", marginBottom: "-8px", marginRight: "10px" } }),
+                                "\u30BF\u30B0\u304C\u3042\u308A\u307E\u305B\u3093"))))),
         react_1["default"].createElement("div", { style: { height: "5vh" } }),
         react_1["default"].createElement(Divider_1["default"], null),
         post.tags.length > 0 ? react_1["default"].createElement("div", null,
@@ -198,4 +195,4 @@ var PostDetail = function (_a) {
                 react_1["default"].createElement(CircularProgress_1["default"], { color: "inherit", style: { marginTop: "20vh" } })))));
 };
 exports["default"] = PostDetail;
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4;

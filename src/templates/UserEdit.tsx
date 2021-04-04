@@ -1,10 +1,11 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { useDispatch,useSelector } from "react-redux";
 import { TextInput, SelectBox, PrimaryButton } from "../components/UI/index";
-import styles from "./module.css/SignUp.module.css";
+
 import { db,storage ,FirebaseTimestamp,auth} from "../firebase/index"
 import firebase from "firebase/app"
-import { getUsername, getUserAvatar, getUserId, getEmail,updateUserAction,getUserProfile } from "../reducks/users/userSlice";
+import { getUsername, getUserAvatar, getUserId, getUserUrl, updateUserAction, getUserProfile } from "../reducks/users/userSlice";
+
 import { Avatar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles"
 import Box from "@material-ui/core/Box"
@@ -13,8 +14,8 @@ import { hideLoadingAction, showLoadingAction } from "../reducks/loadingSlice";
 import { snackbarOpenAction } from "reducks/snackbar/snackbarSlice"
 import { push } from "connected-react-router"
 import loadImage from 'blueimp-load-image';
-import { SectionContainer,Title } from 'assets/GlobalLayoutStyle';
-
+import { SectionContainer,Title,BoldText } from 'assets/GlobalLayoutStyle';
+import { errorOpenAction,errorCloseAction,getErrorState } from "reducks/errorSlice";
 
 const useStyles = makeStyles((theme) => ({
   large: {
@@ -22,6 +23,11 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(15),
     margin: "auto"
   },
+  hideIcon: {
+     textAlign: "center",
+  display: "none"
+  }
+
 }));
 
 
@@ -30,15 +36,17 @@ const UserEdit: React.FC = () => {
 
 const classes = useStyles();
   const currentUsername: string = useSelector(getUsername);
-  const currentEmail: string = useSelector(getEmail);
+  const currentUrl: string = useSelector(getUserUrl);
   const currentAvatar: string = useSelector(getUserAvatar);
-  const currentProfile:string = useSelector(getUserProfile)
+  const currentProfile: string = useSelector(getUserProfile)
+  const error = useSelector(getErrorState)
 const uid =useSelector(getUserId)
-  const [username, setUsername] = useState(currentUsername || ""),
-    [email, setEmail] = useState(currentEmail || ""),
-    [profile, setProfile] = useState(currentProfile || ""),
-    [avatar, setAvatar] = useState(currentAvatar || ""),
-    [url, setUrl] = useState("");
+  const [username, setUsername] = useState<string>(currentUsername || ""),
+
+    [profile, setProfile] = useState<string>(currentProfile || ""),
+    [avatar, setAvatar] = useState<string>(currentAvatar || ""),
+    [url, setUrl] = useState<string>(currentUrl || "");
+
     console.log(uid)
  const inputUsername = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,16 +55,16 @@ const uid =useSelector(getUserId)
     [setUsername]
   );
 
-  const inputEmail = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setEmail(event.target.value);
-    },
-    [setEmail]
-  );
 
     const inputProfile = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      setProfile(event.target.value);
+        setProfile(event.target.value);
+        if (event.target.value.length > 200
+        ) {
+          dispatch(errorOpenAction())
+        }else{
+          dispatch(errorCloseAction())
+        }
     },
     [setProfile]
   );
@@ -104,11 +112,11 @@ const uid =useSelector(getUserId)
       },"image/jpeg")
     }
 
-  const updateUser = async(avatar: string, username: string, email: string,profile:string,url:string) => {
+  const updateUser = async(avatar: string, username: string,profile:string,url:string) => {
     dispatch(showLoadingAction("ユーザー情報を更新"))
     const timestamp = FirebaseTimestamp.now()
     const userInitialData = {
-      email: email,
+
       updated_at: timestamp,
       username: username,
       avatar: avatar,
@@ -118,7 +126,6 @@ const uid =useSelector(getUserId)
 
     }
     const user =auth.currentUser;
-   console.log(user)
 user.updateProfile({
   displayName: username,
   photoURL: avatar,
@@ -126,15 +133,8 @@ user.updateProfile({
 }).then(function() {
   console.log("success")
 }).catch(function(error) {
-  // An error happened.
+    console.log("処理に失敗")
 });
-
-//     user.updateEmail(email).then(function() {
-//   console.log("success")
-// }).catch(function(error) {
-//   // An error happened.
-// });
-
 
     await dispatch(updateUserAction(userInitialData));
 
@@ -151,16 +151,6 @@ user.updateProfile({
         });
   };
 
-//     const commentUser = db.collection("posts").doc(allId).collection("comments")
-//               commentUser.get().then((querySnapshot) => {
-//                 querySnapshot.forEach((doc) => {
-//                   const comId = doc.data().id;
-//                   console.log(comId)
-//     })
-//  })
-
-
-
 
   return (
     <div>
@@ -174,7 +164,7 @@ user.updateProfile({
 
                 <Avatar className={classes.large} src={avatar}/>
                     <input
-                      className={styles.login_hiddenIcon}
+                      className={classes.hideIcon}
                       type="file"
               onChange={onChangeImageHandler}
                 />
@@ -192,20 +182,11 @@ user.updateProfile({
           required={true}
           onChange={inputUsername}
           rows={1}
-          value={username}
+            value={username}
+              variant="outlined"
           type={"text"}
         />
 
-        <TextInput
-          fullWidth={true}
-          label={"メールアドレス"}
-          multiline={false}
-          required={true}
-          onChange={inputEmail}
-          rows={1}
-          value={email}
-          type={"email"}
-        />
 
               <TextInput
           fullWidth={true}
@@ -213,16 +194,19 @@ user.updateProfile({
           multiline={true}
           required={true}
           onChange={inputProfile}
-          rows={5}
-          value={profile}
+            rows={12}
+              variant="outlined"
+          value={profile.slice(0,200)}
           type={"text"}
           />
+          {error && <BoldText color={"red"}>⚠️文字は200字以内でお願いします。</BoldText>}
                         <TextInput
           fullWidth={true}
           label={"活動しているsns,webサイトのurl"}
           multiline={false}
           required={true}
-          onChange={inputUrl}
+            onChange={inputUrl}
+              variant="outlined"
           rows={1}
           value={url}
           type={"text"}
@@ -233,7 +217,7 @@ user.updateProfile({
             label={"ユーザー情報を更新"}
             onClick={() =>
               updateUser(
-                    avatar,username,email,profile,url
+                    avatar,username,profile,url
             )
              }
             />

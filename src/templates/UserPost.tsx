@@ -2,7 +2,7 @@ import React, { useEffect,useState }  from 'react'
 import { useDispatch, useSelector } from "react-redux";
 // import ProductEdit from "./ProductEdit";
 import { PostCard,UserPostItem} from "../components/PostProduct";
-
+import { BoldText } from "assets/GlobalLayoutStyle";
 import List from "@material-ui/core/List";
 import { addUserPost } from "../reducks/posts/operations";
 import { getUserPosts } from "../reducks/posts/postSlice";
@@ -44,7 +44,7 @@ console.log(posts)
             />
           )
           )
-          : <div className="center none_post"><SentimentDissatisfiedOutlinedIcon/><h1>投稿はまだありません</h1></div>
+          : <div className="center none_post"><SentimentDissatisfiedOutlinedIcon/><BoldText>投稿はまだありません</BoldText></div>
         }
        </List>
       </div>

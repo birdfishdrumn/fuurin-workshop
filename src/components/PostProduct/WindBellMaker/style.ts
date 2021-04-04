@@ -1,10 +1,40 @@
 import styled, { css } from "styled-components"
 
 type TextColorStyle = 'default' | 'white' | 'blue' | 'pink';
-
+type TextFontStyle = 'StdN' | 'Mincho' | 'default' | 'Hannotate'| 'Wawati';
 export interface StyleProps {
   textstyle?: TextColorStyle | any;
+  fontstyle?: TextFontStyle | any;
 }
+
+
+function getTextFont(style: TextFontStyle = 'default') {
+  switch (style) {
+    case 'default':
+      return css`
+      font-family:'ヒラギノ角ゴシック','Hiragino Sans';
+       `;
+    case 'StdN':
+      return css`
+      font-family:'ヒラギノ角ゴ StdN','Hiragino Kaku Gothic StdN';
+
+      `;
+    case 'Mincho':
+      return css`
+       font-family:'ヒラギノ明朝 ProN','Hiragino Mincho ProN';
+      `;
+      case 'Hannotate':
+      return css`
+      font-family:"Comic Sans MS";
+      `;
+     case 'Wawati':
+      return css`
+      font-family:'Wawati SC';
+      `;
+  }
+}
+
+
 
 function getTextColor(style: TextColorStyle = 'default') {
   switch (style) {
@@ -31,6 +61,10 @@ function getTextColor(style: TextColorStyle = 'default') {
   }
 }
 
+
+
+
+
 const TextStyle = css`
     -ms-writing-mode: tb-rl;
   writing-mode: vertical-rl;
@@ -38,12 +72,11 @@ const TextStyle = css`
   top:300px;
   left:35%;
   text-align:left;
-
   font-size:0.8rem;
   font-weight:bold;
   height:240px;
-  /* color:black; */
-  color:${props=>(props.second && "red")};
+   ${(props: StyleProps) => getTextFont(props.fontstyle)};
+
     ${(props: StyleProps) => getTextColor(props.textstyle)};
      ${props => {
    switch (props.textLength) {
@@ -120,7 +153,7 @@ object-fit:cover;
 `
 export const Flex = styled.div`
 display:grid;
-grid-template-columns:  1fr 1fr 1fr 1fr;
+grid-template-columns:${props => (props.shape ? "8fr" : "repeat(auto-fill,40px)")};
 `
 export const Image = styled.img`
 object-fit:cover;

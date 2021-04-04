@@ -12,6 +12,7 @@ import { db } from "../../firebase/index"
 import {push } from "connected-react-router"
 import styled from "styled-components"
 
+
 const Rank = styled(ListItemAvatar)`
 width:100%;
 `
@@ -75,7 +76,9 @@ const id = props.post.id
 
   return (
 
+
     <>
+
       <ListItem className={classes.list}>
         <div onClick={()=>dispatch(push(`/post/${id}`))}>
         <Rank>

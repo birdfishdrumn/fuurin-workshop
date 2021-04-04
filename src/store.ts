@@ -9,6 +9,7 @@ import postReducer from './reducks/posts/postSlice';
 import snackbarReducer from './reducks/snackbar/snackbarSlice';
 import modalReducer from './reducks/modal/modalSlice';
 import loadingReducer from './reducks/loadingSlice';
+import errorReducer from './reducks/errorSlice';
 import thunk from "redux-thunk";
 
 
@@ -21,7 +22,8 @@ export const store = configureStore({
     //  like: likesReducer,
     snackbar:snackbarReducer,
     loading: loadingReducer,
-    modal:modalReducer,
+    modal: modalReducer,
+    error:errorReducer,
     // @ts-ignore
 
      router: connectRouter(history),

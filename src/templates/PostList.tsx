@@ -1,4 +1,4 @@
-import React, { useEffect,useState }  from 'react'
+import React, { useEffect,useState,useCallback }  from 'react'
 import { useDispatch, useSelector } from "react-redux";
 // import ProductEdit from "./ProductEdit";
 import styles from "./module.css/PostList.module.css";
@@ -6,33 +6,28 @@ import { makeStyles } from "@material-ui/core/styles";
 import { PostCard,CarouselItem} from "components/PostProduct";
 // import { fetchPosts } from "../reducks/posts/operations";
 import { push } from "connected-react-router";
-import {  FirebaseTimestamp,db} from "../firebase";
+import {  auth,db} from "../firebase";
 // import { getPosts } from "../reducks/posts/postSlice";
 import { hideLoadingAction, showLoadingAction } from "../reducks/loadingSlice";
 import count from "count-array-values";
+import { snackbarOpenAction, getSnackbarState } from "reducks/snackbar/snackbarSlice"
 
-import {snackbarOpenAction,getSnackbarState} from "reducks/snackbar/snackbarSlice"
-import { getRoute } from "../reducks/users/userSlice"
+import { getRoute,login } from "../reducks/users/userSlice"
 import { fetchPostsAction } from "../reducks/posts/postSlice"
-import ViewColumnIcon from '@material-ui/icons/ViewColumn';
-import GridOnIcon from '@material-ui/icons/GridOn';
-import Tooltip from '@material-ui/core/Tooltip';
-import { NormalButton} from "../components/UI";
+import { NormalButton,ImageStyleChangeIcon} from "../components/UI";
 import ReactLoading from 'react-loading';
 import SentimentDissatisfiedOutlinedIcon from '@material-ui/icons/SentimentDissatisfiedOutlined';
 import firebase from "firebase/app"
 import { POST } from "../types/posts"
-import { GridList, Title, SectionWrapper, ScrollItem} from "assets/GlobalLayoutStyle"
+import { GridList, Title, SectionWrapper, ScrollItem,IconFlex,WhiteIcon} from "assets/GlobalLayoutStyle"
 import { OrderByDirection } from '@firebase/firestore-types'
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import PopulationPost from "./PopulatePost"
 import Carousel from 'react-material-ui-carousel'
+import styled from "styled-components";
+import NotPushAuth from "NotPushAuth"
 
-
-// import { ProductDialog  } from "components/UI/index";
-// import { snackbarOpenAction } from "reducks/snackbar/snackbarSlice";
-// import Carousel from 'react-material-ui-carousel'
 
 const useStyles = makeStyles((theme) => ({
   sort: {
@@ -72,12 +67,12 @@ const postsRef = db.collection("posts")
    const tags = /^\?tags=/.test(query) ? query.split("?tags=")[1] : "";
   console.log(query)
   console.log(decodeURI(tags))
-  const changeSortAsc = () => {
-  setOrder("asc")
-}
-  const changeSortDesc = () => {
-  setOrder("desc")
-}
+//   const changeSortAsc = () => {
+//   setOrder("asc")
+// }
+  const changeSort = useCallback((change) => {
+  setOrder(change)
+},[setOrder])
 
   // 投稿をとってくる関数
 
@@ -91,7 +86,7 @@ const fetchPosts = (category,tags) => {
   //  tagのクエリ
     query = (tags !== "") ? query.where("tags", "array-contains", tags) : query;
     // onSnapshotでリアルタイムにデータをとってくる
-      const unSub = query.limit(24).onSnapshot(snapshots => {
+      query.limit(24).onSnapshot(snapshots => {
         const postList = []
         snapshots.forEach(snapshot => {
           const post = snapshot.data();
@@ -163,6 +158,8 @@ useEffect(() => {
       })
   }
 
+
+
   const imageList = postsList.map((post) => post.images[0]).slice(0,5)
 console.log(imageList)
   const tagsList = postsList.map((post) => post.tags)
@@ -183,6 +180,7 @@ console.log(imageList)
 
   return (
     <SectionWrapper top>
+      <NotPushAuth/>
       {!category && !tags && <Carousel
         animation="slide"
       >
@@ -196,29 +194,12 @@ console.log(imageList)
       }
       {/* ArrowDownwardIcon */}
       {!category && !tags && <Title>新着作品</Title>}
-        <ul  className={classes.sort}>
-          {/* <li  >新しい順</li>
-        <li  >古い順</li> */}
-         <Tooltip title="新しい準" interactive>
-           <li onClick={changeSortDesc}><ArrowDownwardIcon fontSize="large" onClick={() =>setChange(false) } /></li>
-        </Tooltip>
-           <Tooltip title="古い順" interactive>
-           <li onClick={changeSortAsc}><ArrowUpwardIcon fontSize="large" onClick={() =>setChange(false) } /></li>
-        </Tooltip>
-        <Tooltip title="グリッド" interactive>
-           <li><GridOnIcon fontSize="large" onClick={() =>setChange(false) } /></li>
-        </Tooltip>
-        <Tooltip title="短冊まで" interactive>
-            <li onClick={()=>setChange(true)} ><ViewColumnIcon  fontSize="large" /></li>
-        </Tooltip>
-
-     </ul>
+      <ImageStyleChangeIcon changeSort={changeSort} setChange={setChange}/>
+   <div className="module-spacer--medium"/>
       {/* タグを検索した場合 */}
       {tags && <div className="center large_text">「{tags}」の検索結果</div>}
       {category && <div className="center large_text">「{catName}」の検索結果</div>}
 
-
-      {!postsList.length && <><SentimentDissatisfiedOutlinedIcon /><h1>投稿がまだありません...</h1></>}
 
       <GridList change={change}>
 

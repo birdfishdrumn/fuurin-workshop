@@ -3,7 +3,6 @@ import { TextInput, PrimaryButton } from "components/UI";
 import { signIn ,googleSignIn,twitterSignIn} from "reducks/users/operations";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { getError } from "reducks/users/userSlice";
 import { useSelector } from "react-redux"
 import { push } from "connected-react-router"
 import styled from "styled-components"
@@ -36,7 +35,6 @@ interface PROPS {
 
 const SignIn: React.FC<PROPS> = (props: any) => {
   const history = useHistory()
-  const error = useSelector(getError)
   const dispatch = useDispatch();
   const  [email, setEmail] = useState<string>(""),
     [password, setPassword] = useState<string>("");
@@ -88,9 +86,7 @@ const SignIn: React.FC<PROPS> = (props: any) => {
         variant="outlined"
         onChange={inputPassword}
       />
-      {error &&
-     <span>エラーです</span>
-     }
+
       <div className="center">
 
         <PrimaryButton

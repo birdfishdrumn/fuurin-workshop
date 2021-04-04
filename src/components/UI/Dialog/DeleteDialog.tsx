@@ -8,18 +8,15 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import { deletePost } from "../../reducks/posts/operations";
+import { deletePost } from "../../../reducks/posts/operations";
 import {useSelector,useDispatch} from "react-redux";
-
-import { SignIn, SignUp } from "./index";
-import { makeStyles } from "@material-ui/core/styles";
+import { snackbarOpenAction } from "reducks/snackbar/snackbarSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
     root: {
       margin: 0,
-      padding: theme.spacing(3),
-      width:"100%"
+      padding: theme.spacing(2),
     },
     closeButton: {
       position: 'absolute',
@@ -28,16 +25,6 @@ const styles = (theme: Theme) =>
       color: theme.palette.grey[500],
     },
   });
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-
-    // display: "inlineBlock"
-
-
-
-  },
-}))
 
 export interface DialogTitleProps extends WithStyles<typeof styles> {
   id: string;
@@ -61,7 +48,7 @@ const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
 
 const DialogContent = withStyles((theme: Theme) => ({
   root: {
-    padding: theme.spacing(3),
+    padding: theme.spacing(2),
   },
 }))(MuiDialogContent);
 
@@ -73,38 +60,59 @@ const DialogActions = withStyles((theme: Theme) => ({
 }))(MuiDialogActions);
 
 interface PROPS {
-  signIn?: boolean;
-  setSign: React.Dispatch<React.SetStateAction<boolean>>;
-  open: boolean;
-  handleClose: ()=>void
+  title?: string;
+  id?: string;
+  uid?: string;
+  handleClose: () => void
+  product?: boolean;
+  openModal: boolean;
+  handleModalClose?: () => void;
 }
 
- const  CustomDialog:React.FC<PROPS> = ({open,handleClose,signIn,setSign}) =>{
-
+ const  CustomDialog:React.FC<PROPS> = (props) =>{
+  // const [open, setOpen] =useState(true);
    const dispatch = useDispatch()
- const classes = useStyles()
-  // const handleClickOpen = () => {
-  //   setOpen(true);
-  // };
 
 
+   const id = props.id;
+   const uid = props.uid
 
+   const handleDelete = async(id:string,uid:string) => {
+     dispatch(deletePost(id, uid))
+     props.handleClose()
+     await dispatch(snackbarOpenAction({ text:"作品を削除しました。",type:true}))
+   }
+
+   const handleChange = () => {
+     props.handleClose()
+     props.handleModalClose()
+   }
   return (
     <div>
 
-      <Dialog className={classes.root}onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
-             <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-         {signIn ? "ログイン" : "アカウントを登録"}
-        </DialogTitle>
-        <DialogContent >
-          {signIn ?
-            <SignIn setSign={setSign} />
-            :
-            <SignUp setSign={setSign}/>
+      <Dialog onClose={props.handleClose} aria-labelledby="customized-dialog-title" open={props.openModal}>
+        <DialogTitle id="customized-dialog-title" onClose={props.product ? props.handleModalClose : props.handleClose}>
+          {props.product ?
+          "登録の破棄":"作品の削除"
         }
 
+        </DialogTitle>
+        <DialogContent dividers>
+          <Typography gutterBottom>
+            削除されたデータは復元できません。削除してよろしいですか？
+          </Typography>
         </DialogContent>
         <DialogActions>
+          {props.product ?
+            <Button onClick={handleChange} color="primary">
+            削除する
+          </Button>
+ :
+
+     <Button  onClick={()=>handleDelete(id,uid)} color="primary">
+            削除する
+          </Button>
+}
 
 </DialogActions>
       </Dialog>

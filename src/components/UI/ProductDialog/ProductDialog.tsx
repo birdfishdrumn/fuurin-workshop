@@ -1,5 +1,3 @@
-
-
 import React from "react";
 import Button from "@material-ui/core/Button";
 import Dialog, { DialogProps } from "@material-ui/core/Dialog";
@@ -7,7 +5,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 
-import PostDetail from "templates/PostDetailModule"
+import PostDetail from "components/PostProduct/PostDetailModule"
 import { useTheme } from '@material-ui/core/styles';
 import { makeStyles,withStyles,WithStyles,createStyles, Theme   } from "@material-ui/core/styles";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -94,9 +92,6 @@ export default function ScrollDialog({ dialogId,dialogOpen,handleClickOpen, hand
         <div id ="title"/>
         <DialogContent dividers className={classes.content}>
             <PostDetail productId={dialogId} onClose={handleClose}/>
-
-          {/* <button onClick={scrollTop}>top</button> */}
-          {/* <a href="#scroll-dialog-title">top</a> */}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">

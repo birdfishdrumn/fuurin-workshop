@@ -64,20 +64,21 @@ var styles_1 = require("@material-ui/core/styles");
 var styles_2 = require("@material-ui/core/styles");
 var DialogTitle_1 = require("@material-ui/core/DialogTitle");
 var useMediaQuery_1 = require("@material-ui/core/useMediaQuery");
-var Close_1 = require("@material-ui/icons/Close");
 var core_1 = require("@material-ui/core");
 var UI_1 = require("components/UI");
 var blueimp_load_image_1 = require("blueimp-load-image");
 var react_cropper_1 = require("react-cropper");
 require("cropperjs/dist/cropper.css");
 var IconButton_1 = require("@material-ui/core/IconButton");
-var AddPhotoAlternate_1 = require("@material-ui/icons/AddPhotoAlternate");
+var AddAPhoto_1 = require("@material-ui/icons/AddAPhoto");
 var style_1 = require("./style");
 var pathData_1 = require("./pathData");
 var GlobalLayoutStyle_1 = require("assets/GlobalLayoutStyle");
 var Button_1 = require("@material-ui/core/Button");
 var CloudUpload_1 = require("@material-ui/icons/CloudUpload");
+var DoneOutline_1 = require("@material-ui/icons/DoneOutline");
 var useStyles = styles_1.makeStyles(function (theme) {
+    var _a;
     return styles_1.createStyles({
         modal: {
             // width:"600px",
@@ -91,11 +92,25 @@ var useStyles = styles_1.makeStyles(function (theme) {
             // boxShadow: theme.shadows[5],
             padding: theme.spacing(2, 0)
         },
-        content: {
+        content: (_a = {},
+            _a[theme.breakpoints.down("sm")] = {
+                width: "100%"
+            },
+            _a.padding = 0,
+            _a.width = "600px",
+            _a),
+        button: {
+            margin: theme.spacing(1),
+            padding: theme.spacing(1),
+            fontWeight: "bold"
+        },
+        title: {
             padding: 0
         },
-        button: {
-            margin: theme.spacing(1)
+        cutButton: {
+            position: "absolute",
+            right: theme.spacing(1),
+            top: theme.spacing(2)
         }
     });
 });
@@ -103,7 +118,9 @@ var styles = function (theme) {
     return styles_1.createStyles({
         root: {
             margin: 0,
-            padding: theme.spacing(3),
+            display: "flex",
+            // padding: theme.spacing(3),
+            padding: "0 10px",
             width: "100%"
         },
         closeButton: {
@@ -117,9 +134,7 @@ var styles = function (theme) {
 var DialogTitle = styles_1.withStyles(styles)(function (props) {
     var children = props.children, classes = props.classes, onClose = props.onClose, other = __rest(props, ["children", "classes", "onClose"]);
     return (react_1["default"].createElement(DialogTitle_1["default"], __assign({ disableTypography: true, className: classes.root }, other),
-        react_1["default"].createElement(core_1.Typography, { variant: "h6" }, children),
-        onClose ? (react_1["default"].createElement(IconButton_1["default"], { "aria-label": "close", className: classes.closeButton, onClick: onClose },
-            react_1["default"].createElement(Close_1["default"], null))) : null));
+        react_1["default"].createElement(core_1.Typography, { variant: "h6" }, children)));
 });
 var WindBellCropper = function (_a) {
     var imageUrl = _a.imageUrl, setImageUrl = _a.setImageUrl, pathItem = _a.pathItem, setPathItem = _a.setPathItem;
@@ -131,8 +146,9 @@ var WindBellCropper = function (_a) {
     var _d = react_1.useState(100), progress = _d[0], setProgress = _d[1];
     var classes = useStyles(); //Material-ui
     var _e = react_1.useState(), cropper = _e[0], setCropper = _e[1];
-    var _f = react_1.useState(false), open = _f[0], setOpen = _f[1];
-    var _g = react_1.useState(false), openCircularProgress = _g[0], setOpenCircularProgress = _g[1]; //処理中みたいモーダル
+    var _f = react_1.useState(), check = _f[0], setCheck = _f[1];
+    var _g = react_1.useState(false), open = _g[0], setOpen = _g[1];
+    var _h = react_1.useState(false), openCircularProgress = _h[0], setOpenCircularProgress = _h[1]; //処理中みたいモーダル
     // 画像を切り取る前の処理
     var d = 0;
     function kaiten(x) {
@@ -224,34 +240,50 @@ var WindBellCropper = function (_a) {
     }); };
     var handleClose = function () {
         setOpen(false);
+        setCheck(false);
     };
     var handleCircularProgressClose = function () {
         setOpenCircularProgress(false);
     };
+    var checkOpen = function () {
+        setOpen(true);
+        setCheck(true);
+    };
     return (react_1["default"].createElement("div", null,
         error && react_1["default"].createElement("div", null, error),
-        react_1["default"].createElement("h2", null),
-        react_1["default"].createElement(IconButton_1["default"], null,
-            react_1["default"].createElement("label", null,
-                "\u98A8\u9234\u306E\u753B\u50CF\u3092\u6295\u7A3F",
-                react_1["default"].createElement(AddPhotoAlternate_1["default"], null),
-                react_1["default"].createElement("input", { className: "u-display-none", type: "file", id: "image", onChange: handleImage }))),
-        react_1["default"].createElement("br", null),
-        imageUrl &&
-            react_1["default"].createElement(Button_1["default"], { variant: "contained", color: "secondary", className: classes.button, onClick: function () { return setOpen(true); } }, "\u5207\u308A\u629C\u3044\u305F\u753B\u50CF\u3092\u78BA\u8A8D"),
+        react_1["default"].createElement("div", { className: "module-spacer--medium" }),
+        react_1["default"].createElement(GlobalLayoutStyle_1.BoldText, null, "\u5B8C\u6210\u3057\u305F\u3089\u30B9\u30AF\u30EA\u30FC\u30F3\u30B7\u30E7\u30C3\u30C8\u3067\u4FDD\u5B58\u3057\u3088\u3046\uFF01"),
+        react_1["default"].createElement("div", { className: "module-spacer--medium" }),
+        react_1["default"].createElement(GlobalLayoutStyle_1.IconFlex, null,
+            react_1["default"].createElement("div", null,
+                react_1["default"].createElement(IconButton_1["default"], { className: classes.button },
+                    react_1["default"].createElement("label", null,
+                        react_1["default"].createElement(AddAPhoto_1["default"], { style: { fontSize: "40px" } }),
+                        react_1["default"].createElement("input", { className: "u-display-none", onChange: handleImage, type: "file", id: "image" }))),
+                react_1["default"].createElement(GlobalLayoutStyle_1.BoldText, null, "\u6295\u7A3F")),
+            imageUrl.length &&
+                react_1["default"].createElement("div", null,
+                    react_1["default"].createElement(IconButton_1["default"], { className: classes.button, onClick: function () { return checkOpen(); } },
+                        react_1["default"].createElement("label", null,
+                            react_1["default"].createElement(DoneOutline_1["default"], { style: { fontSize: "40px" } }))),
+                    react_1["default"].createElement(GlobalLayoutStyle_1.BoldText, null, "\u78BA\u8A8D"))),
         react_1["default"].createElement("div", null),
-        react_1["default"].createElement(core_1.Dialog, { "aria-labelledby": "transition-modal-title", "aria-describedby": "transition-modal-description", className: classes.modal, open: open, fullScreen: fullScreen, maxWidth: "xl", onClose: handleClose, closeAfterTransition: true, BackdropComponent: core_1.Backdrop, BackdropProps: {
+        react_1["default"].createElement(core_1.Dialog, { "aria-labelledby": "transition-modal-title", "aria-describedby": "transition-modal-description", className: classes.modal, open: open, fullScreen: fullScreen, maxWidth: "md", onClose: handleClose, closeAfterTransition: true, BackdropComponent: core_1.Backdrop, BackdropProps: {
                 timeout: 500
             } },
             react_1["default"].createElement("div", { className: classes.paper },
-                react_1["default"].createElement(DialogTitle, { id: "customized-dialog-title", onClose: handleClose }, "\u753B\u50CF\u306E\u5207\u308A\u629C\u304D"),
+                react_1["default"].createElement(DialogTitle, { id: "customized-dialog-title", onClose: handleClose },
+                    react_1["default"].createElement(GlobalLayoutStyle_1.Title, null, "\u753B\u50CF\u306E\u5207\u308A\u629C\u304D"),
+                    react_1["default"].createElement("div", { className: classes.cutButton }, !check &&
+                        react_1["default"].createElement(Button_1["default"], { variant: "contained", color: "primary", className: classes.button, startIcon: react_1["default"].createElement(CloudUpload_1["default"], null), onClick: getCropData }, "\u753B\u50CF\u3092\u5207\u308A\u629C\u304F"))),
                 react_1["default"].createElement(core_1.Divider, null),
                 react_1["default"].createElement(core_1.DialogContent, { className: classes.content },
-                    react_1["default"].createElement(react_cropper_1["default"], { style: { height: 450, width: "100%" }, initialAspectRatio: 1, aspectRatio: 5 / 4.3, preview: ".img-preview", src: image, viewMode: 1, guides: true, minCropBoxHeight: 150, minCropBoxWidth: 150, background: false, responsive: true, autoCropArea: 1, checkOrientation: false, onInitialized: function (instance) {
-                            setCropper(instance);
-                        } }),
+                    !check &&
+                        react_1["default"].createElement(react_cropper_1["default"], { style: { height: 450, width: "100%" }, initialAspectRatio: 1, aspectRatio: 5 / 4.3, preview: ".img-preview", src: image, viewMode: 1, guides: true, minCropBoxHeight: 150, minCropBoxWidth: 150, background: false, responsive: true, autoCropArea: 1, checkOrientation: false, onInitialized: function (instance) {
+                                setCropper(instance);
+                            } }),
                     react_1["default"].createElement("div", { className: "center" },
-                        react_1["default"].createElement(Button_1["default"], { variant: "contained", color: "default", className: classes.button, startIcon: react_1["default"].createElement(CloudUpload_1["default"], null), onClick: getCropData }, "\u753B\u50CF\u3092\u5207\u308A\u629C\u304F"),
+                        react_1["default"].createElement("div", { className: "module-spacer--medium" }),
                         react_1["default"].createElement(GlobalLayoutStyle_1.Title, { id: "cut" }, "\u5207\u308A\u629C\u304B\u308C\u305F\u753B\u50CF"),
                         react_1["default"].createElement(style_1.SvgContainer, null,
                             react_1["default"].createElement("div", null,
@@ -262,10 +294,11 @@ var WindBellCropper = function (_a) {
                                     react_1["default"].createElement("image", { xlinkHref: imageUrl, id: "img1", width: "100%", height: "100%", style: { marginRight: "20px" }, preserveAspectRatio: "xMidYMid slice", clipPath: "url(#clip03)" })))),
                         react_1["default"].createElement("button", { onClick: function () { return kaiten(90); } }, "\u56DE\u8EE2"),
                         react_1["default"].createElement("div", { style: { height: "50vh" } }),
-                        pathData_1.pathData.map(function (p) { return (react_1["default"].createElement("div", { onClick: function () { return setPathItem({
+                        react_1["default"].createElement(style_1.Flex, null, pathData_1.pathData.map(function (p) { return (react_1["default"].createElement(style_1.ImagePallet, { onClick: function () { return setPathItem({
                                 path: p.path,
                                 viewBox: p.viewBox
-                            }); } }, p.label)); }))),
+                            }); } },
+                            react_1["default"].createElement(style_1.Image, { src: p.img }))); })))),
                 react_1["default"].createElement(core_1.Divider, null),
                 react_1["default"].createElement(core_1.DialogActions, null,
                     react_1["default"].createElement(UI_1.PrimaryButton, { label: "\u5B8C\u4E86", onClick: handleClose })))),

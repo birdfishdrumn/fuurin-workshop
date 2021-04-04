@@ -24,12 +24,13 @@ import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 
 import IconButton from "@material-ui/core/IconButton";
-import AddPhotoAlternateIcon from "@material-ui/icons/AddPhotoAlternate"
-import { SvgContainer, Svg } from "./style"
+import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
+import { SvgContainer, Svg, ImagePallet, Flex, Image, } from "./style"
 import { pathData } from "./pathData"
-import { Title } from "assets/GlobalLayoutStyle"
+import { Title,IconFlex,BoldText } from "assets/GlobalLayoutStyle"
 import Button from '@material-ui/core/Button';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import DoneOutlineIcon from '@material-ui/icons/DoneOutline';
 
 const useStyles = makeStyles((theme:Theme) =>
   createStyles({
@@ -47,11 +48,29 @@ const useStyles = makeStyles((theme:Theme) =>
       padding: theme.spacing(2,0)
     },
     content: {
-      padding:0,
+      [theme.breakpoints.down("sm")]: {
+              width:"100%"
+       },
+      padding: 0,
+      width: "600px",
+
     },
        button: {
-      margin: theme.spacing(1),
+         margin: theme.spacing(1),
+         padding: theme.spacing(1),
+         fontWeight: "bold",
+        //  color:"white"
+
     },
+    title: {
+      padding:0
+    },
+    cutButton: {
+      position: "absolute",
+      right: theme.spacing(1),
+      top: theme.spacing(2),
+
+    }
   })
 );
 
@@ -61,7 +80,9 @@ const styles = (theme: Theme) =>
   createStyles({
     root: {
       margin: 0,
-      padding: theme.spacing(3),
+      display:"flex",
+      // padding: theme.spacing(3),
+      padding:"0 10px",
       width:"100%"
     },
     closeButton: {
@@ -84,11 +105,11 @@ const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
   return (
     <MuiDialogTitle disableTypography className={classes.root} {...other}>
       <Typography variant="h6">{children}</Typography>
-      {onClose ? (
+      {/* {onClose ? (
         <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
           <CloseIcon />
         </IconButton>
-      ) : null}
+      ) : null} */}
     </MuiDialogTitle>
   );
 });
@@ -106,6 +127,7 @@ const WindBellCropper = ({imageUrl,setImageUrl,pathItem,setPathItem }) => {
 
   const classes = useStyles(); //Material-ui
   const [cropper, setCropper] = useState<any>();
+  const [check, setCheck] = useState<boolean>();
   const [open, setOpen] = useState<boolean>(false);
 
   const [openCircularProgress, setOpenCircularProgress] = useState<boolean>(false); //処理中みたいモーダル
@@ -212,56 +234,54 @@ function kaiten(x){
 
   const handleClose = () => {
     setOpen(false);
+    setCheck(false)
   };
   const handleCircularProgressClose = () => {
     setOpenCircularProgress(false);
   };
+
+  const checkOpen = () => {
+    setOpen(true)
+    setCheck(true)
+ }
 
 
   return (
     <div>
 
       {error && <div>{error}</div>}
-      <h2>
-
-      </h2>
-
-   {/* <Button
-        variant="contained"
-        color="default"
-        className={classes.button}
-        startIcon={<CloudUploadIcon />}
-      >
-        Upload
-      </Button> */}
-                   <IconButton >
-        <label>
-          風鈴の画像を投稿
-                        <AddPhotoAlternateIcon />
-                        <input className="u-display-none" type="file" id="image" onChange={handleImage}/>
+ <div className="module-spacer--medium" />
+      <BoldText >完成したらスクリーンショットで保存しよう！</BoldText>
+        <div className="module-spacer--medium" />
+      <IconFlex>
+        <div>
+           <IconButton className={classes.button}>
+                    <label >
+          <AddAPhotoIcon style={{ fontSize: "40px" }}/>
+          <input className="u-display-none" onChange={handleImage} type="file" id="image" />
                     </label>
       </IconButton>
-      <br />
+          <BoldText>投稿</BoldText>
+          </div>
 
 
-      {imageUrl &&
-        <Button
-              variant="contained"
-             color="secondary"
+      {imageUrl.length &&
+        <div>
+        <IconButton
         className={classes.button}
-          onClick={() => setOpen(true)}>切り抜いた画像を確認</Button>
-      }
+            onClick={() => checkOpen()}>
+            <label >
+            <DoneOutlineIcon style={{ fontSize: "40px" }} />
+            </label>
+            </IconButton>
+        <BoldText>確認</BoldText>
+        </div>
+
+        }
+        </IconFlex>
        <div>
 
-            {/* <div className="u-text-right">
-          <span>{images.length > 0? "作品画像を追加する"　: "作品画像を登録する"}</span>
-                <IconButton className={classes.icon}>
-                    <label>
-                        <AddPhotoAlternateIcon />
-                        <input className="u-display-none" type="file" id="image" onChange={e => uploadImage(e)}/>
-                    </label>
-                </IconButton>
-            </div> */}
+
         </div>
       <Dialog
         aria-labelledby="transition-modal-title"
@@ -269,50 +289,61 @@ function kaiten(x){
         className={classes.modal}
         open={open}
           fullScreen={fullScreen}
-           maxWidth="xl"
+           maxWidth="md"
         onClose={handleClose}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
           timeout: 500
         }}
-      >
-        <div className={classes.paper}>
-          <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-            画像の切り抜き
-          </DialogTitle>
-          <Divider/>
-           <DialogContent className={classes.content}>
-          <Cropper
-            style={{ height: 450, width: "100%" }}
-            initialAspectRatio={1}
-            aspectRatio={5 / 4.3}
-            preview=".img-preview"
-            src={image}
-            viewMode={1}
-            guides={true}
-            minCropBoxHeight={150}
-            minCropBoxWidth={150}
-            background={false}
-            responsive={true}
-            autoCropArea={1}
-            checkOrientation={false}
-            onInitialized={(instance) => {
-              setCropper(instance);
-            }}
-            />
 
-           <div  className="center">
-          <Button
+      >
+
+        <div className={classes.paper}>
+
+          <DialogTitle  id="customized-dialog-title" onClose={handleClose}>
+            <Title>画像の切り抜き</Title>
+            <div className={classes.cutButton}>
+              {!check &&
+            <Button
         variant="contained"
-        color="default"
+        color="primary"
         className={classes.button}
         startIcon={<CloudUploadIcon />}
         onClick={getCropData}
       >
         画像を切り抜く
-      </Button>
+              </Button>
+              }
+              </div>
+          </DialogTitle>
+          <Divider/>
+          <DialogContent className={classes.content}>
+            {!check &&
+              <Cropper
+                style={{ height: 450, width: "100%" }}
+                initialAspectRatio={1}
+                aspectRatio={5 / 4.3}
+                preview=".img-preview"
+                src={image}
+                viewMode={1}
+                guides={true}
+                minCropBoxHeight={150}
+                minCropBoxWidth={150}
+                background={false}
+                responsive={true}
+                autoCropArea={1}
+                checkOrientation={false}
+                onInitialized={(instance) => {
+                  setCropper(instance);
+                }}
+              />
+            }
+
+           <div  className="center">
+             <div className="module-spacer--medium" />
               <Title id="cut">切り抜かれた画像</Title>
+
               <SvgContainer>
                   <div>
                     <svg width={0} height={0} style={{ position: 'absolute', top: 0, left: 0 }}>
@@ -337,15 +368,19 @@ function kaiten(x){
 
               <button  onClick={()=>kaiten(90)} >回転</button>
 
-                <div style={{ height: "50vh" }} />
+              <div style={{ height: "50vh" }} />
+              <Flex>
                 {pathData.map((p) => (
-                  <div onClick={() => setPathItem({
+
+                    <ImagePallet onClick={() => setPathItem({
                     path: p.path,
                     viewBox:p.viewBox
-                  })}
-                  >{p.label}</div>
-                ))}
+                  })}>
+          <Image src={p.img} />
 
+              </ImagePallet>
+                ))}
+               </Flex>
               </div>
             </DialogContent>
           <Divider />

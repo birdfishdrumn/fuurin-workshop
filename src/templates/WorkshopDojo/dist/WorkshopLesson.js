@@ -19,11 +19,10 @@ var react_1 = require("react");
 var GlobalLayoutStyle_1 = require("assets/GlobalLayoutStyle");
 var styled_components_1 = require("styled-components");
 var react_id_swiper_1 = require("react-id-swiper");
-var marukingyo_svg_jpg_1 = require("assets/img/src/marukingyo_svg.jpg");
-var LessonWrapper = styled_components_1["default"].div(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n width:100%;\n height:80%;\n background:white;\n padding:50px 25px;\n\n"], ["\n width:100%;\n height:80%;\n background:white;\n padding:50px 25px;\n\n"])));
-var LessonColumn = styled_components_1["default"].div(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n  display:flex;\n >div:first-child{\n  flex-basis:40%\n }\n >div:last-child{\n   flex-basis:50%\n   text-align:left;\n }\n"], ["\n  display:flex;\n >div:first-child{\n  flex-basis:40%\n }\n >div:last-child{\n   flex-basis:50%\n   text-align:left;\n }\n"])));
-var LessonBox = styled_components_1["default"].div(templateObject_3 || (templateObject_3 = __makeTemplateObject(["\nwidth:90%;\nheight:500px;\nbackground-color:white;\npadding:30px;\n"], ["\nwidth:90%;\nheight:500px;\nbackground-color:white;\npadding:30px;\n"])));
-var LessonImage = styled_components_1["default"].img(templateObject_4 || (templateObject_4 = __makeTemplateObject(["\nwidth:350px;\nheight:350px;\nborder-radius:50%;\n"], ["\nwidth:350px;\nheight:350px;\nborder-radius:50%;\n"])));
+var index_1 = require("firebase/index");
+var LessonBox = styled_components_1["default"].div(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\nwidth:100%;\n/* height:500px; */\nbackground-color:white;\npadding:30px;\n\n"], ["\nwidth:100%;\n/* height:500px; */\nbackground-color:white;\npadding:30px;\n\n"])));
+var LessonImage = styled_components_1["default"].img(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\nwidth:350px;\nheight:350px;\nborder-radius:50%;\nobject-fit:cover;\n@media(max-width:768px){\n  width:100%;\n  height:auto;\n}\n"], ["\nwidth:350px;\nheight:350px;\nborder-radius:50%;\nobject-fit:cover;\n@media(max-width:768px){\n  width:100%;\n  height:auto;\n}\n"])));
+var LessonText = styled_components_1["default"](GlobalLayoutStyle_1.Text)(templateObject_3 || (templateObject_3 = __makeTemplateObject(["\nwidth:60%;\nmargin:0 auto;\npadding:10px 0 30px 0;\n"], ["\nwidth:60%;\nmargin:0 auto;\npadding:10px 0 30px 0;\n"])));
 var WorkShopDojo = function () {
     var params = {
         pagination: {
@@ -33,17 +32,35 @@ var WorkShopDojo = function () {
         navigation: {
             nextEl: '.swiper-button-next',
             prevEl: '.swiper-button-prev'
-        }
+        },
+        rebuildOnUpdate: true
     };
+    var _a = react_1.useState([]), slide = _a[0], setSlide = _a[1];
+    var id = window.location.pathname.split("/lesson")[1];
+    if (id) {
+        id = id.split("/")[1];
+    }
+    react_1.useEffect(function () {
+        var unSub = index_1.db.collection("lessons").doc(id).collection("slide").orderBy("number", "asc").onSnapshot(function (snapshot) {
+            setSlide(snapshot.docs.map(function (doc) { return ({
+                id: doc.data().id,
+                title: doc.data().title,
+                images: doc.data().images,
+                description: doc.data().description
+            }); }));
+        });
+        return function () {
+            unSub();
+        };
+    }, []);
+    console.log(slide);
     return (react_1["default"].createElement(GlobalLayoutStyle_1.SectionWrapping, null,
         react_1["default"].createElement(GlobalLayoutStyle_1.Title, null, "\u7D75\u4ED8\u3051\u4F53\u9A13\u9053\u5834"),
         react_1["default"].createElement("div", { className: "module-spacer--medium" }),
-        react_1["default"].createElement(react_id_swiper_1["default"], __assign({}, params),
-            react_1["default"].createElement(LessonBox, null,
-                react_1["default"].createElement(LessonImage, { src: marukingyo_svg_jpg_1["default"] })),
-            react_1["default"].createElement(LessonBox, null),
-            react_1["default"].createElement(LessonBox, null),
-            react_1["default"].createElement(LessonBox, null))));
+        react_1["default"].createElement(react_id_swiper_1["default"], __assign({}, params), slide.map(function (s) { return (react_1["default"].createElement(LessonBox, { key: s.id },
+            react_1["default"].createElement(LessonImage, { src: s.images.path }),
+            react_1["default"].createElement(GlobalLayoutStyle_1.Title, null, s.title),
+            react_1["default"].createElement(LessonText, { left: true }, s.description))); }))));
 };
 exports["default"] = WorkShopDojo;
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4;
+var templateObject_1, templateObject_2, templateObject_3;

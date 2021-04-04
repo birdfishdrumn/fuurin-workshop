@@ -31,6 +31,7 @@ var Tab_1 = require("@material-ui/core/Tab");
 var Typography_1 = require("@material-ui/core/Typography");
 var Box_1 = require("@material-ui/core/Box");
 var index_1 = require("components/HelpComponents/index");
+var index_2 = require("components/UI/index");
 function TabPanel(props) {
     var children = props.children, value = props.value, index = props.index, other = __rest(props, ["children", "value", "index"]);
     return (react_1["default"].createElement("div", __assign({ role: "tabpanel", hidden: value !== index, id: "scrollable-auto-tabpanel-" + index, "aria-labelledby": "scrollable-auto-tab-" + index }, other), value === index && (react_1["default"].createElement(Box_1["default"], { p: 3 },
@@ -52,14 +53,14 @@ var useStyles = styles_1.makeStyles(function (theme) { return ({
 var HelpDetail = function (props) {
     var classes = useStyles();
     var stateValue = props.location.state;
-    var _a = react_1["default"].useState(stateValue), value = _a[0], setValue = _a[1];
+    var _a = react_1["default"].useState(stateValue || 0), value = _a[0], setValue = _a[1];
     console.log(props.location.state);
     var handleChange = function (event, newValue) {
         setValue(newValue);
     };
     return (react_1["default"].createElement("div", null,
-        react_1["default"].createElement(GlobalLayoutStyle_1.SectionWrapping, null,
-            react_1["default"].createElement(GlobalLayoutStyle_1.Title, null, "\u30D8\u30EB\u30D7"),
+        react_1["default"].createElement(index_2.SiteMapNav, null),
+        react_1["default"].createElement(GlobalLayoutStyle_1.SectionWrapping, { large: true },
             react_1["default"].createElement("div", { className: classes.root },
                 react_1["default"].createElement(AppBar_1["default"], { position: "static", color: "default" },
                     react_1["default"].createElement(Tabs_1["default"], { value: value, onChange: handleChange, indicatorColor: "primary", scrollButtons: "on", textColor: "primary", variant: "scrollable", "aria-label": "scrollable auto tabs example" },

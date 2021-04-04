@@ -36,8 +36,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.fetchPostsInFavorite = exports.twitterSignIn = exports.googleSignIn = exports.addPostToFavorite = exports.listenAuthState = exports.signOut = exports.signUp = exports.signIn = void 0;
+exports.changePasswordAction = exports.userDelete = exports.fetchPostsInFavorite = exports.twitterSignIn = exports.googleSignIn = exports.addPostToFavorite = exports.listenAuthNotState = exports.listenAuthState = exports.signOut = exports.signUp = exports.signIn = void 0;
 // import { history } from "../store";
+var app_1 = require("firebase/app");
 var index_1 = require("../../firebase/index");
 var loadingSlice_1 = require("../loadingSlice");
 var userSlice_1 = require("./userSlice");
@@ -47,7 +48,6 @@ var modalSlice_1 = require("reducks/modal/modalSlice");
 exports.signIn = function (email, password) {
     return function (dispatch) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            dispatch(userSlice_1.closeError());
             dispatch(loadingSlice_1.showLoadingAction("サインインしています..."));
             if (email === "" || password === "") {
                 dispatch(loadingSlice_1.hideLoadingAction());
@@ -83,7 +83,8 @@ exports.signIn = function (email, password) {
                             uid: uid,
                             username: data.username,
                             profile: data.profile,
-                            avatar: data.avatar
+                            avatar: data.avatar,
+                            url: data.url
                         }));
                         //
                     }).then(function () {
@@ -163,7 +164,9 @@ exports.signUp = function (username, email, password, confirmPassword) {
                                 uid: uid,
                                 updated_at: timestamp,
                                 username: username,
-                                first: false
+                                first: false,
+                                avatar: "",
+                                url: ""
                             };
                             // auth.signOut()
                             // 確認のE-Mail送信に成功
@@ -213,7 +216,9 @@ exports.listenAuthState = function () {
                         index_1.db.collection("users").doc(uid_1).get()
                             .then(function (snapshot) {
                             var data = snapshot.data();
+                            // if文がないとエラーが出る
                             if (data) {
+                                console.log("huuta");
                                 console.log(data);
                                 dispatch(userSlice_1.login({
                                     isSignedIn: true,
@@ -222,13 +227,41 @@ exports.listenAuthState = function () {
                                     email: data.email,
                                     username: data.username,
                                     avatar: data.avatar,
-                                    profile: data.profile
+                                    profile: data.profile,
+                                    url: data.url
                                 }));
                             }
                         });
                     }
                     else {
                         dispatch(react_router_redux_1.push("/signin"));
+                    }
+                })];
+        });
+    }); };
+};
+exports.listenAuthNotState = function () {
+    return function (dispatch) { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, index_1.auth.onAuthStateChanged(function (user) {
+                    if (user) {
+                        var uid_2 = user.uid;
+                        index_1.db.collection("users").doc(uid_2).get()
+                            .then(function (snapshot) {
+                            var data = snapshot.data();
+                            // if文がないとエラーが出る
+                            console.log(data);
+                            dispatch(userSlice_1.login({
+                                isSignedIn: true,
+                                role: data.role,
+                                uid: uid_2,
+                                email: data.email,
+                                username: data.username,
+                                avatar: data.avatar,
+                                profile: data.profile,
+                                url: data.url
+                            }));
+                        });
                     }
                 })];
         });
@@ -317,7 +350,8 @@ exports.googleSignIn = function () {
                                 avatar: user.photoURL,
                                 username: user.displayName,
                                 email: user.email,
-                                profile: data.profile
+                                profile: data.profile,
+                                url: data.url
                                 // likes:data.likes
                             }));
                             _a.label = 3;
@@ -346,49 +380,6 @@ exports.googleSignIn = function () {
         });
     }); };
 };
-// googleでログイン
-// export const googleSignIn = ():AppThunk => {
-//   return async (dispatch) => {
-//     auth.signInWithPopup(provider).then(async result => {
-//       const user = result.user
-//       if (user) {
-//         const uid = user.uid
-//         const timestamp = FirebaseTimestamp.now()
-//         const role = await db.collection("users").doc(uid).get()
-//         if (role.exists) {
-//           return db.collection("users").doc(uid).get().then(snapshot => {
-//             const data = snapshot.data();
-//             dispatch(login({
-//               isSignedIn: true,
-//                 avatar: user.photoURL,
-//               role: data.role,
-//               uid: uid,
-//               username: user.displayName,
-//               email: user.email,
-//                profile: data.profile
-//               // likes:data.likes
-//             }))
-//             const userInitialData = {
-//               created_at: timestamp,
-//               avatar: user.photoURL,
-//               role: "customer",
-//               uid: uid,
-//               updated_at: timestamp,
-//               username: user.displayName,
-//               email: user.email,
-//               // profile:user.profile
-//             }
-//             db.collection("users").doc(uid).set(userInitialData,{merge:true})
-//           }).then(() => {
-//             dispatch(hideLoadingAction());
-//             dispatch(snackbarOpenAction({ text: "googleアカウントでの認証に成功しました！", type: true }))
-//             dispatch(push("/"))
-//           })
-//         }
-//       }
-//     })
-//   }
-// }
 exports.twitterSignIn = function () {
     return function (dispatch) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -418,7 +409,10 @@ exports.twitterSignIn = function () {
                                 profile: data.profile,
                                 email: user.email,
                                 avatar: user.photoURL,
-                                username: user.displayName
+                                username: user.displayName,
+                                url: data.url
+                                //  profile: user.profile
+                                // likes:data.likes
                             }));
                             userInitialData = {
                                 created_at: timestamp,
@@ -450,6 +444,57 @@ exports.fetchPostsInFavorite = function (posts) {
     return function (dispatch) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             dispatch(userSlice_1.fetchPostsInFavoriteAction(posts));
+            return [2 /*return*/];
+        });
+    }); };
+};
+exports.userDelete = function (uid) {
+    return function (dispatch) { return __awaiter(void 0, void 0, void 0, function () {
+        var user;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    dispatch(loadingSlice_1.showLoadingAction("退会処理をしています..."));
+                    user = index_1.auth.currentUser;
+                    console.log(user);
+                    // 順番の注意　先にいuser.deleteした後だと処理が完了しない。
+                    return [4 /*yield*/, index_1.db.collection("users").doc(uid)["delete"]()];
+                case 1:
+                    // 順番の注意　先にいuser.deleteした後だと処理が完了しない。
+                    _a.sent();
+                    user["delete"]().then(function () {
+                        dispatch(userSlice_1.logout());
+                        dispatch(loadingSlice_1.hideLoadingAction());
+                        dispatch(snackbarSlice_1.snackbarOpenAction({ text: "退会しました！またのお越しをお待ちしております。", type: true }));
+                        dispatch(react_router_redux_1.push("/signin"));
+                    })["catch"](function (error) {
+                        dispatch(loadingSlice_1.hideLoadingAction());
+                        dispatch(snackbarSlice_1.snackbarOpenAction({ text: "処理に失敗しました。再ログインして再度お試しください。", type: false }));
+                    });
+                    return [2 /*return*/];
+            }
+        });
+    }); };
+};
+exports.changePasswordAction = function (currentPassword, newPassword) {
+    return function (dispatch) { return __awaiter(void 0, void 0, void 0, function () {
+        var user, credential;
+        return __generator(this, function (_a) {
+            dispatch(loadingSlice_1.showLoadingAction("パスワードを変更しています..."));
+            user = index_1.auth.currentUser;
+            credential = app_1["default"].auth.EmailAuthProvider.credential(user.email, currentPassword);
+            user.reauthenticateWithCredential(credential).then(function () {
+                user.updatePassword(newPassword).then(function () {
+                    dispatch(loadingSlice_1.hideLoadingAction());
+                    dispatch(snackbarSlice_1.snackbarOpenAction({ text: "パスワードを変更しました！", type: true }));
+                })["catch"](function (error) {
+                    dispatch(loadingSlice_1.hideLoadingAction());
+                    dispatch(snackbarSlice_1.snackbarOpenAction({ text: "処理に失敗しました。再ログインして再度お試しください。", type: false }));
+                });
+            })["catch"](function (error) {
+                dispatch(loadingSlice_1.hideLoadingAction());
+                dispatch(snackbarSlice_1.snackbarOpenAction({ text: "処理に失敗しました。再ログインして再度お試しください。", type: false }));
+            });
             return [2 /*return*/];
         });
     }); };

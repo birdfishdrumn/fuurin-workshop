@@ -69,9 +69,6 @@ var ArrowDownward_1 = require("@material-ui/icons/ArrowDownward");
 var ArrowUpward_1 = require("@material-ui/icons/ArrowUpward");
 var PopulatePost_1 = require("./PopulatePost");
 var react_material_ui_carousel_1 = require("react-material-ui-carousel");
-// import { ProductDialog  } from "components/UI/index";
-// import { snackbarOpenAction } from "reducks/snackbar/snackbarSlice";
-// import Carousel from 'react-material-ui-carousel'
 var useStyles = styles_1.makeStyles(function (theme) { return ({
     sort: {
         margin: "20px 50px 10px 0",
@@ -197,19 +194,24 @@ var PostList = function () {
     return (react_1["default"].createElement(GlobalLayoutStyle_1.SectionWrapper, { top: true },
         !category && !tags && react_1["default"].createElement(react_material_ui_carousel_1["default"], { animation: "slide" }, imageList.map(function (item, i) { return react_1["default"].createElement(PostProduct_1.CarouselItem, { key: item.id, item: item, src: item.path }); })),
         !category && !tags && react_1["default"].createElement(GlobalLayoutStyle_1.Title, null, "\u65B0\u7740\u4F5C\u54C1"),
-        react_1["default"].createElement("ul", { className: classes.sort },
+        react_1["default"].createElement(GlobalLayoutStyle_1.IconFlex, null,
             react_1["default"].createElement(Tooltip_1["default"], { title: "\u65B0\u3057\u3044\u6E96", interactive: true },
                 react_1["default"].createElement("li", { onClick: changeSortDesc },
-                    react_1["default"].createElement(ArrowDownward_1["default"], { fontSize: "large", onClick: function () { return setChange(false); } }))),
+                    react_1["default"].createElement(GlobalLayoutStyle_1.WhiteIcon, null,
+                        react_1["default"].createElement(ArrowDownward_1["default"], { fontSize: "large", onClick: function () { return setChange(false); } })))),
             react_1["default"].createElement(Tooltip_1["default"], { title: "\u53E4\u3044\u9806", interactive: true },
                 react_1["default"].createElement("li", { onClick: changeSortAsc },
-                    react_1["default"].createElement(ArrowUpward_1["default"], { fontSize: "large", onClick: function () { return setChange(false); } }))),
+                    react_1["default"].createElement(GlobalLayoutStyle_1.WhiteIcon, null,
+                        react_1["default"].createElement(ArrowUpward_1["default"], { fontSize: "large", onClick: function () { return setChange(false); } })))),
             react_1["default"].createElement(Tooltip_1["default"], { title: "\u30B0\u30EA\u30C3\u30C9", interactive: true },
                 react_1["default"].createElement("li", null,
-                    react_1["default"].createElement(GridOn_1["default"], { fontSize: "large", onClick: function () { return setChange(false); } }))),
+                    react_1["default"].createElement(GlobalLayoutStyle_1.WhiteIcon, null,
+                        react_1["default"].createElement(GridOn_1["default"], { fontSize: "large", onClick: function () { return setChange(false); } })))),
             react_1["default"].createElement(Tooltip_1["default"], { title: "\u77ED\u518A\u307E\u3067", interactive: true },
                 react_1["default"].createElement("li", { onClick: function () { return setChange(true); } },
-                    react_1["default"].createElement(ViewColumn_1["default"], { fontSize: "large" })))),
+                    react_1["default"].createElement(GlobalLayoutStyle_1.WhiteIcon, null,
+                        react_1["default"].createElement(ViewColumn_1["default"], { fontSize: "large" }))))),
+        react_1["default"].createElement("div", { className: "module-spacer--medium" }),
         tags && react_1["default"].createElement("div", { className: "center large_text" },
             "\u300C",
             tags,
@@ -218,9 +220,6 @@ var PostList = function () {
             "\u300C",
             catName,
             "\u300D\u306E\u691C\u7D22\u7D50\u679C"),
-        !postsList.length && react_1["default"].createElement(react_1["default"].Fragment, null,
-            react_1["default"].createElement(SentimentDissatisfiedOutlined_1["default"], null),
-            react_1["default"].createElement("h1", null, "\u6295\u7A3F\u304C\u307E\u3060\u3042\u308A\u307E\u305B\u3093...")),
         react_1["default"].createElement(GlobalLayoutStyle_1.GridList, { change: change }, postsList.length > 0 ?
             postsList.map(function (post) { return (react_1["default"].createElement(GlobalLayoutStyle_1.ScrollItem, { key: post.id },
                 react_1["default"].createElement(PostProduct_1.PostCard, { change: change, post: post, key: post.id, name: post.name, images: post.images, allImages: post.allImages, id: post.id, description: post.description, username: post.username, avatar: post.avatar, uid: post.uid }))); })
