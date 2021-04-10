@@ -8,6 +8,7 @@ import userReducer from './reducks/users/userSlice';
 import postReducer from './reducks/posts/postSlice';
 import snackbarReducer from './reducks/snackbar/snackbarSlice';
 import modalReducer from './reducks/modal/modalSlice';
+import dialogReducer from './reducks/dialog/dialogSlice';
 import loadingReducer from './reducks/loadingSlice';
 import errorReducer from './reducks/errorSlice';
 import thunk from "redux-thunk";
@@ -19,7 +20,7 @@ export const store = configureStore({
   reducer: {
     user: userReducer,
     post: postReducer,
-    //  like: likesReducer,
+    dialog:dialogReducer,
     snackbar:snackbarReducer,
     loading: loadingReducer,
     modal: modalReducer,

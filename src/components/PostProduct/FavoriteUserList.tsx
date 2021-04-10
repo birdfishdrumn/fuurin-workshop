@@ -16,6 +16,8 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       maxWidth: '700px',
       backgroundColor: theme.palette.background.paper,
+       boxShadow: "0 0px 10px rgba(0,0,0,0.2)",
+      cursor:"pointer"
     },
         large: {
       width: theme.spacing(10),

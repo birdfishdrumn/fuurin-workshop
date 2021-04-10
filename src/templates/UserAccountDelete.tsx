@@ -37,9 +37,8 @@ const UserAccount = () => {
     dispatch(userDelete(uid))
     // alert("ok")
   }
-    const transition = useCallback((path) => {
-       history.push(path)
-    }, []);
+
+
    const inputName = useCallback(
     (event:React.ChangeEvent<HTMLInputElement>) => {
       setName(event.target.value);

@@ -32,11 +32,5 @@ export const {modalOpenAction,modalCloseAction} = modalSlice.actions;
 // modalの中にmodalというオブジェクトが入っている。stateはinitialState,modalはname:"modal"に該当する。
 export const getModalState = (state: RootState )=> state.modal.modal.state;
 
-// export const getmodalText = (state: RootState )=> state.modal.modal.text;
-
-// export const getmodalname = createSelector(
-//   [selectmodal],
-//   state => state.modalname
-// )
 
 export default modalSlice.reducer

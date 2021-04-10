@@ -5,8 +5,7 @@ import {useDispatch} from "react-redux"
 
 const PostDetail = () => {
   const postId = window.location.pathname.split("/post/")[1];
-  const [id, setId] = useState(postId)
-  const dispatch = useDispatch()
+  const [id, setId] = useState<string>(postId)
  console.log(postId)
 
 useEffect(() => {

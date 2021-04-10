@@ -10,7 +10,9 @@ import { useTheme } from '@material-ui/core/styles';
 import {PrimaryButton} from "components/UI/index"
 import DoneIcon from '@material-ui/icons/Done';
 import { WindBellMakerType } from "types/posts"
-import WindBellMaker from "../PostProduct/WindBellMaker/WindBellMaker"
+import WindBellMaker from "./WindBellMaker"
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from '@material-ui/icons/Close';
 import styled from "styled-components"
 
 const TwoColumn = styled.div`
@@ -25,10 +27,6 @@ const CustomDialogContent = styled(DialogContent)`
 }
 
 `
-// interface PROPS {
-//  props:WindBellMakerType
-// }
-
 const WindBellDialog:React.FC<WindBellMakerType> = ({textLength,strip,setStrip,dialogOpen,handleClose,windBellImage,setWindBellImage,pathItem,setPathItem,wishText,inputWishText}) => {
 
   const theme = useTheme();
@@ -73,14 +71,11 @@ const WindBellDialog:React.FC<WindBellMakerType> = ({textLength,strip,setStrip,d
 
           </DialogContentText> */}
           <div className="module-spacer--medium" />
-          <div className="center">
-          <Button
-              startIcon={<DoneIcon/>}
-          variant="contained"
-            onClick={handleClose}
-            style={{margin:"0 auto"}}
-          // className={classes.button}
-          color="primary">風鈴メイカーを終了</Button>
+          <div style={{textAlign:"right"}}>
+
+            <IconButton  onClick={handleClose}>
+              <CloseIcon style={{fontSize:"40px"}}/>
+            </IconButton>
          </div>
         </CustomDialogContent>
 

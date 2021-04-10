@@ -2257,6 +2257,11 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
+"@types/blueimp-load-image@^5.14.2":
+  version "5.14.2"
+  resolved "https://registry.yarnpkg.com/@types/blueimp-load-image/-/blueimp-load-image-5.14.2.tgz#4c95a4a87e9e9dbb3fab3411d32bf927ecb166e9"
+  integrity sha512-H3jcOj1AY9kIAWdwTIT1mqnJQDBqNXSc9vSI2HOaqHLrclxwraLB/3dWDrVytm7Lsj+YBm1LW1K4/meTWM1BFA==
+
 "@types/domhandler@*", "@types/domhandler@2.4.1":
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@types/domhandler/-/domhandler-2.4.1.tgz#7b3b347f7762180fbcb1ece1ce3dd0ebbb8c64cf"

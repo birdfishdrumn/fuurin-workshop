@@ -9,7 +9,7 @@ from "./TextDetail"
 export { default as PrimaryButton }
 from "./PrimaryButton"
 export { default as NormalButton }
-from "./NormalButton"
+from "./EventButton"
 export { default as SelectBox }
 from "./SelectBox"
 export { default as SearchBox }
@@ -37,9 +37,7 @@ from "./HelpButton"
 export { default as Share }
 from "./Share"
 export { default as WindBellDialog }
-from "./WindBellDialog"
-export { default as SignDialog }
-from "./Dialog/SignDialog"
+from "../PostProduct/WindBellMaker/WindBellDialog"
 
 export { default as SiteMapNav }
 from "./ComponentNav/SiteMapNav"

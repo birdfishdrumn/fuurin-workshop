@@ -4,6 +4,7 @@ import { useSelector,useDispatch } from "react-redux";
 import {
   db,FirebaseTimestamp
 } from "firebase/index"
+import firebase from "firebase/app"
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles ,createStyles} from "@material-ui/core/styles";
 import HTMLReactParser from "html-react-parser"
@@ -11,7 +12,7 @@ import { ImageSwiper,RelationPost,Comment,Favorite } from "components/PostProduc
 import IconButton from '@material-ui/core/IconButton';
 // import {addProductToCart} from "../reducks/users/operations"
 import { push } from "connected-react-router";
-import { getPostsInFavorite,getUserId,getUserAvatar,getUsername } from "reducks/users/userSlice";
+import { getPostsInFavorite,getUserId,getUserAvatar,getUsername,getIsSignedIn } from "reducks/users/userSlice";
 
 import moment from 'moment'  // #1
 import 'moment/locale/ja'
@@ -24,7 +25,8 @@ import { Flex, SectionWrapper,Title,GridLow,BackgroundWhite,BoldText,StyledBoldT
 import CircularProgress from '@material-ui/core/CircularProgress';
 import SentimentDissatisfiedOutlinedIcon from '@material-ui/icons/SentimentDissatisfiedOutlined';
 import {returnCodeToBr} from "functions/function"
-import {USER} from "types/user"
+import { dialogOpenAction } from "reducks/dialog/dialogSlice";
+import {POST} from "types/posts"
 
 const AvatarTitle = styled(Avatar)`
 display:inline-block;
@@ -87,7 +89,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 interface PROPS {
-  productId?: string;
+  productId: string;
   onClose?: () => void;
   template?: boolean;
 
@@ -97,20 +99,21 @@ const PostDetailModule:React.FC<PROPS> = ({ productId, onClose,template }) => {
 
   const classes = useStyles()
   const dispatch = useDispatch()
-  const postInFavorite = useSelector(getPostsInFavorite);
+  const postInFavorite:Partial<POST[]>  = useSelector(getPostsInFavorite);
 
   // お気に入りした作品数
-  const likesId = postInFavorite.map(post =>
+  const likesId = postInFavorite.map((post: any) =>
     post.postId)
 
   const username = useSelector(getUsername)
   const avatar = useSelector(getUserAvatar)
-
   const uid = useSelector(getUserId)
+  const isSignedIn = useSelector(getIsSignedIn)
   // idは新たに定義されたidである事を忘れない
   // idの扱いが違う
   const [id, setId] = useState<string>(productId);
-  const [post, setPost] = useState(null)
+  const [post, setPost] = useState<POST>(
+  )
   const [postUid,setPostUid] = useState("")
   const [tags,setTags] = useState([])
 
@@ -120,9 +123,9 @@ const PostDetailModule:React.FC<PROPS> = ({ productId, onClose,template }) => {
   useEffect(() => {
     // 個別の商品情報の取得なのでdoc(id)と引数にidを忘れない
     if (id)  {
-      const unSub = db.collection("posts").doc(id).onSnapshot(doc => {
+      const unSub = db.collection("posts").doc(id).onSnapshot((doc:firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>) => {
 
-        const data = doc.data()
+        const data:any = doc.data()
           if (data) {
             const tags = data.tags
             const postUid =data.uid
@@ -140,7 +143,7 @@ const PostDetailModule:React.FC<PROPS> = ({ productId, onClose,template }) => {
   }, [id]);
 
   console.log(postUid)
-
+  console.log(post)
 
 console.log(tags)
   const random = Math.floor(Math.random() * tags.length);
@@ -159,9 +162,8 @@ console.log(tags)
 
     }, [setId])
 
-  // ーーーーーーーモジュールにしかないーーーーーーーーーーーー
 
-  const searchTag = (tag) => {
+  const searchTag = (tag:any) => {
     dispatch(push(`/?tags=${tag}`))
    onClose && onClose()
   }
@@ -175,7 +177,7 @@ console.log(tags)
             <Title id="title" >{post.name}</Title>
             <div>
               {!template &&
-                <IconButton onClick={() => onClose()} >
+                <IconButton onClick={() => onClose && onClose()} >
                   <CloseIcon />
                 </IconButton>}
             </div>
@@ -192,7 +194,11 @@ console.log(tags)
               <div className="module-spacer--small" />
               <Flex between>
                 <Flex>
-                  <AvatarTitle onClick={()=>dispatch(push("/users/" + post.uid))} src={post.avatar}/>
+                  <AvatarTitle onClick={() => isSignedIn ?
+                    dispatch(push("/users/" + post.uid))
+                    :
+                    dispatch(dialogOpenAction({  type: "sign", typeState: false }))
+                  } src={post.avatar} />
                 <Username>{post.username}</Username>
                 </Flex>
                 <Flex>
@@ -229,7 +235,7 @@ console.log(tags)
             {/* タグ一覧 */}
             <PostTag>
 
-               {post.tags.length ? post.tags.map((t,index) => (
+               {post.tags?.length ? post.tags?.map((t,index) => (
               <li key={index} onClick={()=>searchTag(t)}>#{t}</li>
                ))
                     :
@@ -246,7 +252,7 @@ console.log(tags)
           {post.tags.length > 0 ? <div >
             <RelationPost randomTag={randomTag} tags={tags} id={id} changeRelation={changeRelation}/>
           </div>
-            : <Title>関連作品はありません</Title>
+            : <Title min>関連作品はありません</Title>
           }
               <div style={{height:"10vh"}}/>
         </>
@@ -256,10 +262,9 @@ console.log(tags)
         (
         <div style={{
             height: "100vh",
-          width:"1024px",
-            // backgroundColor:"#F5F5F5"
+
         }}>
-            <CircularProgress color="inherit"  style={{ marginTop: "20vh" }}/>
+            <CircularProgress color="inherit"  style={{ margin: "20vh 0" }}/>
           </div>
       )
 }

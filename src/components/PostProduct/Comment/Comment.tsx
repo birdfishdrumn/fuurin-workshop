@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback,memo } from 'react'
 import Avatar from '@material-ui/core/Avatar';
 import {
   db
@@ -21,6 +21,7 @@ import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
 import Typography from '@material-ui/core/Typography';
+import { dialogOpenAction } from "reducks/dialog/dialogSlice";
 
 const Accordion = withStyles({
   root: {
@@ -82,7 +83,7 @@ interface PROPS {
   postUid: string;
 }
 
-const Comment: React.FC<PROPS> = ({ id, avatar,username, uid, postUid }) => {
+const Comment: React.FC<PROPS> = memo(({ id, avatar,username, uid, postUid }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
     const [expanded, setExpanded] = React.useState<string | false>( "");
@@ -261,7 +262,11 @@ const Comment: React.FC<PROPS> = ({ id, avatar,username, uid, postUid }) => {
 
               <PostComment key={com.id} >
                 <div>
-                <Avatar src={com.avatar} className={classes.small} onClick={()=>dispatch(push("/users/" + com.uid))}/>
+                  <Avatar src={com.avatar} className={classes.small} onClick={() => isSignedIn ?
+                    dispatch(push("/users/" + com.uid))
+                    :
+                     dispatch(dialogOpenAction({  type: "sign", typeState: false }))
+              } />
 
                 <PostCommentUser>@{com.username}さん</PostCommentUser>
                  <CommentTime>
@@ -271,13 +276,7 @@ const Comment: React.FC<PROPS> = ({ id, avatar,username, uid, postUid }) => {
                   </div>
                 {com.uid === uid && <DeleteComment onClick={()=>deleteComment(com.id)}>コメントを削除</DeleteComment>}
                 <PostCommentText>{com.text} </PostCommentText>
-                {/* {postUid === uid &&
-                  <p>返信する
-                      <form onSubmit={replyComment(com.id)}>
-                    <CommentForm avatar={avatar} setComment={setReply} comment={reply}  />
-                  </form>
-                  </p>
-                } */}
+
                   <div className="module-spacer--small"/>
                    {(postUid === uid  || com.reply === true) &&
                   <>
@@ -285,11 +284,11 @@ const Comment: React.FC<PROPS> = ({ id, avatar,username, uid, postUid }) => {
                                <Accordion square expanded={expanded === com.text} onChange={handleChange(com.text)} onClick={fetchReplyComment(com.id)}>
                <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
 
-            <Typography>返信</Typography>
+            <Typography style={{color:"blue"}}>返信を見る</Typography>
         </AccordionSummary>
-        <AccordionDetails>
+        <AccordionDetails style={{background:"	#F8F8FF"}}>
 
-                        <Reply avatar={avatar} id={com.id} replies={replies} replyComment={replyComment} setReply={setReply} reply={reply}/>
+                      <Reply avatar={avatar} id={com.id} replies={replies} replyComment={replyComment} setReply={setReply} reply={reply} isSignedIn={isSignedIn}/>
 
 
         </AccordionDetails>
@@ -300,9 +299,7 @@ const Comment: React.FC<PROPS> = ({ id, avatar,username, uid, postUid }) => {
               </>
               }
 
-                 {/* <form onSubmit={replyComment(com.id)}>
-        <CommentForm setComment={setReply} comment={reply}  />
-                  </form> */}
+
               </PostComment>
 
 
@@ -320,6 +317,6 @@ const Comment: React.FC<PROPS> = ({ id, avatar,username, uid, postUid }) => {
 
     </div>
   )
-}
+})
 
 export default Comment

@@ -18,7 +18,7 @@ import {
 //  DialogTitle,
   Backdrop
 } from "@material-ui/core";
-import { PrimaryButton } from "components/UI";
+import { PrimaryButton,HelpButton } from "components/UI";
 import loadImage from 'blueimp-load-image';
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
@@ -67,8 +67,8 @@ const useStyles = makeStyles((theme:Theme) =>
     },
     cutButton: {
       position: "absolute",
-      right: theme.spacing(1),
-      top: theme.spacing(2),
+      right: theme.spacing(8),
+      top: theme.spacing(1),
 
     }
   })
@@ -83,12 +83,13 @@ const styles = (theme: Theme) =>
       display:"flex",
       // padding: theme.spacing(3),
       padding:"0 10px",
-      width:"100%"
+      width: "100%",
+      position:"relative"
     },
     closeButton: {
       position: 'absolute',
       right: theme.spacing(1),
-      top: theme.spacing(1),
+      top: "-10px",
       color:"white",
     },
   });
@@ -105,11 +106,10 @@ const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
   return (
     <MuiDialogTitle disableTypography className={classes.root} {...other}>
       <Typography variant="h6">{children}</Typography>
-      {/* {onClose ? (
-        <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
-          <CloseIcon />
-        </IconButton>
-      ) : null} */}
+
+      <div  className={classes.closeButton} >
+        <HelpButton name="写真の撮り方"type="windBellMaker"  cropper/>
+        </div>
     </MuiDialogTitle>
   );
 });
@@ -184,7 +184,8 @@ function kaiten(x){
 
       // アップロード処理
       console.log("アップロード処理");
-      canvas.image.toBlob((imagedata) => {
+      // @ts-ignore
+      canvas.image.toBlob((imagedata: any) => {
          const storageRef = storage.ref("images/test/"); //どのフォルダの配下に入れるかを設定
       const imagesRef = storageRef.child(fileName); //ファイル名
 
@@ -302,8 +303,13 @@ function kaiten(x){
         <div className={classes.paper}>
 
           <DialogTitle  id="customized-dialog-title" onClose={handleClose}>
-            <Title>画像の切り抜き</Title>
+
+
+               <Title min style={{ marginLeft: "10px" }}>画像の切り抜き</Title>
+
+
             <div className={classes.cutButton}>
+
               {!check &&
             <Button
         variant="contained"
@@ -316,6 +322,7 @@ function kaiten(x){
               </Button>
               }
               </div>
+
           </DialogTitle>
           <Divider/>
           <DialogContent className={classes.content}>
@@ -342,7 +349,7 @@ function kaiten(x){
 
            <div  className="center">
              <div className="module-spacer--medium" />
-              <Title id="cut">切り抜かれた画像</Title>
+              <Title min id="cut">切り取った画像</Title>
 
               <SvgContainer>
                   <div>

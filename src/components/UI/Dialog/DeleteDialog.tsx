@@ -75,15 +75,15 @@ interface PROPS {
 
 
    const id = props.id;
-   const uid = props.uid
+   const uid = props.uid;
 
-   const handleDelete = async(id:string,uid:string) => {
+   const handleDelete = async(id:string,uid:string):Promise<void> => {
      dispatch(deletePost(id, uid))
      props.handleClose()
      await dispatch(snackbarOpenAction({ text:"作品を削除しました。",type:true}))
    }
 
-   const handleChange = () => {
+   const handleChange = ():void => {
      props.handleClose()
      props.handleModalClose()
    }

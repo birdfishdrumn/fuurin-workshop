@@ -5,7 +5,7 @@ import {getUserAvatar, getUsername,getEmail,getUserProfile,getUserUrl} from "../
 import {useHistory} from "react-router-dom"
 import { makeStyles} from "@material-ui/core/styles"
 import { Avatar } from "@material-ui/core";
-import { Title,BoldText,HelpButtonWrapper} from "assets/GlobalLayoutStyle";
+import { Title,BoldText,HelpButtonWrapper,SectionContainer} from "assets/GlobalLayoutStyle";
 import {returnCodeToBr} from "functions/function"
 
 const useStyles = makeStyles((theme) => ({
@@ -44,11 +44,11 @@ const email: string = useSelector(getEmail)
     }, []);
   console.log(avatar)
     return (
-      <section className="c-section-container center">
-        <HelpButtonWrapper>
+      <SectionContainer>
+        {/* <HelpButtonWrapper> */}
            <HelpButton type="profile" name="プロフィールの編集について"/>
         <Title>マイプロフィール</Title>
-        </HelpButtonWrapper>
+        {/* </HelpButtonWrapper> */}
 
 
             <Avatar className={classes.large} src={avatar} />
@@ -56,7 +56,10 @@ const email: string = useSelector(getEmail)
 
 
             <TextDetail label="ユーザー名" value={username} />
-
+               <div className={classes.profile}>
+         email
+            <BoldText left style={{ marginTop: "10px", fontWeight: 600 }}>{email}</BoldText>
+            </div>
            <div className={classes.profile}>
           Url
             <BoldText left style={{ marginTop: "10px", fontWeight: 600 }}>{url}</BoldText>
@@ -64,7 +67,7 @@ const email: string = useSelector(getEmail)
         <div className="center">
           <div className={classes.profile}>
           紹介文
-            <BoldText style={{ marginTop: "10px", fontWeight: 600 }}>{returnCodeToBr(profile)}</BoldText>
+            <BoldText style={{ marginTop: "10px", fontWeight: 600 }}>{profile && returnCodeToBr(profile)}</BoldText>
             </div>
         <div className="center"></div>
               <PrimaryButton label={"投稿した作品"} onClick={() => transition('/user/post')} />
@@ -72,7 +75,7 @@ const email: string = useSelector(getEmail)
   <PrimaryButton label={"アカウントを設定"} onClick={() => transition('/user/account')}/>
 
             </div>
-        </section>
+        </SectionContainer>
     );
 };
 

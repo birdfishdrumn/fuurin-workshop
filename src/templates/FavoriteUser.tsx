@@ -6,16 +6,16 @@ import { useSelector,useDispatch } from "react-redux";
 import { SectionWrapper,Title,BoldText } from "assets/GlobalLayoutStyle";
 import { FavoriteNav } from "components/UI/index"
 import { showLoadingAction,hideLoadingAction } from "reducks/loadingSlice";
-
+import {LIKEUSER} from "types/likeUser"
 
 const FavoriteUser = () => {
   const uid = useSelector(getUserId)
   const dispatch = useDispatch()
-  const [favoriteUser, setFavoriteUser] = useState([])
+  const [favoriteUser, setFavoriteUser] = useState<LIKEUSER[]>([])
   useEffect(() => {
      dispatch(showLoadingAction("loading"))
   db.collection("users").doc(uid).collection("likeUser").get().then((snapshot)=>{
-    const list = []
+    const list:any[] = []
     snapshot.forEach((doc)=>{
       const data = doc.data()
       console.log(data)

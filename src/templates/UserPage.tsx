@@ -1,23 +1,23 @@
 import React,{useEffect,useState} from 'react'
 import { db, auth } from "../firebase/index"
 import firebase from "firebase/app"
-import { SectionWrapper,GridList,ScrollItem,Title ,Text,BoldText,WhiteIcon,IconFlex} from "assets/GlobalLayoutStyle"
+import { SectionWrapper,GridList,ScrollItem,Title ,Text,BoldText,MinText,IconFlex} from "assets/GlobalLayoutStyle"
 import Avatar from '@material-ui/core/Avatar';
 import styled from "styled-components"
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import { addUserPost } from "../reducks/posts/operations";
-import { getUserPosts } from "../reducks/posts/postSlice";
+import { fetchPosts } from "../reducks/posts/operations";
+import { getPosts } from "../reducks/posts/postSlice";
 import { PostCard } from "components/PostProduct";
 import { getUserId,getIsSignedIn,login,getUserUrl } from "../reducks/users/userSlice";
 import { useDispatch, useSelector } from "react-redux"
 import {returnCodeToBr} from "functions/function"
-import LanguageIcon from '@material-ui/icons/Language';
-import GridOnIcon from '@material-ui/icons/GridOn';
+
 import { PrimaryButton,ImageStyleChangeIcon } from 'components/UI';
 import CheckIcon from '@material-ui/icons/Check';
 import FavoriteIcon from '@material-ui/icons/Favorite';
-import { Snackbar } from '@material-ui/core';
+import {POST} from "types/posts"
+
 const ProfileColumn = styled.div`
 display:flex;
  box-shadow: 2px 2px 4px gray;
@@ -85,22 +85,26 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const UserPage = () => {
   const dispatch = useDispatch()
-  const posts = useSelector(getUserPosts);
+  const posts:POST[] = useSelector(getPosts);
   // 自分のuserId
   const isSignedIn = useSelector(getIsSignedIn)
   const myUserId = useSelector(getUserId)
   console.log(myUserId)
   const classes = useStyles();
+
   const [username, setUsername] = useState<string>("")
   const [avatar, setAvatar] = useState<string>("")
   const [profile, setProfile] = useState<string>("")
   const [favoriteUserArray,setFavoriteUserArray] = useState([])
   const [change, setChange] = useState<boolean>(false)
-  const [url,setUrl] = useState<string>("")
-  let uid = window.location.pathname.split("/users/")[1];
+  const [url, setUrl] = useState<string>("")
+
+  let uid: string | never = window.location.pathname.split("/users/")[1];
+
+
   useEffect(() => {
 
-      db.collection("users").doc(uid).get().then((snapshot) => {
+      db.collection("users").doc(uid).get().then((snapshot:firebase.firestore.DocumentData) => {
         if (snapshot.data()) {
           const data = snapshot.data()
           console.log(data)
@@ -118,13 +122,13 @@ const UserPage = () => {
   }, [])
 
   useEffect(() => {
-  dispatch(addUserPost(uid))
+  dispatch(fetchPosts(uid))
   }, [])
   console.log(posts)
 
   useEffect(() => {
     if (isSignedIn) {
-      const unSub = db.collection("users").doc(myUserId).onSnapshot((snapshot) => {
+      const unSub = db.collection("users").doc(myUserId).onSnapshot((snapshot:firebase.firestore.DocumentData) => {
         const data = snapshot.data()
         const Userfavorite = data.favoriteUser
         setFavoriteUserArray(Userfavorite)
@@ -138,6 +142,8 @@ const UserPage = () => {
   }, [])
 console.log(favoriteUserArray)
 
+
+  // --------userをお気に入りに登録する関数-----------
   const addFavoriteUser = async() => {
     const userRef =  await db.collection("users")
     const id = uid
@@ -167,11 +173,7 @@ if(favoriteUserArray &&  favoriteUserArray.includes(uid)){
           db.collection("users").doc(myUserId).update({
             favoriteUser: firebase.firestore.FieldValue.arrayUnion(uid)
             // count: firebase.firestore.FieldValue.increment(-1)
-
           })
-
-
-
     })
    // お気に入りされたuserにiカウントする
   await userRef.doc(uid).set({
@@ -180,6 +182,10 @@ if(favoriteUserArray &&  favoriteUserArray.includes(uid)){
     console.log("huuta")
 }
   }
+
+    // --------userをお気に入りに登録する関数-----------
+
+
   return (
     <SectionWrapper>
 
@@ -200,7 +206,7 @@ if(favoriteUserArray &&  favoriteUserArray.includes(uid)){
           <div className="module-spacer--extra-small" />
           {url && <>
               <BoldText>{username}さんの活動</BoldText>
-          <BoldText><a href={url} target="_blank" rel="noopener noreferrer"><LanguageIcon style={{fontSize:"40px"}}/></a></BoldText>
+            <BoldText min ><a href={url} target="_blank" rel="noopener noreferrer">{url}</a></BoldText>
             </>
            }
 
@@ -208,15 +214,14 @@ if(favoriteUserArray &&  favoriteUserArray.includes(uid)){
 
         <div>
           <Title left black>{username ? username : "noname"}</Title>
-          {profile  ? <Text left>{returnCodeToBr(profile)}</Text> : "プロフィールが記述されていません。"}
+          {profile  ? <MinText left>{returnCodeToBr(profile)}</MinText> : "プロフィールが記述されていません。"}
        </div>
         </ProfileColumn>
         {/* </BackgroundWhite> */}
-      <div className="module-spacer--large" />
+      <div className="module-spacer--medium" />
       <Title>{username}さんの作品</Title>
-
       <ImageStyleChangeIcon setChange={setChange}/>
-
+           <div className="module-spacer--extra-small" />
       <GridList change={change}>
 
         {posts.length > 0 ?

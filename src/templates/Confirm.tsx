@@ -1,24 +1,16 @@
 import React, { useCallback, useState,useEffect} from "react";
 import { TextInput, PrimaryButton } from "../components/UI";
-import { auth } from "../firebase/index"
+
 import { Text } from "assets/GlobalLayoutStyle";
 import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom"
-import { getIsSignedIn } from "reducks/users/userSlice";
+
 import { push } from "connected-react-router";
 import {SectionWrapping} from "assets/GlobalLayoutStyle"
 
 const Confirm: React.FC= () => {
   const dispatch = useDispatch();
-  // const isSignedIn = useSelector(getIsSignedIn)
-  const [email, setEmail] = useState("");
- const history = useHistory()
-  const inputEmail = useCallback(
-    (event) => {
-      setEmail(event.target.value);
-    },
-    [setEmail]
-  );
+  // const isSignedIn = useSelector(getIsSignedIn
+
 
   return (
     <SectionWrapping>

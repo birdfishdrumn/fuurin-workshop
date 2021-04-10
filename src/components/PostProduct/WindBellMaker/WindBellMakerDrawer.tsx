@@ -368,7 +368,7 @@ const classicList = patterns.filter((pattern) => {
         </div>
 
             <PrimaryButton
-          label="風鈴をカスタマイズする"
+          label="短冊を変える"
            onClick={handleDrawerOpen}
           />
         <div className="module-spacer--medium" />
@@ -406,7 +406,7 @@ const classicList = patterns.filter((pattern) => {
      <TreeView
       aria-label="gmail"
       className={classes.treeRoot}
-      defaultExpanded={['3']}
+      defaultExpanded={['']}
       defaultCollapseIcon={<ArrowDropDownIcon />}
       defaultExpandIcon={<ArrowRightIcon />}
       defaultEndIcon={<div style={{ width: 24 }} />}

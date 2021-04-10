@@ -2,13 +2,13 @@ import React, { useCallback, useState } from "react";
 import { TextInput, PrimaryButton } from "components/UI";
 import { signUp } from "reducks/users/operations";
 import { useDispatch } from "react-redux";
+import { MinText, StyledLink } from "assets/GlobalLayoutStyle"
+import Divider from "@material-ui/core/Divider"
+import {dialogStateChangeAction} from "reducks/dialog/dialogSlice"
+import { faLastfmSquare } from "@fortawesome/free-brands-svg-icons";
 
-// import { useHistory } from "react-router-dom";
-interface PROPS {
-    setSign: React.Dispatch<React.SetStateAction<boolean>>;
-}
 
-const SignUp: React.FC<PROPS> = (props: any) => {
+const SignUp: React.FC = (props: any) => {
   // const history = useHistory()
   const dispatch = useDispatch();
   const [username, setUsername] = useState<string>(""),
@@ -93,17 +93,22 @@ const SignUp: React.FC<PROPS> = (props: any) => {
       />
       <div className="center">
 
-
+        <MinText left>アカウントを登録した時点で<StyledLink to="terms">利用規約</StyledLink>と<StyledLink to="policy">プライバシーポリシー</StyledLink>に同意したものとします。</MinText>
         <PrimaryButton
-          label={"アカウント登録"}
+          label={"同意して登録"}
           disabled={
              username === "" || email === "" || password === "" || confirmPassword === ""}
           onClick={() =>
                 dispatch(signUp(username, email, password, confirmPassword))
           }
         />
-        <div className="module-spacer--medium" />
-        <p className="pointer" onClick={()=>props.setSign(true)}>
+         <div className="module-spacer--small" />
+       <Divider/>
+        <MinText left>入力後本人確認メールをお送りいたします。メールのリンクより本人確認後、アカウント登録が正式に完了しログインが可能になります。<br />
+          <span style={{color:"red"}}>※既に同じメールアドレスのSNSアカウントで登録している場合は、新規登録することができませんのでメールアドレスを変えて登録してください。</span>
+        </MinText>
+         <div className="module-spacer--medium" />
+        <p className="pointer" onClick={()=>dispatch(dialogStateChangeAction(false))}>
           アカウントをお持ちの方はこちら
         </p>
       </div>

@@ -3,7 +3,9 @@ import {SectionWrapping,Title,Text} from "assets/GlobalLayoutStyle"
 import styled from "styled-components"
 import { Link } from 'react-router-dom'
 import {db} from "firebase/index"
-import {LESSON} from "types/lesson"
+import { LESSON } from "types/lesson"
+import { showLoadingAction, hideLoadingAction } from "reducks/loadingSlice";
+import {useDispatch} from "react-redux"
 
 const LessonWrapper = styled.div`
  width:100%;
@@ -42,14 +44,18 @@ const LessonColumn = styled.div`
 `
 
 const WorkShopDojo = () => {
-    const [lessons,setLessons] = useState<LESSON[]>([])
+  const [lessons, setLessons] = useState<LESSON[]>([])
+  const dispatch = useDispatch()
+
   useEffect(() => {
+   dispatch(showLoadingAction("loading"))
     db.collection("lessons").get().then((snapshot) => {
       const list:any = []
       snapshot.forEach((doc) => {
         const data = doc.data()
         list.push(data)
       })
+      dispatch(hideLoadingAction())
       setLessons(list)
     })
   }, [])
@@ -63,7 +69,7 @@ const WorkShopDojo = () => {
         <StyledLink to={`/lesson/${lesson.id}`}>
         <LessonColumn>
           <div>
-           <img src =""/>
+           <img src ="https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/slide%2FGlPawrfvzGJcloCF?alt=media&token=43848d95-f094-4f72-936f-3f050f77c938"/>
           </div>
           <div>
             <Title left>Lesson 1</Title>
@@ -79,7 +85,7 @@ const WorkShopDojo = () => {
         <StyledLink to="/workshopcaution">
         <LessonColumn>
           <div>
-           <img src =""/>
+           <img src ="https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/sozai%2F4729901_s.jpg?alt=media&token=d954867e-b2c4-4ce4-a209-19762d889989"/>
           </div>
           <div>
 
@@ -101,6 +107,21 @@ const WorkShopDojo = () => {
 
                 <Title left>色の作り方</Title>
                 <Text left>こちらでは簡単な色の作り方について紹介いたします。原色のまま使う方が夏らしい明るい柄が出来上がりますが、自分の世界観を表現したい方は積極的に色を作っていきましょう</Text>
+          </div>
+        </LessonColumn>
+       </StyledLink>
+      </LessonWrapper>
+      <div className="module-spacer--medium" />
+                    <LessonWrapper>
+        <StyledLink to="/strip">
+        <LessonColumn>
+          <div>
+           <img src ="https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/sozai%2Ftanzaku.png?alt=media&token=50dfbb86-b8d8-44c6-86ef-15debec6cf63"/>
+          </div>
+          <div>
+
+                <Title left>短冊の付け方</Title>
+                <Text left>体験を終えた後には短冊をつけましょう。こちらでは短冊の付け方、またオリジナル短冊の簡単な作り方について説明いたします。</Text>
           </div>
         </LessonColumn>
        </StyledLink>

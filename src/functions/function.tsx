@@ -21,7 +21,7 @@ export const datetimeToString = (dt) => {
         + ('00' + dt.getSeconds()).slice(-2)
 };
 
-export const  returnCodeToBr = (text) => {
+export const  returnCodeToBr = (text:string) => {
   if(text === "") {
     return text
   } else {
@@ -29,3 +29,8 @@ export const  returnCodeToBr = (text) => {
     return HTMLReactParser(text.replace(/\r?\n/g,"<br/>"))
   }
 };
+
+export const openOutsideLink = (url:string) => {
+    // const url = "https://maruyosi.theshop.jp/"
+    window.open(url, '_blank')
+  }

@@ -1,12 +1,11 @@
-import React, { useEffect,useState }  from 'react'
+import React, { useEffect,useState,memo }  from 'react'
 import { useDispatch, useSelector } from "react-redux";
-
+import {Dispatch,Action} from "redux"
 import {  db} from "../firebase";
 import { getPosts,fetchPostsAction } from "reducks/posts/postSlice";
 import { hideLoadingAction, showLoadingAction } from "reducks/loadingSlice";
 import List from "@material-ui/core/List";
 import {SectionWrapper,GridList,ScrollItem,Scroll} from "assets/GlobalLayoutStyle"
-
 import { PopulationList,PostCard,UserPopulationList } from "components/PostProduct/index"
 import styled, { css }from "styled-components"
 import { makeStyles, Theme } from '@material-ui/core/styles';
@@ -17,8 +16,10 @@ import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import NotPushAuth from "NotPushAuth"
 import { SearchPopulationNav } from "components/UI/index";
+import { POST } from "types/posts"
+import {USER} from "types/user"
 
-
+// ランキングの上位表示にメダル番号をつける。
 const RankingMixin = css`
   position:relative;
   color:red;
@@ -132,161 +133,163 @@ interface PROPS {
   top?: boolean;
 }
 
-const PopulationPost:React.FC<PROPS> = ({top}) => {
+const PopulationPost: React.FC<PROPS> = memo(({ top }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
+  console.log("jjjjjjjjjj")
 
-    const [postsList, setPostsList] = useState([])
-const [userList,setUserList] = useState([])
+  const [postsList, setPostsList] = useState<POST[]>([])
+  const [userList, setUserList] = useState<USER[]>([])
+    const [value, setValue] = useState<number>(0);
   const postsRef = db.collection("posts")
   const userRef = db.collection("users")
-    const [value, setValue] = React.useState(0);
+
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
 
 
-const fetchPosts = () => {
-  return async (dispatch) => {
+  const fetchPosts = () => {
+    return async (dispatch:Dispatch<Action>):Promise<void> => {
 
-          dispatch(showLoadingAction("Loading"))
+      dispatch(showLoadingAction("Loading"))
 
-       postsRef.orderBy("count","desc").limit(50).get()
-      .then(snapshots => {
-        const postList = []
-        snapshots.forEach(snapshot => {
-          const post = snapshot.data();
-          postList.push(post)
-          console.log(postList.length - 1)
+      postsRef.orderBy("count", "desc").limit(50).get()
+        .then(snapshots => {
+          const postList:any = []
+          snapshots.forEach(snapshot => {
+            const post = snapshot.data();
+            postList.push(post)
+            console.log(postList.length - 1)
 
+          })
+
+          setPostsList(postList)
+
+          dispatch(fetchPostsAction(postList))
+          dispatch(hideLoadingAction());
         })
-
-         setPostsList(postList)
-
-        dispatch(fetchPostsAction(postList))
-        dispatch(hideLoadingAction());
-    })
+    }
   }
-}
 
-  const fetchFavoriteUser = () => {
-  return async (dispatch) => {
+  const fetchFavoriteUser = ()=> {
+    return async (dispatch:Dispatch<Action>):Promise<void> => {
 
-          dispatch(showLoadingAction("Loading"))
+      dispatch(showLoadingAction("Loading"))
 
-       userRef.orderBy("userFavoriteCount","desc").limit(50).get()
-      .then(snapshots => {
-        const userList = []
-        snapshots.forEach(snapshot => {
-          const user = snapshot.data();
-          userList.push(user)
+      userRef.orderBy("userFavoriteCount", "desc").limit(50).get()
+        .then(snapshots => {
+          const userList: any = []
+          snapshots.forEach(snapshot => {
+            const user = snapshot.data();
+            userList.push(user)
+          })
+          setUserList(userList)
+          dispatch(hideLoadingAction());
         })
-         setUserList(userList)
-        dispatch(hideLoadingAction());
-    })
+    }
   }
-}
 
   useEffect(() => {
     dispatch(fetchPosts())
-     dispatch(fetchFavoriteUser())
+    dispatch(fetchFavoriteUser())
 
   }, [])
   console.log(postsList[0])
   console.log(userList)
   return (
     <SectionWrapper>
-      <NotPushAuth/>
+      <NotPushAuth />
 
       {!top &&
         <>
-        <SearchPopulationNav
-        />
-                <div className={classes.appRoot}>
-      <AppBar position="static" style={{background:"white"}} >
-        <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
-          <Tab label="作品" {...a11yProps(0)} style={{color:"black"}} />
-          <Tab label="ユーザー" {...a11yProps(1)} style={{color:"black"}}  />
+          <SearchPopulationNav
+          />
+          <div className={classes.appRoot}>
+            <AppBar position="static" style={{ background: "white" }} >
+              <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
+                <Tab label="作品" {...a11yProps(0)} style={{ color: "black" }} />
+                <Tab label="ユーザー" {...a11yProps(1)} style={{ color: "black" }} />
 
-        </Tabs>
-      </AppBar>
-      <TabPanel value={value} index={0}>
+              </Tabs>
+            </AppBar>
+            <TabPanel value={value} index={0}>
 
-      <List className={classes.root}>
-         {postsList.length > 0 ?
+              <List className={classes.root}>
+                {postsList.length > 0 ?
 
-            postsList.map((post) => (
-            <Ranking key={post.likesId}>
-                <PopulationList  post={post} />
-                  </Ranking>
-          )): <div style={{
-            height: "100vh",
-            backgroundColor:"white"
-          }}></div>
+                  postsList.map((post) => (
+                    <Ranking key={post.likesId}>
+                      <PopulationList post={post} />
+                    </Ranking>
+                  )) : <div style={{
+                    height: "100vh",
+                    backgroundColor: "white"
+                  }}></div>
 
-        }
-       </List>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
+                }
+              </List>
+            </TabPanel>
+            <TabPanel value={value} index={1}>
 
-      <List className={classes.root}>
-         {userList.length > 0 ?
+              <List className={classes.root}>
+                {userList.length > 0 ?
 
-            userList.map((user) => (
-            <Ranking  key={user.uid} >
-                <UserPopulationList user={user} />
-                  </Ranking>
-          )): <div style={{
-            height: "100vh",
-            backgroundColor:"white"
-          }}></div>
+                  userList.map((user) => (
+                    <Ranking key={user.uid} >
+                      <UserPopulationList user={user} />
+                    </Ranking>
+                  )) : <div style={{
+                    height: "100vh",
+                    backgroundColor: "white"
+                  }}></div>
 
-        }
-       </List>
-      </TabPanel>
-        </div>
+                }
+              </List>
+            </TabPanel>
+          </div>
         </>
       }
 
 
       {top &&
 
-      <Scroll>
+        <Scroll>
 
-        {postsList.length > 0 ?
-          postsList.map((post) => (
-               <ScrollItem width key={post.id}>
-              <PostCard
+          {postsList.length > 0 ?
+            postsList.map((post) => (
+              <ScrollItem width key={post.id}>
+                <PostCard
 
-              post={post}
-              key={post.id}
-              name={post.name}
-                images={post.images}
-                allImages={post.allImages}
-              id={post.id}
-              description={post.description}
-              username={post.username}
-              avatar={post.avatar}
-              uid={post.uid}
-            />
-            </ScrollItem>
+                  post={post}
+                  key={post.id}
+                  name={post.name}
+                  images={post.images}
+                  allImages={post.allImages}
+                  id={post.id}
+                  description={post.description}
+                  username={post.username}
+                  avatar={post.avatar}
+                  uid={post.uid}
+                />
+              </ScrollItem>
 
-          ))
+            ))
 
-          :
-          // ローディング中の表示
-          <div style={{
-            height: "100vh",
-            backgroundColor:"#F5F5F5"
-          }}></div>
+            :
+            // ローディング中の表示
+            <div style={{
+              height: "100vh",
+              backgroundColor: "#F5F5F5"
+            }}></div>
 
-        }
+          }
 
-      </Scroll>
-}
- </SectionWrapper>
+        </Scroll>
+      }
+    </SectionWrapper>
   )
-}
+});
 
 export default PopulationPost

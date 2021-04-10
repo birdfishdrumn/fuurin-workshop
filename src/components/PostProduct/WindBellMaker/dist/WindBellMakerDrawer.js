@@ -264,7 +264,7 @@ function PersistentDrawerRight(_a) {
                 react_1["default"].createElement(IconButton_1["default"], { onClick: handleDrawerClose }, theme.direction === 'rtl' ? react_1["default"].createElement(ChevronLeft_1["default"], null) : react_1["default"].createElement(ChevronRight_1["default"], null))),
             "\u77ED\u518A\u306E\u6A21\u69D8",
             react_1["default"].createElement(Divider_1["default"], null),
-            react_1["default"].createElement(TreeView_1["default"], { "aria-label": "gmail", className: classes.treeRoot, defaultExpanded: ['3'], defaultCollapseIcon: react_1["default"].createElement(ArrowDropDown_1["default"], null), defaultExpandIcon: react_1["default"].createElement(ArrowRight_1["default"], null), defaultEndIcon: react_1["default"].createElement("div", { style: { width: 24 } }) },
+            react_1["default"].createElement(TreeView_1["default"], { "aria-label": "gmail", className: classes.treeRoot, defaultExpanded: [''], defaultCollapseIcon: react_1["default"].createElement(ArrowDropDown_1["default"], null), defaultExpandIcon: react_1["default"].createElement(ArrowRight_1["default"], null), defaultEndIcon: react_1["default"].createElement("div", { style: { width: 24 } }) },
                 react_1["default"].createElement(StyledTreeItem, { nodeId: "1", labelText: "\u548C\u7D19\u30FB\u5E03" },
                     react_1["default"].createElement(style_1.Flex, null, washiList.map(function (item) { return (react_1["default"].createElement(style_1.ImagePallet, { onClick: function () { return setStrip(item.images.path); } },
                         react_1["default"].createElement(style_1.Image, { src: item.images.path }))); }))),

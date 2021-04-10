@@ -16,12 +16,15 @@ var Router = function () {
         react_1["default"].createElement(react_router_1.Route, { exact: true, path: "/workshopkit", component: index_1.WorkshopKit }),
         react_1["default"].createElement(react_router_1.Route, { exact: true, path: "/post/:id", component: index_1.PostDetail }),
         react_1["default"].createElement(react_router_1.Route, { path: "/search", component: index_1.Search }),
+        react_1["default"].createElement(react_router_1.Route, { exact: true, path: "/users/:id", component: index_1.UserPage }),
         react_1["default"].createElement(react_router_1.Route, { exact: true, path: "/", component: index_1.PostList }),
+        react_1["default"].createElement(react_router_1.Route, { exact: true, path: "/population", component: index_1.PopulatePost }),
         react_1["default"].createElement(Auth_1["default"], null,
             react_1["default"].createElement(react_router_1.Route, { exact: true, path: "/push/:id", component: index_1.PushPage }),
-            react_1["default"].createElement(react_router_1.Route, { exact: true, path: "/users/:id", component: index_1.UserPage }),
+            react_1["default"].createElement(react_router_1.Route, { exact: true, path: "/setting", component: index_1.Setting }),
             react_1["default"].createElement(react_router_1.Route, { path: "/posts/edit(/:id)?", component: index_1.PostEdit }),
             react_1["default"].createElement(react_router_1.Route, { path: "/dojo", component: index_1.WorkshopDojo }),
+            react_1["default"].createElement(react_router_1.Route, { path: "/mixcolor", component: index_1.MixColor }),
             react_1["default"].createElement(react_router_1.Route, { path: "/lesson/:id", component: index_1.WorkshopLesson }),
             react_1["default"].createElement(react_router_1.Route, { path: "/workshopcaution", component: index_1.WorkshopCaution }),
             react_1["default"].createElement(react_router_1.Route, { exact: true, path: "/user/account", component: index_1.UserAccount }),
@@ -32,7 +35,6 @@ var Router = function () {
             react_1["default"].createElement(react_router_1.Route, { exact: true, path: "/user/edit", component: index_1.UserEdit }),
             react_1["default"].createElement(react_router_1.Route, { exact: true, path: "/likes", component: index_1.FavoriteList }),
             react_1["default"].createElement(react_router_1.Route, { exact: true, path: "/likesUser", component: index_1.FavoriteUser }),
-            react_1["default"].createElement(react_router_1.Route, { exact: true, path: "/population", component: index_1.PopulatePost }),
             react_1["default"].createElement("div", { style: { height: "100px" } }))));
 };
 exports["default"] = Router;

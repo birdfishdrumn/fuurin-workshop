@@ -11,13 +11,13 @@ service cloud.firestore {
 
 
   match /likes/{likesId}{
-    allow read,write: if request.auth.uid == userId;
+    allow read,write,delete: if request.auth.uid == userId;
   }
     match /likeUser/{likeUserId}{
     allow write: if request.auth.uid == userId;
     allow read;
   }
-   match /message/{messageId}{
+   match /pallet/{palletId}{
     allow read,write: if request.auth.uid == userId;
   }
 
@@ -30,9 +30,12 @@ service cloud.firestore {
     allow update: if request.auth.uid == userId;
 
      match /comments/{commentsId}{
-    allow read,write: if request.auth.uid != null;
+    allow read;
+    allow write: if request.auth.uid != null;
+
          match /reply/{replyId}{
-    allow read,write: if request.auth.uid != null;
+    allow read;
+    allow write: if request.auth.uid != null;
   }
   }
   }
@@ -63,6 +66,10 @@ service cloud.firestore {
     allow write: if request.auth.uid != null;
   }
     match /tanzaku/{tanzakuId}{
+    allow read;
+    allow write: if request.auth.uid != null;
+  }
+     match /color/{colorId}{
     allow read;
     allow write: if request.auth.uid != null;
   }

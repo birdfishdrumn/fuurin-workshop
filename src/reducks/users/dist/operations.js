@@ -99,40 +99,6 @@ exports.signIn = function (email, password) {
         });
     }); };
 };
-// export const signUp = (username: string, email: string, password: string, confirmPassword: string): AppThunk  => {
-//   return async (dispatch) => {
-//         dispatch(showLoadingAction("アカウントを登録しています..."));
-//     if (username === "" || email === "" || password === "" || confirmPassword === "") {
-//       alert("必須項目が未入力です。")
-//       return false
-//     }
-//     if (password !== confirmPassword) {
-//       alert("パスワードが一致しません。もう一度お試しください。")
-//       return false
-//     }
-//     return auth.createUserWithEmailAndPassword(email, password)
-//       .then(result => {
-//         const user = result.user
-//         if (user) {
-//           const uid = user.uid
-//           const timestamp = FirebaseTimestamp.now()
-//           const userInitialData= {
-//             created_at: timestamp,
-//             email: email,
-//             role: "customer",
-//             uid: uid,
-//             updated_at: timestamp,
-//             username: username
-//           }
-//           db.collection("users").doc(uid).set(userInitialData)
-//             .then(() => {
-//               dispatch(hideLoadingAction());
-//                 dispatch(push("/"));
-//           })
-//          }
-//     })
-//   }
-// }
 exports.signUp = function (username, email, password, confirmPassword) {
     return function (dispatch) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -198,6 +164,7 @@ exports.signOut = function () {
             dispatch(loadingSlice_1.showLoadingAction("Sign out..."));
             index_1.auth.signOut()
                 .then(function () {
+                // パーミションエラーが発生
                 dispatch(userSlice_1.logout());
                 dispatch(loadingSlice_1.hideLoadingAction());
                 dispatch(react_router_redux_1.push("/signin"));
@@ -250,17 +217,19 @@ exports.listenAuthNotState = function () {
                             .then(function (snapshot) {
                             var data = snapshot.data();
                             // if文がないとエラーが出る
-                            console.log(data);
-                            dispatch(userSlice_1.login({
-                                isSignedIn: true,
-                                role: data.role,
-                                uid: uid_2,
-                                email: data.email,
-                                username: data.username,
-                                avatar: data.avatar,
-                                profile: data.profile,
-                                url: data.url
-                            }));
+                            if (data) {
+                                console.log(data);
+                                dispatch(userSlice_1.login({
+                                    isSignedIn: true,
+                                    role: data.role,
+                                    uid: uid_2,
+                                    email: data.email,
+                                    username: data.username,
+                                    avatar: data.avatar,
+                                    profile: data.profile,
+                                    url: data.url
+                                }));
+                            }
                         });
                     }
                 })];
@@ -326,7 +295,7 @@ exports.googleSignIn = function () {
     return function (dispatch) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             index_1.auth.signInWithPopup(index_1.provider).then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
-                var user, uid, timestamp, role, data, userInitialData;
+                var user, uid, timestamp, role, userInitialData, data;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -337,6 +306,15 @@ exports.googleSignIn = function () {
                             return [4 /*yield*/, index_1.db.collection("users").doc(uid).get()];
                         case 1:
                             role = _a.sent();
+                            userInitialData = {
+                                created_at: timestamp,
+                                avatar: user.photoURL,
+                                role: "customer",
+                                uid: uid,
+                                updated_at: timestamp,
+                                username: user.displayName,
+                                email: user.email
+                            };
                             if (!role.exists) return [3 /*break*/, 3];
                             return [4 /*yield*/, index_1.db.collection("users").doc(uid).get().then(function (snapshot) {
                                     return snapshot.data();
@@ -354,22 +332,24 @@ exports.googleSignIn = function () {
                                 url: data.url
                                 // likes:data.likes
                             }));
-                            _a.label = 3;
-                        case 3:
-                            userInitialData = {
-                                created_at: timestamp,
-                                avatar: user.photoURL,
-                                role: "customer",
-                                uid: uid,
-                                updated_at: timestamp,
-                                username: user.displayName,
-                                email: user.email
-                            };
+                            //   dispatch(hideLoadingAction());
+                            // dispatch(push("/"))
                             index_1.db.collection("users").doc(uid).set(userInitialData, { merge: true })
                                 .then(function () {
                                 dispatch(loadingSlice_1.hideLoadingAction());
                                 dispatch(snackbarSlice_1.snackbarOpenAction({ text: "googleアカウントでの認証に成功しました！", type: true }));
                                 dispatch(react_router_redux_1.push("/"));
+                            });
+                            return [3 /*break*/, 4];
+                        case 3:
+                            index_1.db.collection("users").doc(uid).set(userInitialData, { merge: true })
+                                .then(function () {
+                                console.log("first");
+                                dispatch(loadingSlice_1.hideLoadingAction());
+                                dispatch(react_router_redux_1.push("/setting"));
+                                // dispatch(snackbarOpenAction({ text: "twitterアカウントでの認証に成功しました！", type: true }))
+                            })["catch"](function () {
+                                alert("ログインに失敗しました。ネットワークエラーなどの可能性があります。お時間がたってから再度お試しください。");
                             });
                             _a.label = 4;
                         case 4: return [2 /*return*/];
@@ -384,17 +364,27 @@ exports.twitterSignIn = function () {
     return function (dispatch) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             index_1.auth.signInWithPopup(index_1.twitterProvider).then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
-                var user, uid, timestamp, role, data, userInitialData;
+                var user, uid, timestamp, role, userInitialData, data;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
                             user = result.user;
-                            if (!user) return [3 /*break*/, 3];
+                            if (!user) return [3 /*break*/, 4];
                             uid = user.uid;
                             timestamp = index_1.FirebaseTimestamp.now();
                             return [4 /*yield*/, index_1.db.collection("users").doc(uid).get()];
                         case 1:
                             role = _a.sent();
+                            userInitialData = {
+                                created_at: timestamp,
+                                avatar: user.photoURL,
+                                role: "customer",
+                                uid: uid,
+                                updated_at: timestamp,
+                                username: user.displayName,
+                                email: user.email
+                            };
+                            console.log("success");
                             if (!role.exists) return [3 /*break*/, 3];
                             return [4 /*yield*/, index_1.db.collection("users").doc(uid).get().then(function (snapshot) {
                                     return snapshot.data();
@@ -414,25 +404,29 @@ exports.twitterSignIn = function () {
                                 //  profile: user.profile
                                 // likes:data.likes
                             }));
-                            userInitialData = {
-                                created_at: timestamp,
-                                avatar: user.photoURL,
-                                role: "customer",
-                                uid: uid,
-                                updated_at: timestamp,
-                                username: user.displayName,
-                                email: user.email
-                            };
+                            console.log("twieete");
                             index_1.db.collection("users").doc(uid).set(userInitialData, { merge: true })
                                 .then(function () {
+                                console.log("final");
                                 dispatch(loadingSlice_1.hideLoadingAction());
                                 dispatch(react_router_redux_1.push("/"));
                                 dispatch(snackbarSlice_1.snackbarOpenAction({ text: "twitterアカウントでの認証に成功しました！", type: true }));
                             })["catch"](function () {
                                 alert("ログインに失敗しました。ネットワークエラーなどの可能性があります。お時間がたってから再度お試しください。");
                             });
-                            _a.label = 3;
-                        case 3: return [2 /*return*/];
+                            return [3 /*break*/, 4];
+                        case 3:
+                            index_1.db.collection("users").doc(uid).set(userInitialData, { merge: true })
+                                .then(function () {
+                                console.log("first");
+                                dispatch(loadingSlice_1.hideLoadingAction());
+                                dispatch(react_router_redux_1.push("/"));
+                                dispatch(snackbarSlice_1.snackbarOpenAction({ text: "twitterアカウントでの認証に成功しました！", type: true }));
+                            })["catch"](function () {
+                                alert("ログインに失敗しました。ネットワークエラーなどの可能性があります。お時間がたってから再度お試しください。");
+                            });
+                            _a.label = 4;
+                        case 4: return [2 /*return*/];
                     }
                 });
             }); });

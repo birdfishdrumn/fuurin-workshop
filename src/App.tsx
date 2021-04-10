@@ -7,7 +7,8 @@ import { Footer,BottomNavigator} from "./components/Footer"
 import { Header } from "./components/Header"
 import { Loading,ScrollTop,Snackbar} from "./components/UI"
 import Auth from "./Auth";
-import { Main  } from "assets/GlobalLayoutStyle";
+import { Main } from "assets/GlobalLayoutStyle";
+import GlobalDialog from "components/UI/Dialog/GlobalDialog"
 const App = () => {
   return (
     <Loading>
@@ -19,7 +20,7 @@ const App = () => {
         </Main>
       </ScrollTop>
 
-
+      <GlobalDialog/>
         <Auth notUseEffect>
         <BottomNavigator />
         <div className="mobile_only">

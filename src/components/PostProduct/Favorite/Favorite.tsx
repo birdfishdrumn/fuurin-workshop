@@ -81,7 +81,7 @@ const Favorite:React.FC<LIKE> = ({id,uid,likesId,post,props,userPost}) => {
           {<FavoriteStyle isActive = {likesId.includes(id) && true} />
         }
 
-          {!props &&  <FavoriteCount> {post.uid === uid && post.likes ? post.likes.length : <></>}</FavoriteCount>}
+         <FavoriteCount> {post.uid === uid && post.likes ? post.likes.length : <></>}</FavoriteCount>
 
                   </IconButton>
             {/* {!props && !userPost && <FavoriteText>いいね！</FavoriteText>} */}

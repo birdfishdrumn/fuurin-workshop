@@ -13,18 +13,17 @@ const StyledIconButton= styled(IconButton)`
   position:absolute;
   right:5px;
   top:15px;
-  @media(max-width:768px){
-    right:-10px;
-  }
+
 `
 
 interface PROPS {
   type: string;
   name: string;
+  cropper?: boolean;
 }
 
 
-const HelpButton:React.FC<PROPS> = ({type,name}) => {
+const HelpButton:React.FC<PROPS> = ({type,name,cropper}) => {
   const [helpDialogOpen, setHelpDialogOpen] = useState<boolean>(false);
      const helpDialogClose = useCallback(() => {
      setHelpDialogOpen(false)
@@ -39,7 +38,7 @@ const HelpButton:React.FC<PROPS> = ({type,name}) => {
       </HelpIconWrapper>
       <HelpDialog title={name}
         type={type}
-
+        cropper={cropper}
         helpDialogClose={helpDialogClose} helpDialogOpen={helpDialogOpen} />
     </div>
   )

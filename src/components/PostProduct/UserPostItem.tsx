@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
 const UserPostItem = (props) => {
   const classes = useStyles()
   const dispatch = useDispatch()
-  const selector = useSelector((state) => state)
+
    const [openModal,setOpenModal] =useState(false)
   const postInFavorite = useSelector(getPostsInFavorite);
   const name = props.post.name

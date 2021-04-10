@@ -30,52 +30,51 @@ export const deletePost = (id: string,uid:string) => {
 
 export const savePost = (id: string, name: string, description: string, category: string, images: any,allImages:any,username: string,avatar: string,uid:string,tags:string[],check:boolean): AppThunk => {
   return async (dispatch: AppDispatch) => {
-       dispatch(showLoadingAction("Loading"));
-    const timestamp = FirebaseTimestamp.now()
-    const data:any = {
-      category: category,
-      description: description,
-      name: name,
-      images: images,
-      allImages: allImages,
-      username: username,
-      avatar: avatar,
-      uid: uid,
-      tags: tags,
-      updated_at: timestamp,
-      check:check
-    }
+    try {
+      dispatch(showLoadingAction("作品を登録しています"));
+      const timestamp = FirebaseTimestamp.now()
+      const data: any = {
+        category: category,
+        description: description,
+        name: name,
+        images: images,
+        allImages: allImages,
+        username: username,
+        avatar: avatar,
+        uid: uid,
+        tags: tags,
+        updated_at: timestamp,
+        check: check
+      }
 
       if (id === "") {
-     const ref = postsRef.doc()
-      data.created_at = timestamp;
+        const ref = postsRef.doc()
+        data.created_at = timestamp;
+        // 新しく配列を定義してしまうので、constいらない　
+        id = ref.id;
+        data.id = id;
+      }
       // 新しく配列を定義してしまうので、constいらない　
-      id = ref.id;
-      data.id = id;
-   }
-      // 新しく配列を定義してしまうので、constいらない　
-
-    return postsRef.doc(id).set(data, {
+      console.log("失敗")
+      return postsRef.doc(id).set(data, {
         merge: true
-    })
-
-      .then(async () => {
-
+      }).then(async () => {
+        console.log("失敗")
         // タグのみをタグコレクションに登録する処理
         // for分に配列で回ってきたタグを一つずつ展開してコレクションに入れていく。
-         for (let i = 0; i < tags.length; i++) {
-    const tagElement = tags[i];
+        for (let i = 0; i < tags.length; i++) {
+          const tagElement = tags[i];
           //  console.log(tagElement)
-           const ref = db.collection("tags").doc()
+          const ref = db.collection("tags").doc()
           const id = ref.id
           const sameTag = db.collection("tags").where("tag", "==", tagElement).get()
           const result = await db.collection("tags").where("tag", "==", tagElement).get()
           //  console.log(result)
           //  もしタグの一つがデータベースに存在していたら統合する。
           if (result.size) {
-                sameTag.then((snapshot) => {
+            sameTag.then((snapshot) => {
               snapshot.forEach(doc => {
-              const tagId= doc.data().id
+                const tagId = doc.data().id
 
                 console.log(tagId)
                 if (tagId) {
@@ -90,34 +89,36 @@ export const savePost = (id: string, name: string, description: string, category
               })
             })
           } else {
-                 db.collection("tags").doc(id).set({
+            db.collection("tags").doc(id).set({
               tag: tagElement,
               id: id
             })
           }
+        }
 
 
-         }
-
-
-        dispatch(push("/"))
-dispatch(hideLoadingAction());
 
       }).then(() => {
-
-        dispatch(snackbarOpenAction({ text:"作品を登録しました",type:true}))
+        dispatch(push("/"))
+        dispatch(hideLoadingAction());
+        dispatch(snackbarOpenAction({ text: "作品を登録しました", type: true }))
       }
       ).catch((error) => {
-       dispatch(hideLoadingAction())
+        dispatch(hideLoadingAction())
+        dispatch(snackbarOpenAction({ text: "処理に失敗しました", type: false }))
         throw new Error(error)
       })
+    } catch (err) {
+           dispatch(snackbarOpenAction({ text: "処理に失敗しました", type: false }))
+             dispatch(hideLoadingAction())
 
+    }
   }
 }
 
-export const fetchPosts = ():AppThunk  => {
+export const fetchPosts = (id:string):AppThunk  => {
   return async (dispatch: AppDispatch) => {
-    postsRef.orderBy("updated_at", "desc").get()
+    postsRef.where("uid","==",id).orderBy("updated_at", "desc").get()
       .then(snapshots => {
         const postList: any[] = []
         snapshots.forEach(snapshot => {
@@ -128,6 +129,7 @@ export const fetchPosts = ():AppThunk  => {
     })
   }
 }
+
 
 export const addUserPost = (uid: string) => {
   return async (dispatch) => {

@@ -1,6 +1,7 @@
 export { default as Favorite } from "./Favorite/Favorite"
 export { default as Comment } from "./Comment/Comment"
 export { default as CarouselItem } from "./CarouselItem"
+export { default as ColorContainerBox } from "./ColorContainer/ColorContainerBox"
 export { default as FavoriteListItem } from "./FavoriteListItem"
 export { default as FavoriteUserList } from "./FavoriteUserList"
 // export { default as ImageArea } from "./ImageArea"

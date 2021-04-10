@@ -8,7 +8,8 @@ import { addUserPost } from "../reducks/posts/operations";
 import { getUserPosts } from "../reducks/posts/postSlice";
 import SentimentDissatisfiedOutlinedIcon from '@material-ui/icons/SentimentDissatisfiedOutlined';
 import { makeStyles } from "@material-ui/core/styles";
-import { getUserAvatar,getUserId } from "../reducks/users/userSlice";
+import { getUserAvatar, getUserId } from "../reducks/users/userSlice";
+import {POST} from "types/posts"
 
 // import Carousel from 'react-material-ui-carousel'
 const useStyles = makeStyles((theme) => ({
@@ -24,7 +25,7 @@ const UserPost = () => {
   const classes = useStyles();
   const dispatch = useDispatch()
 
-const posts = useSelector(getUserPosts);
+const posts:POST[] = useSelector(getUserPosts);
   const uid = useSelector(getUserId)
 
   useEffect(() => {
@@ -39,7 +40,7 @@ console.log(posts)
         <List className={classes.root}>
         {posts.length > 0 ?
           posts.map((post) => (
-            <UserPostItem
+            <UserPostItem key={post.id}
            post={post}
             />
           )

@@ -1,7 +1,7 @@
 import React, { useEffect,useState }  from 'react'
 import { useDispatch, useSelector } from "react-redux";
 import { PostCard} from "./index";
-import { GridList} from "assets/GlobalLayoutStyle";
+import { GridList,Title} from "assets/GlobalLayoutStyle";
 import { db} from "../../firebase";
 // import { getPosts } from "../reducks/posts/
 interface PROPS {
@@ -63,7 +63,7 @@ const RelationPost:React.FC<PROPS> = (props) => {
       ):<></>
     }
       </GridList>
-      {relationPosts.length === 0 && <h1>関連作品はありません</h1>}
+      {relationPosts.length === 0 && <Title min>関連作品はありません</Title>}
       </section>
   )
 }

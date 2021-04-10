@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/styles";
 
 const useStyles = makeStyles({
   button: {
-    backgroundColor: "#4dd0e1",
+    backgroundColor: "#00CED1",
     color: "#fff",
     fontSize: 16,
     fontWeight:"bold",
@@ -12,6 +12,9 @@ const useStyles = makeStyles({
     marginButton: 20,
     width: 220,
     marginTop: 20,
+   '&:hover': {
+         background: "#006699",
+      },
   },
 });
 const PrimaryButton = (props) => {

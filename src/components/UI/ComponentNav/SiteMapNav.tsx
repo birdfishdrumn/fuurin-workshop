@@ -38,12 +38,12 @@ const SiteMapNav = () => {
             <BoldText min>ポリシー</BoldText>
             </NavImageContainer>
                           <NavImageContainer onClick={()=>toChange("/workshopkit")}>
-            <NavImage src="https://firebasestorage.googleapis.com/v0/b/instagram-react-a7035.appspot.com/o/sozai%2F%E9%A2%A8%E9%88%B4%E3%81%AE%E3%82%A2%E3%82%A4%E3%82%B3%E3%83%B3.png?alt=media&token=9a97ae2a-b3d9-4a07-b280-867dabae033b" />
+            <NavImage src="https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/sozai%2F%E7%AD%86%E3%81%AE%E3%82%A2%E3%82%A4%E3%82%B3%E3%83%B36.png?alt=media&token=7205b206-a74b-4f3e-acb8-4dea80946c20" />
             <BoldText min>体験キット</BoldText>
             </NavImageContainer>
-                          <NavImageContainer onClick={()=>toChange("/help")}>
-            <NavImage src="https://firebasestorage.googleapis.com/v0/b/instagram-react-a7035.appspot.com/o/sozai%2F%E9%8D%B5%E3%81%AE%E3%82%AA%E3%83%BC%E3%83%95%E3%82%9A%E3%83%B3%E3%82%A2%E3%82%A4%E3%82%B3%E3%83%B3%E7%B4%A0%E6%9D%90.png?alt=media&token=150b483c-d565-41bb-8862-a26e345d0ecd" />
-            <BoldText min>素材について</BoldText>
+                          <NavImageContainer onClick={()=>toChange("/about")}>
+            <NavImage src="https://firebasestorage.googleapis.com/v0/b/instagram-react-a7035.appspot.com/o/sozai%2F%E9%A2%A8%E9%88%B4%E3%81%AE%E3%82%A2%E3%82%A4%E3%82%B3%E3%83%B3.png?alt=media&token=9a97ae2a-b3d9-4a07-b280-867dabae033b" />
+            <BoldText min>江戸風鈴</BoldText>
             </NavImageContainer>
             </IconFlex>
 

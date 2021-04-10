@@ -4,6 +4,6 @@ export type PUSH = {
   title: string;
   message: string;
   id: string;
-  images?: string
-  date: firebase.firestore.Timestamp;
+  images?: string;
+  date?: firebase.firestore.Timestamp;
 }

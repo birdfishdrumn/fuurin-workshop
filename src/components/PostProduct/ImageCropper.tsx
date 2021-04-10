@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useCallback } from "react";
+import React, { useState, useEffect,useCallback,memo } from "react";
 import { Link } from "react-router-dom";
 import { storage } from "../../firebase";
 import { makeStyles,withStyles,WithStyles,createStyles, Theme   } from "@material-ui/core/styles";
@@ -18,7 +18,7 @@ import {
 //  DialogTitle,
   Backdrop
 } from "@material-ui/core";
-import { PrimaryButton } from "components/UI";
+import { PrimaryButton,NormalButton } from "components/UI";
 import loadImage from 'blueimp-load-image';
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
@@ -110,7 +110,7 @@ interface PROPS {
 }
 
 
-const UpLoadTest:React.FC<PROPS> = ({ images, setImages,all }) => {
+const UpLoadTest:React.FC<PROPS> = memo(({ images, setImages,all }) => {
    const theme = useTheme();
  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -123,7 +123,6 @@ const UpLoadTest:React.FC<PROPS> = ({ images, setImages,all }) => {
   const classes = useStyles(); //Material-ui
   const [cropper, setCropper] = useState<any>();
   const [open, setOpen] = useState<boolean>(false);
-
   const [openCircularProgress, setOpenCircularProgress] = useState<boolean>(false); //処理中みたいモーダル
 // 画像を切り取る前の処理
   const handleImage = (e: any) => {
@@ -170,6 +169,7 @@ const UpLoadTest:React.FC<PROPS> = ({ images, setImages,all }) => {
 
       // アップロード処理
       console.log("アップロード処理");
+      // @ts-ignore
       canvas.image.toBlob((imagedata) => {
          const storageRef = storage.ref("images/test/"); //どのフォルダの配下に入れるかを設定
       const imagesRef = storageRef.child(fileName); //ファイル名
@@ -299,15 +299,10 @@ const UpLoadTest:React.FC<PROPS> = ({ images, setImages,all }) => {
             </DialogContent>
           <Divider/>
           <DialogActions>
-               <button
-            // variant="contained"
-            // size="large"
 
-            // color="primary"
-            // label="画像を切り取る"
+            <NormalButton
               onClick={getCropData}
-
-          >切り取り</button>
+              label="切り取り"/>
 
 
 
@@ -332,7 +327,7 @@ const UpLoadTest:React.FC<PROPS> = ({ images, setImages,all }) => {
       </Dialog>
     </div>
   );
-};
+});
 
 function LinearProgressWithLabel(props) {
   return (

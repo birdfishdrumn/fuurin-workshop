@@ -1,4 +1,5 @@
-import React,{useState} from 'react';
+import React, { useState } from 'react';
+import {BoldText} from "assets/GlobalLayoutStyle"
 import { withStyles,WithStyles,createStyles, Theme  } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -8,11 +9,10 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import { deletePost } from "../../../reducks/posts/operations";
 import {useSelector,useDispatch} from "react-redux";
-
-import { SignIn, SignUp } from "../../PostProduct/index";
 import { makeStyles } from "@material-ui/core/styles";
+import { SignIn, SignUp } from "components/PostProduct/index";
+import { dialogOpenAction,dialogCloseAction,getDialogState,getDialogType,getDialogTypeState,getDialogTitle } from "reducks/dialog/dialogSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -43,6 +43,7 @@ export interface DialogTitleProps extends WithStyles<typeof styles> {
   id: string;
   children: React.ReactNode;
   onClose: () => void;
+
 }
 
 const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
@@ -72,36 +73,36 @@ const DialogActions = withStyles((theme: Theme) => ({
   },
 }))(MuiDialogActions);
 
-interface PROPS {
-  signIn?: boolean;
-  setSign: React.Dispatch<React.SetStateAction<boolean>>;
-  open: boolean;
-  handleClose: ()=>void
-}
-
- const  CustomDialog:React.FC<PROPS> = ({open,handleClose,signIn,setSign}) =>{
-
-   const dispatch = useDispatch()
- const classes = useStyles()
-  // const handleClickOpen = () => {
-  //   setOpen(true);
-  // };
 
 
+const CustomDialog: React.FC = ({ }) => {
+    const [sign,setSign] = useState<boolean>(false)
+   const open = useSelector(getDialogState);
+  const type = useSelector(getDialogType);
+  const typeState = useSelector(getDialogTypeState)
+  const title = useSelector(getDialogTitle)
+   const classes = useStyles()
+   const dispatch=useDispatch()
+   const handleClose = () => {
+   dispatch(dialogCloseAction())
+ }
 
   return (
     <div>
 
-      <Dialog className={classes.root}onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
+      <Dialog className={classes.root} onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
              <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-         {signIn ? "ログイン" : "アカウントを登録"}
+          {title ? title : typeState ? "アカウントを登録" : "ログイン" }
         </DialogTitle>
         <DialogContent >
-          {signIn ?
-            <SignIn setSign={setSign} />
-            :
-            <SignUp setSign={setSign}/>
-        }
+          {type === "sign" &&
+          typeState ?  <SignUp/> :<SignIn/>
+
+          }
+          {type === "favorite" &&
+            <BoldText>作品をお気に入りに登録しました。</BoldText>
+
+          }
 
         </DialogContent>
         <DialogActions>

@@ -1,12 +1,12 @@
 import firebase from "firebase/app"
-
+import { POST } from "./posts"
 export type LIKE = {
   id: string;
   uid: string;
   likesId: string[];
-  post: any;
+  post: POST;
   props?: string;
-  userPost?: any;
+  userPost?: boolean;
 }
 
 export type addLike = {

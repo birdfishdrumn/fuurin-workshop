@@ -76,9 +76,10 @@ interface PROPS {
   helpDialogOpen: boolean;
   title: string;
   type: string;
+  cropper?: boolean;
 }
 
- const  CustomDialog:React.FC<PROPS> = ({helpDialogClose,helpDialogOpen,  title,type}) =>{
+ const  CustomDialog:React.FC<PROPS> = ({helpDialogClose,helpDialogOpen,  title,type,cropper}) =>{
 
  const classes = useStyles()
 

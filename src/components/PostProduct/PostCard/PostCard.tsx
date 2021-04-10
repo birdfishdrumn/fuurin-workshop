@@ -93,24 +93,20 @@ const changeStyles = makeStyles((theme) => ({
 
 
 
-const PostCard:React.FC<POST> = (props) => {
+const PostCard: React.FC<POST> = (props) => {
+  const {id,change,name,post} = props
   const classes = useStyles();
   const changeClass = changeStyles()
   const dispatch = useDispatch();
   const uid = useSelector(getUserId)
-   const [open,setOpen] =useState(false)
-  const id = props.id
-  const change =props.change
-  const name = props.name
+
+
   console.log(props.images)
  const postInFavorite =useSelector(getPostsInFavorite);
-console.log(postInFavorite)
+
   const likesId= postInFavorite.map((post: any) =>
     post.postId)
-  const handleChange = () => {
 
-      setOpen(true)
-    }
 
 
 
@@ -155,7 +151,7 @@ console.log(postInFavorite)
               <Avatar src={props.avatar} aria-label="recipe" className={classes.avatar} />
                  <div className={classes.favorite}>
 
-              {<Favorite id={id} uid={uid} likesId={likesId} post={props.post} props="true" />}
+              {<Favorite id={id} uid={uid} likesId={likesId} post={post} props="true" />}
             </div>
                   </>}
 

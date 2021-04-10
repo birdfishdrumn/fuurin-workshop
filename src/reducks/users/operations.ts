@@ -9,20 +9,22 @@ import {login,logout,fetchPostsInFavoriteAction,getUserId} from "./userSlice"
 import { push } from "react-router-redux";
 import { snackbarOpenAction } from "../snackbar/snackbarSlice"
 import { modalOpenAction } from "reducks/modal/modalSlice";
-
+import { dialogCloseAction } from "reducks/dialog/dialogSlice";
 export const signIn = (email: string, password: string): AppThunk => {
 
   return async (dispatch) => {
 
-          dispatch(showLoadingAction("サインインしています..."));
+          dispatch(showLoadingAction("ログインしています..."));
     if (email === "" || password === "") {
         dispatch(hideLoadingAction());
       alert("必須項目が未入力です。")
       return false
     }
    return auth.signInWithEmailAndPassword(email, password)
-      .then((result) => {
-        const userState = result.user
+     .then(async(result) => {
+
+       const userState = result.user
+
         if (!userState) {
           dispatch(hideLoadingAction());
           alert("パスワードかemailが違います")
@@ -38,15 +40,22 @@ export const signIn = (email: string, password: string): AppThunk => {
           dispatch(push("/signin"))
         }
 
-        const uid = userState.uid
+       const uid = userState.uid
+       const first = await db.collection("users").doc(uid).get().then((snapshot) => {
+          return snapshot.data().firstLogin
+        })
+       if (currentUser.emailVerified && first === true) {
+         dispatch(hideLoadingAction());
+           dispatch(dialogCloseAction());
+         dispatch(push("/setting"))
 
-   return db.collection("users").doc(uid).get().then(snapshot => {
+       } else {
+             db.collection("users").doc(uid).get().then(snapshot => {
         const data = snapshot.data();
         if (!data) {
             dispatch(hideLoadingAction());
           throw new Error('ユーザーデータが存在しません');
         }
-
 
               dispatch(login({
                 isSignedIn: true,
@@ -57,7 +66,7 @@ export const signIn = (email: string, password: string): AppThunk => {
                  avatar: data.avatar,
                  url:data.url
               }))
-
+       dispatch(dialogCloseAction());
   //
    }).then(() => {
      dispatch(push("/"))
@@ -65,7 +74,9 @@ export const signIn = (email: string, password: string): AppThunk => {
      dispatch(hideLoadingAction());
      dispatch(snackbarOpenAction({ text:"ログインしました！",type:true}))
             })
+         }
 
+      //  signInWithEmailAndPasswordまでの処理
       }).catch(() => {
         dispatch(snackbarOpenAction({ text:"パスワードかemailアドレスが違います。",type:false}))
                 dispatch(hideLoadingAction());
@@ -108,9 +119,10 @@ export const signUp = (username: string, email: string, password: string, confir
               uid: uid,
               updated_at: timestamp,
               username: username,
-              first: false,
-              avatar:"",
-              url:""
+              firstLogin: true,
+              avatar: "https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/sozai%2Fnoimage.jpg?alt=media&token=b84c418e-e302-425b-a6a0-985422aa86a8",
+              profile:"",
+              url: "",
             }
               // auth.signOut()
             // 確認のE-Mail送信に成功
@@ -146,6 +158,7 @@ export const signOut = ():AppThunk => {
      dispatch(showLoadingAction("Sign out..."))
     auth.signOut()
       .then(() => {
+        // パーミションエラーが発生
         dispatch(logout())
         dispatch(hideLoadingAction());
         dispatch(push("/signin"));
@@ -201,7 +214,7 @@ export const  listenAuthNotState= ():AppThunk => {
 
               const data: any = snapshot.data()
               // if文がないとエラーが出る
-
+              if (data) {
                 console.log(data)
                 dispatch(login({
                   isSignedIn: true,
@@ -210,9 +223,10 @@ export const  listenAuthNotState= ():AppThunk => {
                   email: data.email,
                   username: data.username,
                   avatar: data.avatar,
-                 profile: data.profile,
-                 url:data.url
+                  profile: data.profile,
+                  url: data.url
                 }))
+              }
             })
       }
     })
@@ -238,94 +252,71 @@ export const addPostToFavorite = (addedPost: any,uid:string):AppThunk => {
   }
 };
 
-// export const fetchPush = () => {
-//   return async (dispatch,getState) => {
-// const uid = getState().users.uid
-//        const userRef = db.collection("users").doc(uid)
-//     userRef.collection("message").orderBy("createdAt","desc").get().then((snapshots) => {
-//       const newDate = new Date()
-//       const newHour = newDate.getDate()
-//       const list = []
-//       snapshots.forEach((snapshot) => {
-//         const data = snapshot.data()
-//         const date = data.createdAt.toDate().getDate()
 
-//         const numDate = Number(date)
-//         const checkDate = newHour - numDate
-//         console.log(checkDate)
-//         list.push(data)
-//         userRef.collection("message").where("timeLimit", "<=",checkDate).get().then((querySnapshot) => {
-//           querySnapshot.forEach((doc) => {
-//             const id = doc.data().id
-//             return userRef.collection("message").doc(id).delete()
-//           })
-//           // setPush(data)
-//           // setMsgDate(date)
-//           //   console.log(date)
-//           // console.log(uid)
-//         })
-
-//       }
-
-//       )
-//        dispatch(pushMessageAction(list))
-//     })
-//   }
-//  }
 
 export const googleSignIn = ():AppThunk => {
   return async (dispatch) => {
     auth.signInWithPopup(provider).then(async result => {
         const user = result.user
 
+      if (user) {
+        const uid = user.uid
+        const timestamp = FirebaseTimestamp.now()
+        const role = await db.collection("users").doc(uid).get()
+                const userInitialData = {
+          created_at: timestamp,
+          avatar: user.photoURL,
+          role: "customer",
+          uid: uid,
+          updated_at: timestamp,
+          username: user.displayName,
+          email: user.email,
+                }
+        dispatch(dialogCloseAction());
+        // userがすでにデータベースに存在しているかどうか確認
+        if (role.exists) {
+          const data = await db.collection("users").doc(uid).get().then(snapshot => {
+            return snapshot.data();
+          })
 
-        if (user) {
-          const uid = user.uid
-          const timestamp = FirebaseTimestamp.now()
-          const role = await db.collection("users").doc(uid).get()
-
-          if (role.exists) {
-            const data = await db.collection("users").doc(uid).get().then(snapshot => {
-              return snapshot.data();
-            })
-              dispatch(login({
-                isSignedIn: true,
-                // role: user.role,
-                uid: uid,
-                avatar: user.photoURL,
-                username: user.displayName,
-                email: user.email,
-                 profile: data.profile,
-                 url:data.url
-                // likes:data.likes
-              }))
-              //   dispatch(hideLoadingAction());
-              // dispatch(push("/"))
-
-
-          }
-
-          const userInitialData = {
-            created_at: timestamp,
-            avatar: user.photoURL,
-            role: "customer",
+          dispatch(login({
+            isSignedIn: true,
+            // role: user.role,
             uid: uid,
-            updated_at: timestamp,
+            avatar: user.photoURL,
             username: user.displayName,
             email: user.email,
+            profile: data.profile,
+            url: data.url
+            // likes:data.likes
+          }))
 
-            // first:false
-            // profile:user.profile
-          }
 
-          db.collection("users").doc(uid).set(userInitialData,{merge:true})
-            .then(() => {
+
+        db.collection("users").doc(uid).set(userInitialData, { merge: true })
+          .then(() => {
+            dispatch(hideLoadingAction());
+
+            dispatch(snackbarOpenAction({ text: "googleアカウントでの認証に成功しました！", type: true }))
+            dispatch(push("/"))
+
+          })
+        }
+        // 初めてのログイン
+        else {
+                   db.collection("users").doc(uid).set(userInitialData, { merge: true })
+
+                     .then(() => {
               dispatch(hideLoadingAction());
-                dispatch(snackbarOpenAction({ text:"googleアカウントでの認証に成功しました！",type:true}))
-              dispatch(push("/"))
+              dispatch(push("/setting"))
 
+            }).catch(() => {
+              alert("ログインに失敗しました。ネットワークエラーなどの可能性があります。お時間がたってから再度お試しください。")
             })
+        }
          }
+    }).catch(() => {
+         dispatch(snackbarOpenAction({ text: "ログインに失敗しました。ネットワークエラー、または他のアカウントで同じメールアドレスを使用している可能性があります。", type: false }))
     })
   }
 }
@@ -343,6 +334,17 @@ export const twitterSignIn = (): AppThunk => {
         const uid = user.uid
         const timestamp = FirebaseTimestamp.now()
         const role = await db.collection("users").doc(uid).get()
+              const userInitialData = {
+            created_at: timestamp,
+            avatar: user.photoURL,
+            role: "customer",
+            uid: uid,
+            updated_at: timestamp,
+            username: user.displayName,
+            email: user.email
+
+          }
+        console.log("success")
         if (role.exists) {
           const data = await db.collection("users").doc(uid).get().then(snapshot => {
             return snapshot.data();
@@ -362,31 +364,33 @@ export const twitterSignIn = (): AppThunk => {
             // likes:data.likes
           }))
 
-
-
-
-          const userInitialData = {
-            created_at: timestamp,
-            avatar: user.photoURL,
-            role: "customer",
-            uid: uid,
-            updated_at: timestamp,
-            username: user.displayName,
-            email: user.email
-
-          }
-
           db.collection("users").doc(uid).set(userInitialData, { merge: true })
 
             .then(() => {
+
               dispatch(hideLoadingAction());
+                  dispatch(dialogCloseAction());
               dispatch(push("/"))
               dispatch(snackbarOpenAction({ text: "twitterアカウントでの認証に成功しました！", type: true }))
             }).catch(() => {
               alert("ログインに失敗しました。ネットワークエラーなどの可能性があります。お時間がたってから再度お試しください。")
             })
+        } else {
+
+                   db.collection("users").doc(uid).set(userInitialData, { merge: true })
+
+                     .then(() => {
+
+                       dispatch(hideLoadingAction());
+                        dispatch(dialogCloseAction());
+                  dispatch(push("/setting"))
+            }).catch(() => {
+              alert("ログインに失敗しました。ネットワークエラーなどの可能性があります。お時間がたってから再度お試しください。")
+            })
         }
       }
+    }).catch(() => {
+         dispatch(snackbarOpenAction({ text: "ログインに失敗しました。ネットワークエラー、または他のアカウントで同じメールアドレスを使用している可能性があります。", type: false }))
     })
   }
 }
@@ -402,22 +406,27 @@ export const fetchPostsInFavorite = (posts: string[]):AppThunk => {
 
 export const userDelete = (uid):AppThunk => {
   return async (dispatch) => {
+    try{
           dispatch(showLoadingAction("退会処理をしています..."))
     const user = auth.currentUser;
     console.log(user)
     // 順番の注意　先にいuser.deleteした後だと処理が完了しない。
-     await db.collection("users").doc(uid).delete()
-     user.delete().then(() => {
+    await db.collection("users").doc(uid).delete()
+    user.delete().then(() => {
 
-        dispatch(logout())
+      dispatch(logout())
       dispatch(hideLoadingAction());
-        dispatch(snackbarOpenAction({ text: "退会しました！またのお越しをお待ちしております。", type: true }))
+      dispatch(snackbarOpenAction({ text: "退会しました！またのお越しをお待ちしております。", type: true }))
       dispatch(push("/signin"))
 
-     }).catch((error) => {
-       dispatch(hideLoadingAction());
-         dispatch(snackbarOpenAction({ text: "処理に失敗しました。再ログインして再度お試しください。", type: false }))
-})
+    }).catch(() => {
+      dispatch(hideLoadingAction());
+      dispatch(snackbarOpenAction({ text: "処理に失敗しました。再ログインして再度お試しください。", type: false }))
+    })
+    } catch {
+      dispatch(hideLoadingAction());
+      dispatch(snackbarOpenAction({ text: "処理に失敗しました。再ログインして再度お試しください。", type: false }))
+  }
 
   }
 }

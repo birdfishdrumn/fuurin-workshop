@@ -11,7 +11,7 @@ import Button from "@material-ui/core/Button";
 import { ConfirmModal } from "components/UI/index";
 import SearchIcon from "@material-ui/icons/Search";
 import IconButton from "@material-ui/core/IconButton"
-import { SignDialog } from "components/UI/index";
+import { dialogOpenAction } from "reducks/dialog/dialogSlice";
 import { push } from "connected-react-router";
 import styled from "styled-components"
 
@@ -103,20 +103,14 @@ const signInOpen = () =>{
                     <IconButton className={classes.search}>
                     <SearchIcon style={{fontSize:"30px"}}onClick={ ()=>dispatch(push("/search"))}/>
               </IconButton>
-          <Button className={classes.outlined} color="primary" variant="contained" onClick={signInOpen} >新規登録</Button>
+          <Button className={classes.outlined} color="primary" variant="contained" onClick={()=>dispatch(dialogOpenAction({title:"アカウントの登録",type:"sign",typeState:true}))} >新規登録</Button>
 
                   </div>
-         <SignDialog open={dialogOpen} handleClose={dialogClose} signIn={sign} setSign={setSign} />
+
                   <ConfirmModal />
-
-
           </>
             )
-
         }
-
-
-
         </Toolbar>
 
       </AppBar>

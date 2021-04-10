@@ -8,7 +8,7 @@ import { push } from "connected-react-router"
 import styled from "styled-components"
 import { Divider } from "@material-ui/core";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCoffee } from '@fortawesome/free-solid-svg-icons'
+import {dialogStateChangeAction} from "reducks/dialog/dialogSlice"
 import { faGoogle,faTwitter,faFacebook } from '@fortawesome/free-brands-svg-icons'
 
 const SignInWrapper = styled.div`
@@ -27,13 +27,9 @@ justify-content:space-around;
 }
 `
 
-interface PROPS {
-    setSign: React.Dispatch<React.SetStateAction<boolean>>;
-}
 
 
-
-const SignIn: React.FC<PROPS> = (props: any) => {
+const SignIn: React.FC= (props: any) => {
   const history = useHistory()
   const dispatch = useDispatch();
   const  [email, setEmail] = useState<string>(""),
@@ -107,7 +103,7 @@ const SignIn: React.FC<PROPS> = (props: any) => {
           </SNS>
        <div className="module-spacer--medium" />
 
-        <p className="pointer" onClick={() => props.setSign(false)}>
+        <p className="pointer" onClick={() => dispatch(dialogStateChangeAction(true))}>
           新規登録はこちら
         </p>
          <p className="pointer" onClick={() =>dispatch(push("/signin/reset"))}>

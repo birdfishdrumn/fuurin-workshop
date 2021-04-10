@@ -45,7 +45,7 @@ export default function CustomizedSnackbars() {
         Open success snackbar
       </Button> */}
 
-      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}
+      <Snackbar open={open} autoHideDuration={7000} onClose={handleClose}
 
        anchorOrigin={{ vertical:"top", horizontal:"center" }}
       >

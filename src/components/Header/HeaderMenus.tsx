@@ -7,17 +7,22 @@ import {makeStyles,createStyles} from '@material-ui/core/styles';
 // import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder"
 import SearchIcon from "@material-ui/icons/Search";
-import { getIsSignedIn, getUserId } from "../../reducks/users/userSlice";
+import { getIsSignedIn, getUserId,getUserAvatar } from "../../reducks/users/userSlice";
 import {getPostsInFavorite} from "../../reducks/users/userSlice"
 import { fetchPostsInFavorite} from "../../reducks/users/operations";
 import MenuIcon from "@material-ui/icons/Menu"
 import { SearchBox } from "../UI";
 import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone';
 import { db } from "../../firebase/index"
-import PushList from "./PushList"
-import Popover from '@material-ui/core/Popover';
-import { PopperWrapper}from "./style"
+import Tooltip from '@material-ui/core/Tooltip';
+import PushList from "./PopOverPushList"
+// import Popover from '@material-ui/core/Popover';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import BrushIcon from '@material-ui/icons/Brush';
 import { push } from "connected-react-router";
+import Avatar from '@material-ui/core/Avatar';
+import PopOver from "./PopOver"
+
 
 
 const useStyles = makeStyles((theme) =>
@@ -61,6 +66,10 @@ const useStyles = makeStyles((theme) =>
     typography: {
       padding: theme.spacing(2),
     },
+         small: {
+      width: theme.spacing(4),
+      height: theme.spacing(4),
+    },
 
 
 
@@ -79,7 +88,8 @@ const HeaderMenus: React.FC<PROPS> = (props) => {
   const isSP = window.matchMedia('screen and (max-width: 767px)').matches;
   const dispatch = useDispatch()
   const uid = useSelector(getUserId)
-  const isSignedIn =useSelector(getIsSignedIn)
+  const isSignedIn = useSelector(getIsSignedIn)
+  const avatar = useSelector(getUserAvatar)
   const classes = useStyles()
     const likesPost = useSelector(getPostsInFavorite)
   let postInFavorite: string[] = []
@@ -87,14 +97,15 @@ const HeaderMenus: React.FC<PROPS> = (props) => {
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const [pushLength,setPushLength] = useState<number>(0)
-
+  const [type,setType] = useState("")
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
 
 
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (type:string)=>(event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
+    setType(type)
   };
 
   const handleClose = () => {
@@ -146,53 +157,56 @@ const HeaderMenus: React.FC<PROPS> = (props) => {
 
   return (
     <div className={classes.headerMenu}>
-           <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-      >
-        <PopperWrapper>
-          <PushList  handleClose={handleClose}/>
-      </PopperWrapper>
-      </Popover>
 
+      <PopOver open={open} anchorEl={anchorEl} handleClose={handleClose} id={id} type={type}/>
 
+          <Tooltip title="絵の描き方" interactive>
+           <IconButton onClick={()=>dispatch(push("/dojo"))}>
+
+                  <BrushIcon style={{fontSize:"28px"}}/>
+
+        </IconButton>
+        </Tooltip>
+           <Tooltip title="検索" interactive>
                <IconButton>
               <SearchIcon style={{fontSize:"30px"}} onClick={ ()=>dispatch(push("/search"))}/>
-              </IconButton>
+        </IconButton>
+        </Tooltip>
 
+         <Tooltip title="お知らせ" interactive>
+            <IconButton onClick={handleClick("push")}>
 
-      {isSignedIn &&
-        <>
-            <IconButton onClick={handleClick}>
-           <Badge badgeContent={pushLength && pushLength} color="error">
                   <NotificationsNoneIcon style={{fontSize:"28px"}}/>
-        </Badge>
-      </IconButton>
+
+          </IconButton>
+          </Tooltip>
       <div className="mobile_only" >
-            <IconButton onClick={()=>dispatch(push("/likes"))}>
+           <Tooltip title="作品の登録" interactive>
+            <IconButton onClick={ ()=>dispatch(push("/posts/edit"))}>
+
+                  <AddCircleIcon style={{fontSize:"28px"}}/>
+
+          </IconButton>
+          </Tooltip>
+            <Tooltip title="お気に入り" interactive>
+          <IconButton onClick={() => dispatch(push("/likes"))}>
+
            <Badge badgeContent={likesPost && likesPost.length} color="error">
                   <FavoriteBorderIcon style={{fontSize:"28px"}}/>
-        </Badge>
-        </IconButton>
+              </Badge>
+
+          </IconButton>
+            </Tooltip>
+         <Tooltip title="プロフィール" interactive>
+          <IconButton onClick={handleClick("profile")}>
+          <Avatar className={classes.small} src={avatar} />
+            </IconButton>
+            </Tooltip>
         </div>
+
       <IconButton  onClick = {(event)=>props.handleDrawerToggle(event)}>
         <MenuIcon style={{fontSize:"28px"}}/>
         </IconButton>
-        </>
-
-
-      }
-
     </div>
   )
 }

@@ -2,10 +2,7 @@ import React, { useState,useCallback }from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
+
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -56,9 +53,7 @@ const AddPostModal:React.FC<PROPS> = ({open,handleClose}) =>{
   },[setOpenModal])
   return (
     <div>
-      {/* <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        Open full-screen dialog
-      </Button> */}
+
       <Dialog fullScreen open={open} style={{margin:"0 !important"}} onClose={handleClose} TransitionComponent={Transition}>
         <AppBar className={classes.appBar}>
           <Toolbar>
@@ -68,6 +63,7 @@ const AddPostModal:React.FC<PROPS> = ({open,handleClose}) =>{
             <Typography variant="h6" className={classes.title}>
               作品の登録・編集
             </Typography>
+
             {/* <Button autoFocus color="inherit" onClick={handleClose}>
               save
             </Button> */}

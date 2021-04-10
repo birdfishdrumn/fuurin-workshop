@@ -4,7 +4,7 @@ import { TextInput, SelectBox, PrimaryButton } from "../components/UI/index";
 
 import { db,storage ,FirebaseTimestamp,auth} from "../firebase/index"
 import firebase from "firebase/app"
-import { getUsername, getUserAvatar, getUserId, getUserUrl, updateUserAction, getUserProfile } from "../reducks/users/userSlice";
+import { getUsername, getUserAvatar, getUserId, getUserUrl, updateUserAction, getUserProfile,getEmail } from "../reducks/users/userSlice";
 
 import { Avatar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles"
@@ -14,13 +14,13 @@ import { hideLoadingAction, showLoadingAction } from "../reducks/loadingSlice";
 import { snackbarOpenAction } from "reducks/snackbar/snackbarSlice"
 import { push } from "connected-react-router"
 import loadImage from 'blueimp-load-image';
-import { SectionContainer,Title,BoldText } from 'assets/GlobalLayoutStyle';
+import { SectionWrapper,Title,BoldText } from 'assets/GlobalLayoutStyle';
 import { errorOpenAction,errorCloseAction,getErrorState } from "reducks/errorSlice";
 
 const useStyles = makeStyles((theme) => ({
   large: {
-    width: theme.spacing(15),
-    height: theme.spacing(15),
+    width: theme.spacing(12),
+    height: theme.spacing(12),
     margin: "auto"
   },
   hideIcon: {
@@ -30,8 +30,11 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
+interface PROPS {
+  setting: boolean;
+}
 
-const UserEdit: React.FC = () => {
+const UserEdit: React.FC<PROPS> = ({setting}) => {
     const dispatch = useDispatch();
 
 const classes = useStyles();
@@ -39,10 +42,10 @@ const classes = useStyles();
   const currentUrl: string = useSelector(getUserUrl);
   const currentAvatar: string = useSelector(getUserAvatar);
   const currentProfile: string = useSelector(getUserProfile)
+   const currentEmail: string = useSelector(getEmail)
   const error = useSelector(getErrorState)
 const uid =useSelector(getUserId)
   const [username, setUsername] = useState<string>(currentUsername || ""),
-
     [profile, setProfile] = useState<string>(currentProfile || ""),
     [avatar, setAvatar] = useState<string>(currentAvatar || ""),
     [url, setUrl] = useState<string>(currentUrl || "");
@@ -78,7 +81,6 @@ const uid =useSelector(getUserId)
   );
 
 
-
     const onChangeImageHandler = async(e:  React.ChangeEvent<HTMLInputElement>) => {
     // ![0]はTypeScriptの使用でnull,undefinedではないことを示す。登録された0番目の配列を返す。
         dispatch(showLoadingAction("uploading..."))
@@ -93,8 +95,8 @@ const uid =useSelector(getUserId)
         const S="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         const N=16;
         const fileName = Array.from(crypto.getRandomValues(new Uint32Array(N))).map((n)=>S[n%S.length]).join('')
-
-      canvas.image.toBlob((blob) => {
+    //  @ts-ignore
+      canvas.image.toBlob((blob: any) => {
         const uploadRef = storage.ref('avatars').child(fileName);
         const uploadTask = uploadRef.put(blob);
 
@@ -113,38 +115,51 @@ const uid =useSelector(getUserId)
     }
 
   const updateUser = async(avatar: string, username: string,profile:string,url:string) => {
-    dispatch(showLoadingAction("ユーザー情報を更新"))
+    dispatch(showLoadingAction("プロフィールを更新"))
     const timestamp = FirebaseTimestamp.now()
-    const userInitialData = {
-
+   const firstLogin={firstLogin:false}
+    const baseData = {
       updated_at: timestamp,
       username: username,
       avatar: avatar,
       uid: uid,
       profile: profile,
-      url:url
-
+      url: url,
+      email:currentEmail
     }
-    const user =auth.currentUser;
-user.updateProfile({
+  // 初回ログインの場合はfirstがtrueになる。
+    const userInitialData =
+    !setting ?
+       baseData
+        :
+        Object.assign(baseData, firstLogin)
+
+    const user:any =auth.currentUser;
+  user.updateProfile({
   displayName: username,
   photoURL: avatar,
 
 }).then(function() {
   console.log("success")
-}).catch(function(error) {
-    console.log("処理に失敗")
+}).catch((error: any) => {
+   dispatch(hideLoadingAction())
+          dispatch(snackbarOpenAction({text: "更新に失敗しました。再度時間が経ってからお試しください。",type:false}))
+
 });
 
     await dispatch(updateUserAction(userInitialData));
 
     // user情報を書き換えた後に、過去の情報が全て書き換えられる処理
     await db.collection("users").doc(uid).set(userInitialData, { merge: true }).then(() => {
-      dispatch(push("/user/mypage"))
-    }).then(() => {
-             dispatch(hideLoadingAction())
-      dispatch(snackbarOpenAction({text: "ユーザー情報の更新をしました！",type:true}))
-
+      if (!setting) {
+        dispatch(push("/user/mypage"))
+        dispatch(hideLoadingAction())
+        dispatch(snackbarOpenAction({ text: "プロフィールの更新をしました！", type: true }))
+      } else {
+        dispatch(push("/"))
+        dispatch(hideLoadingAction())
+        dispatch(snackbarOpenAction({ text: "設定が完了しました！はじめましょう！", type: true }))
+      }
       }).catch(() => {
         dispatch(hideLoadingAction())
           dispatch(snackbarOpenAction({text: "更新に失敗しました。再度時間が経ってからお試しください。",type:false}))
@@ -154,10 +169,10 @@ user.updateProfile({
 
   return (
     <div>
-            <SectionContainer>
-        <Title>ユーザー情報の登録・編集</Title>
+            <SectionWrapper>
+        {!setting && <Title>プロフィールの編集</Title>}
         <div className="c-section-container">
-  <Box textAlign="center">
+        <Box textAlign="center">
 
                 <IconButton>
               <label>
@@ -171,12 +186,12 @@ user.updateProfile({
 
                   </label>
             </IconButton>
-             <p>アバターをタップして変更</p>
+             <BoldText>タップして変更</BoldText>
 </Box>
 
                   <div className="module-spacer--medium" />
  <TextInput
-          fullWidth={true}
+          fullWidth={false}
           label={"お名前"}
           multiline={false}
           required={true}
@@ -190,11 +205,11 @@ user.updateProfile({
 
               <TextInput
           fullWidth={true}
-          label={"紹介文"}
+          label={"プロフィール"}
           multiline={true}
           required={true}
           onChange={inputProfile}
-            rows={12}
+            rows={4}
               variant="outlined"
           value={profile.slice(0,200)}
           type={"text"}
@@ -211,10 +226,11 @@ user.updateProfile({
           value={url}
           type={"text"}
         />
-          <div className="module-spacer--medium" />
+          <div className="module-spacer--small" />
           <div className="center">
+
           <PrimaryButton
-            label={"ユーザー情報を更新"}
+            label={setting ? "設定を完了！" :"ユーザー情報を更新"}
             onClick={() =>
               updateUser(
                     avatar,username,profile,url
@@ -224,7 +240,7 @@ user.updateProfile({
 
             </div>
         </div>
-           </SectionContainer>
+           </SectionWrapper>
     </div>
   )
 }

@@ -27,9 +27,9 @@ export type POST = {
   description: string;
   name: string;
   images: {[key:string]:string}[]
-  // image?: IMAGE;
   allImages: {[key:string]:string}[]
   username: string;
+  likes?: string[];
   avatar: string;
   uid: string;
   likesId?: string;
