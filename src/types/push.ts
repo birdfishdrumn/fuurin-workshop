@@ -6,4 +6,4 @@ export type PUSH = {
   id: string;
   images?: string;
   date?: firebase.firestore.Timestamp;
-}
+};

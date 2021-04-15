@@ -4,9 +4,7 @@ import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import HomeIcon from '@material-ui/icons/Home';
 import FavoriteIcon from '@material-ui/icons/Favorite';
-import PersonIcon from '@material-ui/icons/Person';
 import SearchIcon from '@material-ui/icons/Search';
-import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import Avatar from '@material-ui/core/Avatar';
 import AddIcon from '@material-ui/icons/Add';
 import { push } from "connected-react-router"
@@ -36,32 +34,23 @@ const useStyles = makeStyles((theme) => ({
     },
 }))
 
-
-// const useStyles = makeStyles({
-//   root: {
-//     width: "100%",
-//     position: "fixed",
-//     bottom:0
-//   },
-// });
-
-const BottomNavigator =()=> {
+const BottomNavigator = () => {
+  const dispatch = useDispatch()
   const classes = useStyles();
-    const [open, setOpen] = useState<boolean>(false);
-
-  const handleClickOpen = ():void => {
-    setOpen(true);
-  };
+  const [open, setOpen] = useState<boolean>(false);
+  const [value, setValue] = React.useState(0);
   const avatar = useSelector(getUserAvatar);
-  console.log(avatar)
+    const handleClickOpen = ():void => {
+    setOpen(true);
+    };
+
   const handleClose = ():void => {
     setOpen(false);
   };
-  const [value, setValue] = React.useState(0);
-  const dispatch = useDispatch()
+
   return (
     <>
- <BottomNavigation
+      <BottomNavigation
       value={value}
       onChange={(event, newValue) => {
         setValue(newValue);
@@ -70,7 +59,7 @@ const BottomNavigator =()=> {
       className={classes.root}
     >
       <BottomNavigationAction label="ホーム"
-              onClick={()=>dispatch(push("/"))}
+              onClick={()=>dispatch(push("/timeline"))}
         icon={< HomeIcon />} />
       <BottomNavigationAction label="検索"
       onClick={()=>dispatch(push("/search"))}

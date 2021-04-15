@@ -11,4 +11,4 @@ export type COLORS = {
   quantity3: string;
   id: string;
   colorId: string;
- }
+};

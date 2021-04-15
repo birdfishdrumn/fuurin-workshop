@@ -1,11 +1,8 @@
 import React, {  useEffect } from "react";
-
-// import { listenAuthState } from "./features/userSlice";
-import { getIsSignedIn ,login} from "./reducks/users/userSlice";
+import { getIsSignedIn } from "./reducks/users/userSlice";
 import { useDispatch , useSelector } from "react-redux";
 import { listenAuthState } from "./reducks/users/operations";
-import { auth, db } from "./firebase/index"
-import {useHistory} from "react-router-dom"
+
 
 interface AppProps {
   children?: any
@@ -13,14 +10,11 @@ interface AppProps {
 }
 const Auth: React.FC<AppProps> = ({ children,notUseEffect } ) => {
   const dispatch = useDispatch();
-  const history = useHistory();
   const isSignedIn = useSelector(getIsSignedIn);
-  // signinしていなければ、
 
 
   useEffect(() => {
    if (!notUseEffect && !isSignedIn) {
-      // もしサインインしてなければ、listenAuthStateを呼び出し、ログイン画面に遷移させる。
       dispatch(listenAuthState());
     }
   }, []);
@@ -31,8 +25,6 @@ const Auth: React.FC<AppProps> = ({ children,notUseEffect } ) => {
   } else {
     // サインインしてれば子要素を返す・
     return  children  ;
-    // 子要素はauthコンポーネントに入ってくるコンポーネント。
-    // ここではホームコンポーネント
   }
 };
 

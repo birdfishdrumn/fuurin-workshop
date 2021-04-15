@@ -1,6 +1,7 @@
-import React,{useEffect,useState} from 'react'
-import {SectionWrapping, Title, Text, SimpleGrid, CircleImage,BoldText} from "assets/GlobalLayoutStyle"
-import {cautionData,knackData} from "./cautionData"
+import React  from 'react'
+import {SectionWrapping, Title, SimpleGrid, CircleImage,BoldText} from "assets/GlobalLayoutStyle"
+import { cautionData, knackData } from "./cautionData"
+
 const WorkshopCaution = () => {
   return (
     <SectionWrapping>
@@ -13,9 +14,7 @@ const WorkshopCaution = () => {
             <Title min>{caution.title}</Title>
             <BoldText left color={"dimgray"}>{caution.description}</BoldText>
         </div>
-
       ))}
-
       </SimpleGrid>
          <div className="module-spacer--small" />
       <Title>絵付けのコツ</Title>
@@ -27,13 +26,9 @@ const WorkshopCaution = () => {
             <Title min>{knack.title}</Title>
             <BoldText left color={"dimgray"}>{knack.description}</BoldText>
         </div>
-
       ))}
-
       </SimpleGrid>
     </SectionWrapping>
-
-
   )
 }
 

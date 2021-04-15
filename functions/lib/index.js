@@ -59,6 +59,25 @@ exports.onUpdateUser = functions
             const avatar = newUser.avatar;
             batch.update(comDoc.ref, { username, avatar });
         });
+        const likeUserSnapshot = await db
+            .collectionGroup("likeUser")
+            .where("uid", "==", userId)
+            .get();
+        likeUserSnapshot.docs.forEach((likeUserDoc) => {
+            const username = newUser.username;
+            const avatar = newUser.avatar;
+            const profile = newUser.profile;
+            batch.update(likeUserDoc.ref, { username, avatar, profile });
+        });
+        const replySnapshot = await db
+            .collectionGroup("reply")
+            .where("id", "==", userId)
+            .get();
+        replySnapshot.docs.forEach((replyDoc) => {
+            const username = newUser.username;
+            const avatar = newUser.avatar;
+            batch.update(replyDoc.ref, { username, avatar });
+        });
         await batch.commit();
     }
     catch (err) {
@@ -110,6 +129,13 @@ exports.onDeleteUser = functions
         postSnapshot.docs.forEach((postDoc) => {
             batch.delete(postDoc.ref);
         });
+        const reply = await db
+            .collectionGroup("reply")
+            .where("id", "==", userId)
+            .get();
+        reply.docs.forEach((replyDoc) => {
+            batch.delete(replyDoc.ref);
+        });
         await batch.commit();
     }
     catch (err) {
@@ -126,6 +152,8 @@ exports.onDeletePost = functions
     }
     const postId = context.params.postId;
     const firebaseTools = require('firebase-tools');
+    const db = admin.firestore();
+    const batch = db.batch();
     try {
         await firebaseTools.firestore
             .delete(`posts/${postId}/comments`, {
@@ -134,6 +162,14 @@ exports.onDeletePost = functions
             yes: true,
             token: functions.config().fb.token
         });
+        const likes = await db
+            .collectionGroup("likes")
+            .where("postId", "==", postId)
+            .get();
+        likes.docs.forEach((likesDoc) => {
+            batch.delete(likesDoc.ref);
+        });
+        await batch.commit();
     }
     catch (err) {
         console.error(err);

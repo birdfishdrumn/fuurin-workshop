@@ -1,12 +1,11 @@
 import React from 'react'
 import { Title, HelpNav, Text } from "assets/GlobalLayoutStyle"
 import { QuestionIcon } from "./style"
-import {PrimaryButton} from "components/UI"
+import { PrimaryButton } from "components/UI"
+import { openOutsideLink } from "functions/function";
+
 const EdofuurinHelp = () => {
-     const homePageOpen = () => {
-    const url = "https://edo-fuurin.com/about"
-    window.open(url, '_blank')
-  }
+
   return (
     <div>
       <Title>江戸風鈴について</Title>
@@ -22,7 +21,7 @@ const EdofuurinHelp = () => {
         </Title>
          <Text left>江戸風鈴は口がギザギザ、宙吹き、内側から絵を描くという特徴があります。詳しくはこちらのホームページをご覧ください。</Text>
             <PrimaryButton
-            onClick={()=>homePageOpen()}
+            onClick={()=>openOutsideLink("https://edo-fuurin.com/about")}
             label="江戸風鈴について"
           />
       </HelpNav>

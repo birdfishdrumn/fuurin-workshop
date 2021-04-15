@@ -1,17 +1,25 @@
-import React, { useEffect, useState } from 'react'
-
-import { SectionWrapping, BackgroundWhiteTitle, Text, SimpleGrid, CircleImage, StyledImage, BackgroundWhite,ListDesign,StyledLink } from "assets/GlobalLayoutStyle"
+import React from 'react';
+import NotPushAuth from "NotPushAuth";
+import { SectionWrapping, BackgroundWhiteTitle, Text, StyledImage, BackgroundWhite, ListDesign, StyledLink } from "assets/GlobalLayoutStyle";
 import Divider from "@material-ui/core/Divider";
+import styled from "styled-components";
+
+const BackgroundTitleWrapper = styled.div`
+ padding:30px 0;
+`
 
 const ServiceGuide = () => {
   return (
     <SectionWrapping>
-
+      <NotPushAuth/>
       <BackgroundWhiteTitle>体験の始めかた</BackgroundWhiteTitle>
+      <Text left>スマホでご利用でしたらホーム画面に追加していただく事で、スマホアプリのように使いやすくなるのでお願いいたします！</Text>
       <div className="module-spacer--medium" />
       <BackgroundWhite>
-        <BackgroundWhiteTitle left>江戸風鈴に絵を描こう！</BackgroundWhiteTitle>
-
+        <BackgroundTitleWrapper>
+        <StyledImage width={"70"} min src="https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/sozai%2F%E7%AD%86%E3%81%AE%E3%82%A2%E3%82%A4%E3%82%B3%E3%83%B31.png?alt=media&token=323f60c6-7a9c-411a-9457-0c53377d6469"/>
+        <BackgroundWhiteTitle>江戸風鈴に絵を描こう！</BackgroundWhiteTitle>
+       </BackgroundTitleWrapper>
         <Divider />
          <ListDesign>
           <li>体験キットを購入</li>
@@ -27,8 +35,13 @@ const ServiceGuide = () => {
           <StyledImage width={"500px"} src="https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/sozai%2Fcautionshot.jpg?alt=media&token=bfc59732-6433-4cc7-bd91-ed97cf73c6e3"/>
 
         </ListDesign>
-          <div className="module-spacer--medium" />
-        <BackgroundWhiteTitle left>作品の写真を撮影しよう！</BackgroundWhiteTitle>
+        <div className="module-spacer--medium" />
+        <BackgroundTitleWrapper>
+              <StyledImage width={"70"} min src="https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/sozai%2F%E3%82%AB%E3%83%A1%E3%83%A9%E3%82%A2%E3%82%A4%E3%82%B3%E3%83%B38.png?alt=media&token=f56e7f9a-4855-4560-aa13-2bc27db0af44"/>
+            <BackgroundWhiteTitle>作品の写真を撮影しよう！</BackgroundWhiteTitle>
+
+          </BackgroundTitleWrapper>
+
 
         <Divider />
               <ListDesign>
@@ -41,8 +54,12 @@ const ServiceGuide = () => {
             <li>風鈴から短冊までの写真</li>
           <Text left>風鈴メイカーを使わない場合は短冊までの写真を自由な背景に合わせて撮ってみましょう！</Text>
         </ListDesign>
-          <div className="module-spacer--medium" />
-        <BackgroundWhiteTitle left>作品を投稿しよう！</BackgroundWhiteTitle>
+        <div className="module-spacer--medium" />
+        <BackgroundTitleWrapper>
+          <StyledImage  width={"70"} min  src="https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/sozai%2F%E8%A8%98%E4%BA%8B%E3%82%A2%E3%82%A4%E3%82%B3%E3%83%B31.png?alt=media&token=268b332a-c2b0-45a1-9089-2fa627b885e1" />
+            <BackgroundWhiteTitle>作品を投稿しよう！</BackgroundWhiteTitle>
+        </BackgroundTitleWrapper>
+
         <Divider />
                       <ListDesign>
             <li>作品のタイトルや説明を描こう！</li>
@@ -56,8 +73,12 @@ const ServiceGuide = () => {
             またその後短冊に願い事を書くこともできます！自分の今の願い事を書きましょう。
           </Text>
         </ListDesign>
-          <div className="module-spacer--medium" />
-       <BackgroundWhiteTitle left>コミュニケーションを取ろう！</BackgroundWhiteTitle>
+        <div className="module-spacer--medium" />
+        <BackgroundTitleWrapper>
+          <StyledImage width={"70"} min src="https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/sozai%2F%E4%BC%9A%E8%A9%B1%E3%82%A2%E3%82%A4%E3%82%B3%E3%83%B3.png?alt=media&token=a3c64f14-0314-4c12-afdc-6b7d8efe624e" />
+          <BackgroundWhiteTitle>コミュニケーションを取ろう！</BackgroundWhiteTitle>
+        </BackgroundTitleWrapper>
+
         <Divider />
                       <ListDesign>
             <li>自分のプロフィールを充実させる</li>
@@ -69,11 +90,6 @@ const ServiceGuide = () => {
             <li>チームで自分達だけの風鈴の世界観を作ろう！</li>
           <Text left>団体や企業で体験をやられる方は、同じアカウントに作った作品を並べて自分の組織にしかないような特別な世界観を演出しましょう！</Text>
         </ListDesign>
-      <SimpleGrid gap>
-
-
-
-        </SimpleGrid>
         </BackgroundWhite>
     </SectionWrapping>
 

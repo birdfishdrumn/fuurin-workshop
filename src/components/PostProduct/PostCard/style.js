@@ -10,7 +10,6 @@ export const GridList = styled.figure `
     webkit - overflow - scrolling: touch;
 }
 `
-
   : `
 
 display: grid;

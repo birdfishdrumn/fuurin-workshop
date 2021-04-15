@@ -1,14 +1,11 @@
-import React,{useEffect,memo} from 'react'
-import {
-  db
-} from "firebase/index"
+import React, { memo } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import { COMMENT } from "types/comment";
-import { PostComment, PostCommentIcon, PostCommentLength, PostCommentUser, PostCommentText,CommentTime } from "./style"
-import moment from 'moment'  // #1
-import 'moment/locale/ja'
-import CommentForm from "./CommentForm"
-import { makeStyles ,createStyles} from "@material-ui/core/styles";
+import { PostComment, PostCommentUser, PostCommentText, CommentTime } from "./style";
+import moment from 'moment'; // #1
+import 'moment/locale/ja';
+import CommentForm from "./CommentForm";
+import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
 
@@ -33,10 +30,7 @@ interface PROPS {
 
 
 const Reply:React.FC<PROPS> = memo(({ id, replies, replyComment, setReply, reply, avatar,isSignedIn}) => {
-  console.log(id)
   const classes = useStyles()
-  console.log(replies)
-  // replies[0].comId === id &&
   return (
     <div>
 
@@ -51,7 +45,6 @@ const Reply:React.FC<PROPS> = memo(({ id, replies, replyComment, setReply, reply
 
             </CommentTime>
           </div>
-
           <PostCommentText>{rep.text} </PostCommentText>
 
         </PostComment>
@@ -61,9 +54,6 @@ const Reply:React.FC<PROPS> = memo(({ id, replies, replyComment, setReply, reply
         <CommentForm avatar={avatar} setComment={setReply} comment={reply} />
       </form>
       }
-
-
-
 
       {/* <button onClick={fetchReplyComment(com.id)}>ff</button> */}
     </div>

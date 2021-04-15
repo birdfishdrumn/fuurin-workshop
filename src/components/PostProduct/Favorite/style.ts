@@ -5,14 +5,15 @@ export const FavoriteStyle = styled(FavoriteBorderIcon)`
 
 color:${props =>(props.isActive && "red")};
 padding-right:0 !important;
-  margin-right: 10px;
+  margin-right: 5px;
   margin-bottom:3px;
 `
 export const FavoriteCount = styled.span`
 
-    font-size: 1.1rem;
+    font-size: 1rem;
     margin-right: 8px;
     display:inline-block;
+    color:red;
 `
 export const FavoriteWrapper = styled.div`
 padding-bottom: 5px;

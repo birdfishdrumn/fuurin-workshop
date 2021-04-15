@@ -1,8 +1,6 @@
 import React, { useState,useCallback }from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -23,11 +21,11 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: theme.spacing(2),
       flex: 1,
     },
-    root: {
-        //   height: "500px",
-        // marginTop:"500px"
+    // root: {
+    //     //   height: "500px",
+    //     // marginTop:"500px"
 
-    }
+    // }
   }),
 );
 
@@ -46,11 +44,10 @@ interface PROPS {
 
 const AddPostModal:React.FC<PROPS> = ({open,handleClose}) =>{
   const classes = useStyles();
-
-  const [openModal, setOpenModal] = useState<boolean>(false)
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const handleModalClose = useCallback(() => {
     setOpenModal(false)
-  },[setOpenModal])
+  }, [setOpenModal]);
   return (
     <div>
 
@@ -63,10 +60,6 @@ const AddPostModal:React.FC<PROPS> = ({open,handleClose}) =>{
             <Typography variant="h6" className={classes.title}>
               作品の登録・編集
             </Typography>
-
-            {/* <Button autoFocus color="inherit" onClick={handleClose}>
-              save
-            </Button> */}
           </Toolbar>
         </AppBar>
         <PostEdit dialog handleClose={handleClose}/>

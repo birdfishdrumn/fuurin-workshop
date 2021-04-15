@@ -1,5 +1,5 @@
-import React from 'react'
-import { Title, HelpNav, Text, SimpleGrid, BoldText, ImageWrapper} from "assets/GlobalLayoutStyle"
+import React from 'react';
+import { Title, HelpNav, Text, BoldText, ImageWrapper } from "assets/GlobalLayoutStyle";
 import WindBellMaterial from "components/Material/WindBellMaterial"
 import { QuestionIcon } from "./style";
 

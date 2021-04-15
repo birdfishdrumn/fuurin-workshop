@@ -4,17 +4,16 @@ import { signUp } from "reducks/users/operations";
 import { useDispatch } from "react-redux";
 import { MinText, StyledLink } from "assets/GlobalLayoutStyle"
 import Divider from "@material-ui/core/Divider"
-import {dialogStateChangeAction} from "reducks/dialog/dialogSlice"
-import { faLastfmSquare } from "@fortawesome/free-brands-svg-icons";
+import {dialogOpenAction} from "reducks/dialog/dialogSlice"
 
 
 const SignUp: React.FC = (props: any) => {
   // const history = useHistory()
   const dispatch = useDispatch();
   const [username, setUsername] = useState<string>(""),
-    [email, setEmail] = useState<string>(""),
-    [password, setPassword] = useState<string>(""),
-    [confirmPassword, setConfirmPassword] = useState<string>("");
+        [email, setEmail] = useState<string>(""),
+        [password, setPassword] = useState<string>(""),
+        [confirmPassword, setConfirmPassword] = useState<string>("");
 
   const inputUsername = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,8 +44,6 @@ const SignUp: React.FC = (props: any) => {
 
   return (
     <div>
-
-
       <TextInput
         fullWidth={true}
         label={"ユーザー名"}
@@ -102,13 +99,17 @@ const SignUp: React.FC = (props: any) => {
                 dispatch(signUp(username, email, password, confirmPassword))
           }
         />
-         <div className="module-spacer--small" />
+
+        <div className="module-spacer--small" />
+
        <Divider/>
         <MinText left>入力後本人確認メールをお送りいたします。メールのリンクより本人確認後、アカウント登録が正式に完了しログインが可能になります。<br />
           <span style={{color:"red"}}>※既に同じメールアドレスのSNSアカウントで登録している場合は、新規登録することができませんのでメールアドレスを変えて登録してください。</span>
         </MinText>
-         <div className="module-spacer--medium" />
-        <p className="pointer" onClick={()=>dispatch(dialogStateChangeAction(false))}>
+
+        <div className="module-spacer--medium" />
+
+        <p className="pointer" onClick={() =>  dispatch(dialogOpenAction({type:"signin",title:"ログイン"}))}>
           アカウントをお持ちの方はこちら
         </p>
       </div>

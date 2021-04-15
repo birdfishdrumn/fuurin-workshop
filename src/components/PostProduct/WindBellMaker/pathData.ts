@@ -29,5 +29,25 @@ export const pathData = [{
         viewBox: "0 0 1466 1190",
           label: "口が広め",
         img:"https://firebasestorage.googleapis.com/v0/b/instagram-react-a7035.appspot.com/o/shape%2FpatternThumb5.png?alt=media&token=272ef412-1826-47bb-9742-527530303e7e"
-    }
+  },
+  {
+    path: "M867,1c672.51-8.14,1204.15,599.053,788,1200-49.48,71.45-217.87,234.63-300,266q-87.99,7.005-176,14c-128.07,13.77-244.134,14.48-373,20l-388-3c-5.609-1.99-97.615-93.33-113-106C53.509,1184.82-118.2,793.668,106,426,212.665,251.082,399.846,99.243,618,38,693.125,16.91,784.17,23.925,867,1Z",
+    viewBox: "0 0 1803 1506",
+    img:"https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/siruetto%2Fsiruetto.png?alt=media&token=cbc6c8a1-0f30-4557-92ee-e1c9dd68e9c0"
+  },
+  {
+     path: "M795.574,0.286c399.866,9.11,671.576,190.087,776.846,476.4,97.22,264.411-26.85,500.139-156.74,648.922l-76.82,79.37c-35.24,17.17-83.21,5.68-132.41,9.39q-130.29,6.45-260.606,12.91c-81.679,10.95-186.111.15-284.49,9.07-62.072,5.64-145.036,19.65-201.192,1.98l-106.075.3c-52.072-12.84-101.132-62.07-136.809-93.83C50.591,996.427-72.136,753.178,56.808,467.788c108.263-239.617,336.4-396.43,614.248-454.84Z",
+    viewBox: "0 0 1608 1247",
+    img:"https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/siruetto%2Fsiruetto2..png?alt=media&token=9a5724a7-b095-428b-ab3a-32526f79c46c"
+  },
+    {
+     path: "M198,0c95.1-1.238,161.021,39.878,196,99l14,36c24.445,80.706-30.565,129.762-75,159l-26,18c-21.779,9.341-56.458-1.575-83,3-20.595,3.55-43.539,1-67,1l-41-1c-14.916-3.675-24.721-12.9-36-20C40.671,270.234-17.249,213.246,6,138,25.556,74.707,70.809,29.561,134,10l39-8Z",
+    viewBox: "0 0 414 317",
+    img:"https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/siruetto%2Fsiruetto3.png?alt=media&token=f1728713-2b9d-4191-ac14-5fa79be2989c"
+  },
+  {
+      path: "M251,1c30.046-.4,59.533-0.183,84,7,89.072,26.15,222.959,130.856,184,263-15.644,53.062-66.041,114.686-112,136-31.98,14.831-136.829,19.067-182,13l-99-2C-0.953,376.449-33.923,212.448,48,99,79.169,55.836,133.974,22.716,193,8Z",
+      viewBox: "0 0 526 423",
+     img:"https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/siruetto%2F57FE5AB5-C67E-4EA5-AD55-8BBE7BFD77BC_1_105_c.png?alt=media&token=88ac6d6c-6a75-4aa9-82c7-cfe324c80656"
+  }
 ]

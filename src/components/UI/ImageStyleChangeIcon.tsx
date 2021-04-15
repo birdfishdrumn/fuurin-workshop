@@ -25,7 +25,6 @@ const ImageStyleChangeIcon:React.FC<PROPS> = ({setChange,changeSort}) => {
           </Tooltip>
           </>
         }
-
         <Tooltip title="グリッド" interactive>
           <li  onClick={() =>setChange(false) }>
             <WhiteIcon><GridOnIcon fontSize="large" /></WhiteIcon>

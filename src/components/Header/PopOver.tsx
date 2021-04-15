@@ -36,9 +36,7 @@ const PopOver:React.FC<PROPS> = ({open,anchorEl,handleClose,id,type}) => {
           }
               {type === "profile" &&
              <PopOverProfile handleClose={handleClose}/>
-
           }
-
       </PopperWrapper>
       </Popover>
     </div>

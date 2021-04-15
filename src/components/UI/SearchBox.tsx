@@ -1,8 +1,9 @@
-import React,{useState}  from 'react'
-import algoliasearch from 'algoliasearch';
-import {TextInput} from ".";
+import React, { useState } from 'react';
+import FormControl from "@material-ui/core/FormControl";
+import OutlinedInput from "@material-ui/core/OutlinedInput";
+import InputLabel from "@material-ui/core/InputLabel";
 import { makeStyles, createStyles } from '@material-ui/core/styles';
-import {useDispatch} from "react-redux"
+import { useDispatch } from "react-redux";
 import { searchReview } from "../../algolia/algolia";
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Divider from '@material-ui/core/Divider';
@@ -11,12 +12,8 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from "@material-ui/core/ListItemText";
 import { push } from "connected-react-router";
-import styled from "styled-components"
-
-interface Props {
-  fullWidth: boolean;
-  style?: boolean;
-}
+import styled from "styled-components";
+import { POST } from "types/posts";
 
 const SearchBoxWrapper = styled.div`
 position:relative;
@@ -26,28 +23,50 @@ margin:0 auto;
 text-align:center;
    max-width: 500px;
 
+
 `
 
 const useStyles = makeStyles((theme) =>
   createStyles({
      root: {
-    width: '100%',
-    maxWidth: 500,
-      backgroundColor: theme.palette.background.paper,
-    position: 'absolute',
-      overflow: 'auto',
-      top: 50,
-      // left: 500,
-   paddingBottom:0,
-   paddingTop:0,
-      maxHeight: 300,
-      cursor: "pointer",
+        width: '100%',
+        maxWidth: 500,
+        backgroundColor: theme.palette.background.paper,
+        position: 'absolute',
+        overflow: 'auto',
+        top: 60,
+        paddingBottom:0,
+        paddingTop:0,
+        maxHeight: 300,
+        cursor: "pointer",
+      zIndex: 100,
+      boxShadow: "0 0px 10px rgba(0,1,1,0.5)",
+       borderRadius:"5px"
 
     },
     searchText: {
        '&:hover': {
          background: "#eee",
       },
+    },
+    bar: {
+      borderRadius: "40px",
+      width: "500px",
+      background:"white",
+           [theme.breakpoints.down("sm")]: {
+             textAlign: "center",
+             maxWidth: "300px !important",
+            //  width:"100%",
+
+              margin:"0 auto"
+          },
+    },
+    label: {
+      zIndex: 1,
+      padding:"0 20px 5px 20px",
+    },
+    input: {
+        color: '#eee'
     },
     headerMenu: {
          display: 'flex',
@@ -55,77 +74,27 @@ const useStyles = makeStyles((theme) =>
         searchField: {
           alignItems: 'center',
           justifyContent: "center",
-
-          //   display: 'flex',
-          //   marginRight: 32,
           textAlign: "center",
-          //  position: 'relative',
+          borderRadius:"50px",
           width: 500,
-                 margin:"0 auto",
-          // borderRadius:20,
-          //   focus:500
+          margin: "0 auto",
+          // background:"#eee",
+
             [theme.breakpoints.down("sm")]: {
               textAlign: "center",
               width: "90%",
               margin:"0 auto"
+          },
     },
-    },
-
-
-
-    }),
-);
-const smStyles =makeStyles((theme) =>
-  createStyles({
-     root: {
-      width: '100%',
-      margin:"0 auto",
-      maxWidth: "500px",
-    textAlign:"center",
-      backgroundColor: theme.palette.background.paper,
-    position: 'absolute',
-      overflow: 'auto',
-      top: 50,
-
-   paddingBottom:0,
-   paddingTop:0,
-      maxHeight: 300,
-      cursor: "pointer",
-      zIndex: 1,
-
-
-    },
-    searchText: {
-       '&:hover': {
-         background: "#eee",
-      },
-    },
-    headerMenu: {
-         display: 'flex',
-      },
-        searchField: {
-          alignItems: 'center',
-          justifyContent:"center",
-          //   display: 'flex',
-          //   marginRight: 32,
-          textAlign: "center",
-          //  position: 'relative',
-          // width: 800,
-          // borderRadius:20,
-          //   focus:500
-    },
-
-
-
     }),
 );
 
-const SearchBox:React.FC<Props> = (props) => {
+
+const SearchBox = () => {
   const classes = useStyles()
-  const sm = smStyles()
     const dispatch = useDispatch()
     const [keyword, setKeyword] = useState<string>("");
-  const [search, setSearch] = useState([])
+  const [search, setSearch] = useState<POST[]>([])
     const inputKeyword = async (event) => {
     setKeyword(event.target.value)
     if (!event.target.value) {
@@ -157,29 +126,54 @@ console.log(search)
   return (<>
   <SearchBoxWrapper>
     <div className = {classes.searchField} >
-               <TextInput
-            fullWidth={props.fullWidth} label={"キーワードを入力"} multiline={false} onChange={inputKeyword} variant="outlined" required={false} rows={1} value={keyword} type={"text"}
+
+            <FormControl>
+          <InputLabel className={classes.label}>キーワードを入力</InputLabel>
+          <OutlinedInput
+            id="input"
+            value={keyword}
+            type="text"
+            onChange={inputKeyword}
+            fullWidth={true}
+
+            // style={{ borderRadius: "40px", width:"500px"}}
+            className={classes.bar}
+            inputProps={{
+  endAdornment: (
+    <InputAdornment position="end">
+      <SearchIcon />
+    </InputAdornment>
+   )
+  }}
+          />
+
+        </FormControl>
+            {/* fullWidth={props.fullWidth} label={"キーワードを入力"} multiline={false} onChange={inputKeyword} variant="outlined" required={false} rows={1} value={keyword} type={"text"} className={classes.bar}
              InputProps={{
           startAdornment: (
             <InputAdornment position="start">
               <SearchIcon/>
             </InputAdornment>
-          ),
+               ),
+               className:classes.input
         }}
-      />
+       */}
 
       </div>
       <SearchResult>
-    {search.length > 0 && <List className={props.style ? classes.root : sm.root}>
+    {search.length > 0 && <List className={classes.root}>
         {search.map((item) => (
-             <>
-            <ListItem className={classes.searchText} key={item.id} onClick={() => changePage(item)}
+             <div key={item.id}>
+            <ListItem className={classes.searchText}  onClick={() => changePage(item)}
             >
-               <ListItemText  primary={item.name} />
-              <img src={item.images[0].path} width={50}/>
+              <ListItemText primary={item.name} />
+              {item.images &&
+                 <img src={item.images[0].path} width={50}/>
+              }
+
              </ListItem>
             <Divider  component="li" />
-            </>
+            </div>
             ))}
         </List>}
         </SearchResult>

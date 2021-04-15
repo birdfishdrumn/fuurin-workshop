@@ -1,5 +1,4 @@
 import React, { useState, useEffect,useCallback,memo } from "react";
-import { Link } from "react-router-dom";
 import { storage } from "../../firebase";
 import { makeStyles,withStyles,WithStyles,createStyles, Theme   } from "@material-ui/core/styles";
 import { useTheme } from '@material-ui/core/styles';
@@ -9,7 +8,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import {
   Typography,
   Box,
-
   LinearProgress,
   Dialog,
   Divider,
@@ -18,7 +16,7 @@ import {
 //  DialogTitle,
   Backdrop
 } from "@material-ui/core";
-import { PrimaryButton,NormalButton } from "components/UI";
+import { NormalButton } from "components/UI";
 import loadImage from 'blueimp-load-image';
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
@@ -32,16 +30,12 @@ import ImagePreview from "./ImagePreview";
 const useStyles = makeStyles((theme) =>
   createStyles({
     modal: {
-      // width:"600px",
       display: "flex",
       alignItems: "center",
       justifyContent: "center"
     },
     paper: {
       backgroundColor: theme.palette.background.paper,
-      // border: "2px solid #000",
-      // boxShadow: theme.shadows[5],
-
       padding: theme.spacing(2,0)
     },
     content: {
@@ -57,11 +51,7 @@ const useStyles = makeStyles((theme) =>
       height: "65px",
       background: "white",
       padding: "7px",
-
-      // boxShadow:"1px 1px 1px dimgray"
-
     },
-
   })
 );
 
@@ -109,17 +99,13 @@ interface PROPS {
   all?: boolean;
 }
 
-
 const UpLoadTest:React.FC<PROPS> = memo(({ images, setImages,all }) => {
-   const theme = useTheme();
- const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [image, setImage] = useState<string>("");
-
   // const [Images, setImages] = useState("");
   const [error, setError] = useState<string>("");
   const [progress, setProgress] = useState<number>(100);
-
   const classes = useStyles(); //Material-ui
   const [cropper, setCropper] = useState<any>();
   const [open, setOpen] = useState<boolean>(false);
@@ -158,29 +144,25 @@ const UpLoadTest:React.FC<PROPS> = memo(({ images, setImages,all }) => {
       //console.log(imagedata); //バイナリーが見たい人は出力すると見れます
         // 小さい画像に変換
 
-             const canvas = await loadImage(imagedata, {
+      const canvas = await loadImage(imagedata, {
                 maxWidth: 1000,
                 canvas: true,
-             });
+      });
 
-         const S="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        const N=16;
-        const fileName = Array.from(crypto.getRandomValues(new Uint32Array(N))).map((n)=>S[n%S.length]).join('')
+      const S="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const N=16;
+      const fileName = Array.from(crypto.getRandomValues(new Uint32Array(N))).map((n)=>S[n%S.length]).join('')
 
       // アップロード処理
       console.log("アップロード処理");
       // @ts-ignore
       canvas.image.toBlob((imagedata) => {
-         const storageRef = storage.ref("images/test/"); //どのフォルダの配下に入れるかを設定
+      const storageRef = storage.ref("images/test/"); //どのフォルダの配下に入れるかを設定
       const imagesRef = storageRef.child(fileName); //ファイル名
-
       console.log("ファイルをアップする行為");
-      // const upLoadTask = imagesRef.put(imagedata, "data_url");
-        const upLoadTask = imagesRef.put(imagedata)
-
+      const upLoadTask = imagesRef.put(imagedata)
       console.log("タスク実行前");
       setOpenCircularProgress(true);
-
       upLoadTask.on(
         "state_changed",
         (snapshot) => {
@@ -210,9 +192,6 @@ const UpLoadTest:React.FC<PROPS> = memo(({ images, setImages,all }) => {
         }
       );
       },"image/jpeg")
-
-
-
     }
     return;
   };
@@ -220,20 +199,23 @@ const UpLoadTest:React.FC<PROPS> = memo(({ images, setImages,all }) => {
   const handleClose = () => {
     setOpen(false);
   };
+
   const handleCircularProgressClose = () => {
     setOpenCircularProgress(false);
   };
 
-      const deleteImage = useCallback(async (id) => {
-        const ret = window.confirm('この画像を削除しますか？')
-        if (!ret) {
-            return false
-        } else {
-            const newImages = images.filter(image => image.id !== id)
-            setImages(newImages);
-            return storage.ref('images/test/').child(id).delete()
-        }
-    }, [images])
+  const deleteImage = useCallback(async (id) => {
+    const ret = window.confirm('この画像を削除しますか？')
+    if (!ret) {
+      return false
+    } else {
+      const newImages = images.filter(image => image.id !== id)
+      setImages(newImages);
+      return storage.ref('images/test/').child(id).delete()
+    }
+  }, [images]);
+
+
   return (
     <div>
       <div className={classes.iconFlex}>
@@ -245,7 +227,6 @@ const UpLoadTest:React.FC<PROPS> = memo(({ images, setImages,all }) => {
                         <input className="u-display-none" type="file" id="image" onChange={handleImage}/>
                     </label>
         </IconButton>
-          {/* <BoldText min>投稿</BoldText> */}
         </div>
 
        <div>
@@ -263,8 +244,8 @@ const UpLoadTest:React.FC<PROPS> = memo(({ images, setImages,all }) => {
         aria-describedby="transition-modal-description"
         className={classes.modal}
         open={open}
-          fullScreen={fullScreen}
-           maxWidth="xl"
+        fullScreen={fullScreen}
+        maxWidth="xl"
         onClose={handleClose}
         closeAfterTransition
         BackdropComponent={Backdrop}
@@ -303,11 +284,7 @@ const UpLoadTest:React.FC<PROPS> = memo(({ images, setImages,all }) => {
             <NormalButton
               onClick={getCropData}
               label="切り取り"/>
-
-
-
           </DialogActions>
-
         </div>
       </Dialog>
       <Dialog

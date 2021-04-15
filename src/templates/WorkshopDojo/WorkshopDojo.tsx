@@ -1,56 +1,20 @@
-import React,{useEffect,useState} from 'react'
-import {SectionWrapping,Title,Text} from "assets/GlobalLayoutStyle"
-import styled from "styled-components"
-import { Link } from 'react-router-dom'
-import {db} from "firebase/index"
-import { LESSON } from "types/lesson"
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from "react-redux";
+import { SectionWrapping, Title, Text, StyledLink } from "assets/GlobalLayoutStyle";
+import { LessonWrapper, LessonColumn } from "./style";
+import { db } from "firebase/index";
+import { LESSON } from "types/lesson";
 import { showLoadingAction, hideLoadingAction } from "reducks/loadingSlice";
-import {useDispatch} from "react-redux"
 
-const LessonWrapper = styled.div`
- width:100%;
- height:80%;
- background:white;
- padding:50px 10px;
-   box-shadow: 0 0px 10px rgba(0,0,0,0.2);
-   @media(max-width:768px){
-     padding:50px 0px;
-   }
-
-`
-const StyledLink = styled(Link)`
- text-decoration:none;
-`
-
-const LessonColumn = styled.div`
-
-  display:flex;
-  justify-content:center;
-    align-items:center;
-    >div{
-      margin:0 20px;
-    }
- >div:first-child{
-  flex-basis:20%;
-
- }
- >div:last-child{
-   flex-basis:60%;
-   text-align:left;
- }
- @media(max-width:768px){
-   flex-direction:column;
- }
-`
 
 const WorkShopDojo = () => {
-  const [lessons, setLessons] = useState<LESSON[]>([])
-  const dispatch = useDispatch()
+  const [lessons, setLessons] = useState<LESSON[]>([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-   dispatch(showLoadingAction("loading"))
+    dispatch(showLoadingAction("loading"))
     db.collection("lessons").get().then((snapshot) => {
-      const list:any = []
+      const list: any = []
       snapshot.forEach((doc) => {
         const data = doc.data()
         list.push(data)
@@ -58,7 +22,8 @@ const WorkShopDojo = () => {
       dispatch(hideLoadingAction())
       setLessons(list)
     })
-  }, [])
+  }, []);
+
   return (
 
     <SectionWrapping>
@@ -69,7 +34,7 @@ const WorkShopDojo = () => {
         <StyledLink to={`/lesson/${lesson.id}`}>
         <LessonColumn>
           <div>
-           <img src ="https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/slide%2FGlPawrfvzGJcloCF?alt=media&token=43848d95-f094-4f72-936f-3f050f77c938"/>
+           <img alt="レッスン画像" src ="https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/slide%2FGlPawrfvzGJcloCF?alt=media&token=43848d95-f094-4f72-936f-3f050f77c938"/>
           </div>
           <div>
             <Title left>Lesson 1</Title>
@@ -80,12 +45,14 @@ const WorkShopDojo = () => {
        </StyledLink>
       </LessonWrapper>
       ))}
+
       <div className="module-spacer--medium" />
-              <LessonWrapper>
+
+        <LessonWrapper>
         <StyledLink to="/workshopcaution">
         <LessonColumn>
           <div>
-           <img src ="https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/sozai%2F4729901_s.jpg?alt=media&token=d954867e-b2c4-4ce4-a209-19762d889989"/>
+           <img  alt="コツ" src ="https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/sozai%2F4729901_s.jpg?alt=media&token=d954867e-b2c4-4ce4-a209-19762d889989"/>
           </div>
           <div>
 
@@ -97,11 +64,12 @@ const WorkShopDojo = () => {
       </LessonWrapper>
 
       <div className="module-spacer--medium" />
-                    <LessonWrapper>
+
+      <LessonWrapper>
         <StyledLink to="/mixcolor">
         <LessonColumn>
           <div>
-           <img src ="https://firebasestorage.googleapis.com/v0/b/instagram-react-a7035.appspot.com/o/sozai%2F1277239.png?alt=media&token=2be597cc-6586-4132-ad2a-b6eae281b469"/>
+           <img alt="色の作り方" src ="https://firebasestorage.googleapis.com/v0/b/instagram-react-a7035.appspot.com/o/sozai%2F1277239.png?alt=media&token=2be597cc-6586-4132-ad2a-b6eae281b469"/>
           </div>
           <div>
 
@@ -116,7 +84,7 @@ const WorkShopDojo = () => {
         <StyledLink to="/strip">
         <LessonColumn>
           <div>
-           <img src ="https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/sozai%2Ftanzaku.png?alt=media&token=50dfbb86-b8d8-44c6-86ef-15debec6cf63"/>
+           <img alt="短冊" src ="https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/sozai%2Ftanzaku.png?alt=media&token=50dfbb86-b8d8-44c6-86ef-15debec6cf63"/>
           </div>
           <div>
 

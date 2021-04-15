@@ -6,23 +6,23 @@ import "swiper/css/swiper.css";
 interface PROPS{
   images:  {[key:string]:string}[]
 }
-const ImageSwiper: React.FC<PROPS> = (props) => {
+
+const ImageSwiper: React.FC<PROPS> = ({images}) => {
   const [params] = React.useState({
-        pagination: {
-            el: '.swiper-pagination',
-            type: 'bullets',
-            clickable: true,
-            dynamicBullets: true
-        },
+    pagination: {
+      el: '.swiper-pagination',
+      type: 'bullets',
+      clickable: true,
+      dynamicBullets: true
+    },
     navigation: {
       nextEl: ".swiper-button-next",
       prevEl: ".swiper-button-prev"
     },
     loop: true,
     rebuildOnUpdate: true,
-  })
+  });
 
-  const images= props.images
 
   return (
     <Swiper {...params}>
@@ -37,10 +37,9 @@ const ImageSwiper: React.FC<PROPS> = (props) => {
             </div>
           ))
       )
-}
+     }
     </Swiper>
   )
-
 }
 
 export default ImageSwiper

@@ -1,47 +1,36 @@
 import firebase from "firebase/app"
-import * as React from 'react'
-export type PathItem ={
-  path: string;
-  viewBox: string;
-}
 
-export type WindBellMakerType = {
-  textLength: string;
-   dialogOpen: boolean;
-  handleClose: () => void;
-  windBellImage: string;
-  setWindBellImage: React.Dispatch<React.SetStateAction<string>>
-  pathItem: PathItem;
-  setPathItem: React.Dispatch<React.SetStateAction<PathItem>>;
-  strip: string;
-  setStrip:React.Dispatch<React.SetStateAction<string>>;
 
-  wishText: string;
-  inputWishText: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}
 
-export type POST = {
+export type Image = {
+  images: {
+    id: string;
+    path: string;
+  }
+};
 
-  post?:any
+type Extension = {
+  relation?: boolean;
+  changeRelation?: (id: string) => void;
+  check?: boolean
+  favorite?: boolean;
+  change?: boolean
+  post?: any
+};
+
+export type POST = Extension & {
   category?: string;
   description: string;
   name: string;
-  images: {[key:string]:string}[]
-  allImages: {[key:string]:string}[]
+  images: { [key: string]: string }[]
+  allImages: { [key: string]: string }[]
   username: string;
   likes?: string[];
   avatar: string;
   uid: string;
   likesId?: string;
   tags?: string[];
-  key?: string;
-  change?: boolean
   updated_at?: firebase.firestore.Timestamp
   created_at?: firebase.firestore.Timestamp
-  id: string
-  relation?: boolean;
-  // setId?: React.Dispatch<string>;
-   changeRelation?:(id: string) => void;
-  check?: boolean
-  favorite?: boolean;
-}
+  id?: string
+};

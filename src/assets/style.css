@@ -35,27 +35,12 @@ body {
     background-color: #FFFAFA;
 }
 
+a {
+    text-decoration: none;
+}
+
 .c-main {
     padding: 70px 0;
-}
-
-.c-section-wrapin {
-    margin: 0 auto;
-    margin-top: 40px;
-    max-width: 100%;
-    position: relative;
-    padding: 0 auto;
-    text-align: center;
-    width: 100%;
-}
-
-.c-section-container {
-    position: relative;
-    margin: 0 auto;
-    max-width: 400px;
-    padding: 1rem;
-    height: auto;
-    width: calc(100% - 2rem);
 }
 
 .c-section__loading {
@@ -166,20 +151,11 @@ body {
     object-fit: cover;
 }
 
-@media screen and (max-width: 576px) {
-    .c-section-wrapin {
-        margin-top: 0;
-    }
-    .c-main {
-        padding-bottom: 70;
-        padding-top: 10;
-    }
-}
-
 
 /*********** Footer ***********/
 
-.u-text-small {
+
+/* .u-text-small {
     font-size: .9rem;
 }
 
@@ -209,7 +185,7 @@ body {
     color: grey;
     font-size: 1.3rem;
     margin: 0 auto 1rem auto;
-}
+} */
 
 .u-display-none {
     display: none;
@@ -253,31 +229,6 @@ body {
     padding: 30px 70px;
     border-radius: 5px;
     background-color: #F8F8FF;
-}
-
-
-/*********** color***********/
-
-.gray {
-    color: gray;
-}
-
-
-/*********** profile***********/
-
-.profile {
-    height: 100px;
-    width: auto;
-}
-
-.none_post {
-    padding-top: 50px;
-    font-size: large;
-}
-
-.large_text {
-    font-size: large;
-    margin: 20px;
 }
 
 @media(min-width:1024px) {

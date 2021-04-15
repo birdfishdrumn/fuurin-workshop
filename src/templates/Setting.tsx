@@ -1,24 +1,7 @@
-import React,{useEffect} from 'react'
-import styled from "styled-components"
-import {SectionWrapper,Title,MainTitle} from "assets/GlobalLayoutStyle"
-import { makeStyles } from "@material-ui/core/styles"
-import { useDispatch,useSelector } from "react-redux";
-import {UserEdit} from "templates/index"
-
-
-
-const FullScreenWrapper = styled.div`
- width:100vw;
- max-height:110vh !important;
- z-index:999999;
- position:relative;
- margin:-70px 0 -350px;
- padding:0 0 320px 0 ;
-
- background:white;
- `
-
-
+import React from 'react';
+import { FullScreenWrapper } from "./style";
+import { SectionWrapper, MainTitle } from "assets/GlobalLayoutStyle";
+import { UserEdit } from "templates/index";
 
 const Setting = () => {
 
@@ -37,8 +20,6 @@ window.addEventListener("popstate", function() {
         <MainTitle sub>ようこそ！<br/>初めにプロフィールを設定しよう！</MainTitle>
        <UserEdit setting/>
       </SectionWrapper>
-
-
     </FullScreenWrapper>
   )
 }

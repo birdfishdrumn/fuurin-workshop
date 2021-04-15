@@ -1,8 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AppThunk, RootState } from '../../store';
-
-import {user} from "../../types/user"
-
+import { RootState } from '../../store';
 
 export const userSlice = createSlice({
   name: 'user',
@@ -17,13 +14,12 @@ export const userSlice = createSlice({
       role: "",
       email: "",
       name: "",
-
+      twitter: "",
+      instagram:""
     },
     like: {
       likes: []
     },
-
-
   },
   reducers: {
     //  actionsに相当する箇所　actionとpayloadが統合している。
@@ -31,16 +27,14 @@ export const userSlice = createSlice({
       state.user = action.payload;
       state.user.isSignedIn = true;
     },
-
     logout: state => {
-      state.user = { uid: "", avatar: "", username: "", isSignedIn: false, role: "", email: "", name: "",profile:"",url:""}
+      state.user = { uid: "", avatar: "", username: "", isSignedIn: false, role: "", email: "", name: "",profile:"",url:"",twitter:"",instagram:""}
     },
     updateUserAction: (state, action) => {
       state.user = action.payload;
       state.user.isSignedIn = true;
     },
     fetchPostsInFavoriteAction: (state, action:PayloadAction<string[]>) => {
-
       state.like.likes = [...action.payload];
     },
   },
@@ -57,14 +51,10 @@ export const getUserId = (state: RootState) => state.user.user.uid;
 export const getEmail = (state: RootState) => state.user.user.email;
 export const getPostsInFavorite = (state: RootState) => state.user.like.likes
 export const getUserProfile = (state: RootState) => state.user.user.profile
-export const getUserUrl= (state: RootState) => state.user.user.url
+export const getUserUrl = (state: RootState) => state.user.user.url
+export const getUserTwitter = (state: RootState) => state.user.user.twitter
+export const getUserInstagram= (state: RootState) => state.user.user.instagram
 export const getRoute = (state: RootState) => state.router
 
-
-
-// export const getUsername = createSelector(
-//   [selectUser],
-//   state => state.username
-// )
 
 export default userSlice.reducer

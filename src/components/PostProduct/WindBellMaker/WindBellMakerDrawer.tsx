@@ -2,9 +2,8 @@ import React,{useEffect,useState} from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme,Theme, createStyles  } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import { SvgContainer, Svg, ImageContainer, ImagePallet, Flex, Image, Text, StyledText, StyleProps, Color } from "./style"
-import { useDispatch,useSelector } from "react-redux";
-import firebase from "firebase/app"
+import { SvgContainer, Svg, ImageContainer, ImagePallet, Flex, Image, StyledText, StyleProps, Color } from "./style";
+import firebase from "firebase/app";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {TextInput} from "components/UI/index"
 import Typography from '@material-ui/core/Typography';
@@ -13,20 +12,18 @@ import IconButton from '@material-ui/core/IconButton';
 import WindBellCropper from "./WindBellCropper"
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-
-import Fuurin from "assets/img/src/shape/smart.png"
+import Fuurin from "assets/img/src/shape/smart.png";
 import PropTypes from 'prop-types';
 import TreeView from '@material-ui/lab/TreeView';
-import DeleteIcon from '@material-ui/icons/Delete';
 import Label from '@material-ui/icons/Label';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import {PrimaryButton} from "components/UI/index";
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import TreeItem, { TreeItemProps } from '@material-ui/lab/TreeItem';
-import { SvgIconProps } from '@material-ui/core/SvgIcon';
-import { db, storage } from "firebase/index"
-import Button from "@material-ui/core/Button"
+import { db } from "firebase/index";
+import Button from "@material-ui/core/Button";
+import { WINDBELLMAKERTYPE } from "types/windBellMaker";
 
 let  drawerWidth = 165;
 
@@ -109,12 +106,6 @@ const useTreeItemStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-interface PROPS {
-  pathItem:string;
-  windBellImage:string;
-  strip:string;
-
-}
 
 function StyledTreeItem(props: StyledTreeItemProps) {
   const classes = useTreeItemStyles();
@@ -125,8 +116,6 @@ function StyledTreeItem(props: StyledTreeItemProps) {
     labelText,
     ...other
   } = props;
-
-
 
 
   return (
@@ -180,12 +169,6 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 400,
   },
 
-  title: {
-    flexGrow: 1,
-  },
-  hide: {
-    display: 'none',
-  },
   drawer: {
     [theme.breakpoints.down("sm")]: {
       width: drawerWidth,
@@ -234,16 +217,17 @@ interface STRIP {
   }
 }
 
+
+
 // ---------------------ここからが関数---------------------------
 
-
-export default function PersistentDrawerRight({textLength,strip,setStrip,pathItem,windBellImage,setPathItem,setWindBellImage,wishText,inputWishText,uploadImage}) {
+const WindBellMakerDrawer:React.FC<WINDBELLMAKERTYPE> = ({textLength,strip,setStrip,pathItem,windBellImage,setPathItem,setWindBellImage,wishText,inputWishText,uploadImage}) => {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [textColor, setTextColor] = useState("default")
-  const [patterns, setPatterns] = useState<STRIP[]>([])
-  const [textFont, setTextFont] = useState<string>("default")
+  const [textColor, setTextColor] = useState("default");
+  const [patterns, setPatterns] = useState<STRIP[]>([]);
+  const [textFont, setTextFont] = useState<string>("default");
 
 
   const handleDrawerOpen = () => {
@@ -257,123 +241,101 @@ export default function PersistentDrawerRight({textLength,strip,setStrip,pathIte
   useEffect(() => {
     setPathItem({
       path: pathItem.path,
-      viewBox:pathItem.viewBox
+      viewBox: pathItem.viewBox
     })
-    console.log("@p")
-  },[setPathItem])
-
-
+  }, [setPathItem]);
 
   // 短冊の非同期処理
   useEffect(() => {
-        db.collection("tanzaku").get().then((snapshot) => {
+    db.collection("tanzaku").get().then((snapshot) => {
       const list = []
       snapshot.forEach((doc) => {
         const data = doc.data()
         list.push(data)
       })
-          setPatterns(list)
-          console.log(list)
-
-        })
-  }, [])
-
+      setPatterns(list)
+      console.log(list)
+    })
+  }, []);
 
 
-  const flowerList = patterns.filter((pattern) => {
+  const flowerList:STRIP[]= patterns.filter((pattern) => {
     return (pattern.category === '花柄');
-});
+  });
 
-  const washiList = patterns.filter((pattern) => {
+  const washiList:STRIP[] = patterns.filter((pattern) => {
     return (pattern.category === '和紙・布');
-});
+  });
 
-  const wagaraList = patterns.filter((pattern) => {
+  const wagaraList:STRIP[] = patterns.filter((pattern) => {
     return (pattern.category === '和柄');
-});
+  });
 
-const classicList = patterns.filter((pattern) => {
+const classicList:STRIP[] = patterns.filter((pattern) => {
     return (pattern.category === 'クラシック');
-});
+  });
 
-  const woodList = patterns.filter((pattern) => {
+  const woodList:STRIP[] = patterns.filter((pattern) => {
     return (pattern.category === '木目調');
-});
-  const summerList = patterns.filter((pattern) => {
+  });
+  const summerList:STRIP[] = patterns.filter((pattern) => {
     return (pattern.category === '夏の柄');
-});
+  });
 
   return (
     <div className={classes.root}>
-      <CssBaseline />
 
+      <CssBaseline />
       <main
         className={clsx(classes.content, {
           [classes.contentShift]: open,
         })}
       >
         <div/>
-    <div className="center">
-      <SvgContainer>
-
+        <div className="center">
+            <SvgContainer>
+                  <div>
+                  <svg width={0} height={0} style={{position: 'absolute', top: 0, left: 0}}>
+                    <clipPath id="clip01">
+                            <path id="べた塗り_1" data-name="べた塗り 1" d={pathItem.path}/>
+                    </clipPath>
+                      </svg>
+                        <Svg width={200} height={140}  viewBox={pathItem.viewBox}>
+                          {/* @ts-ignore */}
+                          {windBellImage &&
+                              <image xlinkHref={windBellImage} width="100%" height="100%" style={{marginRight:"20px",boxShadow:"2px 2px"}} preserveAspectRatio="xMidYMid slice" clipPath="url(#clip01)" />
+                          }
+                        </Svg>
+              </div>
+      {/* 短冊 */}
             <div>
-  <svg width={0} height={0} style={{position: 'absolute', top: 0, left: 0}}>
-    <clipPath id="clip01">
-
-            <path id="べた塗り_1" data-name="べた塗り 1" d={pathItem.path}/>
-    </clipPath>
-      </svg>
-
-        <Svg width={200} height={140}  viewBox={pathItem.viewBox}>
-          {/* @ts-ignore */}
-          {windBellImage &&
-              <image xlinkHref={windBellImage} width="100%" height="100%" style={{marginRight:"20px",boxShadow:"2px 2px"}} preserveAspectRatio="xMidYMid slice" clipPath="url(#clip01)" />
-          }
-
-            </Svg>
-
-
-      </div>
- {/* 短冊 */}
-       <div>
-  <svg width={0} height={0} style={{position: 'absolute', top: 0, left: 0}}>
-    <clipPath id="clip02">
-
-            <path id="べた塗り_1" data-name="べた塗り 1" d="M32,0H463c2.128,57.109,8.881,115.333-12,157q-4,8-8,16l-33,12c-11.128-1.122-24.16-10.425-38-3-18.393,9.867-25.331,39.156-28,65,13,9.866,22.165,23.392,36,33,34.123-4.415,47.574-16.38,62-40q-4.5-16.5-9-33l26-11c36.209-44.493,32.7-124.819,23-193L760,5q-22.5,1356.365-45,2713L0,2733Q16,1366.635,32,0Z"/>
-          {/* @ts-ignore */}
-    </clipPath>
-      </svg>
-
-        <Svg width={200} height={295}  viewBox="0 0 760 2733">
-          {windBellImage &&
-              <image xlinkHref={strip} width="100%" height="100%" style={{marginRight:"20px",boxShadow:"2px 2px"}} preserveAspectRatio="xMidYMid slice" clipPath="url(#clip02)" />
-          }
-
-            </Svg>
-
-
-      </div>
-
-
-      <ImageContainer>
-         <img src={Fuurin} alt="クリッピングサンプル"/>
-            </ImageContainer>
-       {/*  風鈴の願い事*/}
-            <NormalText textstyle={textColor} fontstyle={textFont} textLength={textLength}>{wishText.slice(0, 48)}</NormalText>
-            {/* 風鈴の願い事 */}
-        </SvgContainer>
-
-
+                    <svg width={0} height={0} style={{position: 'absolute', top: 0, left: 0}}>
+                    <clipPath id="clip02">
+                            <path id="べた塗り_1" data-name="べた塗り 1" d="M32,0H463c2.128,57.109,8.881,115.333-12,157q-4,8-8,16l-33,12c-11.128-1.122-24.16-10.425-38-3-18.393,9.867-25.331,39.156-28,65,13,9.866,22.165,23.392,36,33,34.123-4.415,47.574-16.38,62-40q-4.5-16.5-9-33l26-11c36.209-44.493,32.7-124.819,23-193L760,5q-22.5,1356.365-45,2713L0,2733Q16,1366.635,32,0Z"/>
+                          {/* @ts-ignore */}
+                    </clipPath>
+                      </svg>
+                      <Svg width={200} height={295}  viewBox="0 0 760 2733">
+                          {windBellImage &&
+                              <image xlinkHref={strip} width="100%" height="100%" style={{marginRight:"20px",boxShadow:"2px 2px"}} preserveAspectRatio="xMidYMid slice" clipPath="url(#clip02)" />
+                          }
+                      </Svg>
+                      </div>
+                  <ImageContainer>
+                      <img src={Fuurin} alt="クリッピングサンプル"/>
+                  </ImageContainer>
+            {/*  風鈴の願い事*/}
+                  <NormalText textstyle={textColor} fontstyle={textFont} textLength={textLength}>{wishText.slice(0, 48)}</NormalText>
+           </SvgContainer>
      <WindBellCropper pathItem={pathItem} setPathItem={setPathItem} imageUrl={windBellImage} setImageUrl={setWindBellImage} />
         </div>
-
             <PrimaryButton
           label="短冊を変える"
            onClick={handleDrawerOpen}
-          />
-        <div className="module-spacer--medium" />
+        />
 
-                   <TextInput
+        <div className="module-spacer--medium" />
+           <TextInput
           fullWidth={true}
           label={"願い事"}
           multiline={true}
@@ -384,7 +346,6 @@ const classicList = patterns.filter((pattern) => {
           type={"text"}
                 variant="outlined"
           />
-
       </main>
       <Drawer
         className={classes.drawer}
@@ -402,7 +363,7 @@ const classicList = patterns.filter((pattern) => {
         </div>
                 短冊の模様
         <Divider />
-
+        {/* ここからドロワーメニューの内容 */}
      <TreeView
       aria-label="gmail"
       className={classes.treeRoot}
@@ -412,62 +373,57 @@ const classicList = patterns.filter((pattern) => {
       defaultEndIcon={<div style={{ width: 24 }} />}
     >
           <StyledTreeItem nodeId="1" labelText="和紙・布" >
-                <Flex>
-            {washiList.map((item) => (
-               <ImagePallet onClick={()=>setStrip(item.images.path)}>
-          <Image src={item.images.path} />
-              </ImagePallet>
-            ))}
-               </Flex>
+             <Flex>
+              {washiList.map((item) => (
+                <ImagePallet key={item.title} onClick={()=>setStrip(item.images.path)}>
+              <Image src={item.images.path} />
+               </ImagePallet>
+              ))}
+            </Flex>
           </StyledTreeItem>
           <StyledTreeItem nodeId="2" labelText="和柄" >
-               <Flex>
-            {wagaraList.map((item) => (
-               <ImagePallet onClick={()=>setStrip(item.images.path)}>
-          <Image src={item.images.path} />
+          <Flex>
+                {wagaraList.map((item) => (
+              <ImagePallet  key={item.title} onClick={()=>setStrip(item.images.path)}>
+              <Image src={item.images.path} />
               </ImagePallet>
-            ))}
-               </Flex>
-      </StyledTreeItem>
-          <StyledTreeItem nodeId="3" labelText="クラシック"
-         >
-                      <Flex>
-            {classicList.map((item) => (
+                ))}
+           </Flex>
+          </StyledTreeItem>
+          <StyledTreeItem nodeId="3" labelText="クラシック">
+            <Flex>
+                {classicList.map((item) => (
 
-               <ImagePallet onClick={()=>setStrip(item.images.path)}>
-          <Image src={item.images.path} />
-
+              <ImagePallet  key={item.title} onClick={()=>setStrip(item.images.path)}>
+              <Image src={item.images.path} />
               </ImagePallet>
-            ))}
-               </Flex>
+                  ))}
+            </Flex>
           </StyledTreeItem>
           <StyledTreeItem nodeId="4" labelText="花柄">
             <Flex>
             {flowerList.map((item) => (
-               <ImagePallet onClick={()=>setStrip(item.images.path)}>
+               <ImagePallet  key={item.title} onClick={()=>setStrip(item.images.path)}>
           <Image src={item.images.path} />
               </ImagePallet>
             ))}
-                      </Flex>
-            </StyledTreeItem>
-
-          <StyledTreeItem nodeId="5" labelText="木目調"  >
-                  <Flex>
+            </Flex>
+           </StyledTreeItem>
+           <StyledTreeItem nodeId="5" labelText="木目調"  >
+            <Flex>
             {woodList.map((item) => (
-               <ImagePallet onClick={()=>setStrip(item.images.path)}>
-          <Image src={item.images.path} />
+              <ImagePallet  key={item.title} onClick={()=>setStrip(item.images.path)}>
+              <Image src={item.images.path} />
               </ImagePallet>
             ))}
-               </Flex>
+             </Flex>
           </StyledTreeItem>
-          {/* <StyledTreeItem nodeId="6" labelText="アップロード" labelIcon={PhotoCameraIcon}/> */}
-               <IconButton >
-                    <label>
-                        <PhotoCameraIcon />
-                        <input className="u-display-none" type="file" id="image" onChange={uploadImage}/>
-                    </label>
-                </IconButton>
-
+            <IconButton >
+                <label>
+                    <PhotoCameraIcon />
+                    <input className="u-display-none" type="file" id="image" onChange={uploadImage}/>
+                </label>
+            </IconButton>
 
           <Divider />
           文字のスタイル
@@ -479,17 +435,18 @@ const classicList = patterns.filter((pattern) => {
           </StyledTreeItem>
           <StyledTreeItem nodeId="7" labelText="文字の色" labelIcon={Label}>
             <Flex>
-             <Color color="black" onClick={() => setTextColor("default")}/>
+              <Color color="black" onClick={() => setTextColor("default")}/>
               <Color color="white" onClick={() => setTextColor("white")}/>
               <Color color="blue" onClick={() => setTextColor("blue")} />
-               <Color color="pink" onClick={() => setTextColor("pink")}/>
-
-        </Flex>
-                      </StyledTreeItem>
-    </TreeView>
+              <Color color="pink" onClick={() => setTextColor("pink")}/>
+            </Flex>
+          </StyledTreeItem>
+        </TreeView>
         <Divider />
 
       </Drawer>
     </div>
   );
 }
+
+export default WindBellMakerDrawer

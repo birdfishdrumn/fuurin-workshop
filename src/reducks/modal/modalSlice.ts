@@ -1,27 +1,23 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from 'store';
 
-
-
 export const modalSlice = createSlice({
   name: 'modal',
   initialState: {
     modal:{
-        state: false,
-
+      state: false,
+      text:"",
+      type:""
     }
   },
   reducers: {
 
-     modalOpenAction: (state) => {
-      // state.modal.text = action.payload;
+    modalOpenAction: (state,action) => {
+      state.modal= action.payload
       state.modal.state = true;
-  // state.modal.text = "modal...";
     },
     modalCloseAction:state=> {
-
       state.modal.state = false;
-  // state.modal.text = "";
     },
 
 
@@ -29,8 +25,9 @@ export const modalSlice = createSlice({
 });
 
 export const {modalOpenAction,modalCloseAction} = modalSlice.actions;
-// modalの中にmodalというオブジェクトが入っている。stateはinitialState,modalはname:"modal"に該当する。
-export const getModalState = (state: RootState )=> state.modal.modal.state;
 
+export const getModalState = (state: RootState )=> state.modal.modal.state;
+export const getModalType = (state: RootState )=> state.modal.modal.type;
+export const getModalText = (state: RootState )=> state.modal.modal.text;
 
 export default modalSlice.reducer

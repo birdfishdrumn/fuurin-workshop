@@ -1,19 +1,13 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/core/styles';
-import {PrimaryButton} from "components/UI/index"
-import DoneIcon from '@material-ui/icons/Done';
-import { WindBellMakerType } from "types/posts"
-import WindBellMaker from "./WindBellMaker"
+import { WINDBELLMAKERTYPE } from "types/windBellMaker";
+import WindBellMaker from "./WindBellMaker";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from '@material-ui/icons/Close';
-import styled from "styled-components"
+import styled from "styled-components";
 
 const TwoColumn = styled.div`
   /* width:100%; */
@@ -27,11 +21,10 @@ const CustomDialogContent = styled(DialogContent)`
 }
 
 `
-const WindBellDialog:React.FC<WindBellMakerType> = ({textLength,strip,setStrip,dialogOpen,handleClose,windBellImage,setWindBellImage,pathItem,setPathItem,wishText,inputWishText}) => {
+const WindBellDialog:React.FC<WINDBELLMAKERTYPE> = ({textLength,strip,setStrip,dialogOpen,handleClose,windBellImage,setWindBellImage,pathItem,setPathItem,wishText,inputWishText}) => {
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
 
 
   return (
@@ -43,13 +36,8 @@ const WindBellDialog:React.FC<WindBellMakerType> = ({textLength,strip,setStrip,d
         onClose={handleClose}
         aria-labelledby="responsive-dialog-title"
       >
-
         <CustomDialogContent>
           <TwoColumn>
-            {/* <WindBellMaker
-              strip={strip}
-              setStrip={setStrip}
-              pathItem={pathItem} setPathItem={setPathItem} windBellImage={windBellImage} setWindBellImage={setWindBellImage} /> */}
             <WindBellMaker
               textLength={textLength}
       pathItem={pathItem}
@@ -61,15 +49,7 @@ const WindBellDialog:React.FC<WindBellMakerType> = ({textLength,strip,setStrip,d
               wishText={wishText}
               inputWishText={inputWishText}
             />
-
-
           </TwoColumn>
-
-
-          {/* <DialogContentText>
-
-
-          </DialogContentText> */}
           <div className="module-spacer--medium" />
           <div style={{textAlign:"right"}}>
 
@@ -78,9 +58,6 @@ const WindBellDialog:React.FC<WindBellMakerType> = ({textLength,strip,setStrip,d
             </IconButton>
          </div>
         </CustomDialogContent>
-
-
-
       </Dialog>
     </div>
   );

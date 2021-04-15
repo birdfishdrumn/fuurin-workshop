@@ -94,3 +94,18 @@ export const DeleteComment = styled.p`
 // .post_buttonDisable {
 //   display: none;
 // }
+export const CommentMenu = styled.div`
+position:absolute;
+top:0;
+right:5px;
+`
+export const CommentPostButton = styled.button`
+ ${(props)=> props.comment ? `
+     border: none;
+    color: cornflowerblue;
+    background-color: transparent;
+    cursor: pointer;
+    `
+  :
+  `display: none; `}
+`

@@ -1,27 +1,22 @@
-import React,{useEffect,useState,useCallback} from 'react'
+import React,{useEffect,useState} from 'react'
 import IconButton from "@material-ui/core/IconButton"
 import  Badge  from "@material-ui/core/Badge"
-// import { fetchProductsInCart } from "../../reducks/users/operations"
 import { useSelector, useDispatch } from "react-redux"
 import {makeStyles,createStyles} from '@material-ui/core/styles';
-// import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder"
 import SearchIcon from "@material-ui/icons/Search";
-import { getIsSignedIn, getUserId,getUserAvatar } from "../../reducks/users/userSlice";
-import {getPostsInFavorite} from "../../reducks/users/userSlice"
-import { fetchPostsInFavorite} from "../../reducks/users/operations";
-import MenuIcon from "@material-ui/icons/Menu"
-import { SearchBox } from "../UI";
+import { getUserId,getUserAvatar } from "reducks/users/userSlice";
+import { getPostsInFavorite } from "reducks/users/userSlice";
+import { fetchPostsInFavorite} from "reducks/users/operations";
+import MenuIcon from "@material-ui/icons/Menu";
 import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone';
-import { db } from "../../firebase/index"
+import { db } from "firebase/index";
 import Tooltip from '@material-ui/core/Tooltip';
-import PushList from "./PopOverPushList"
-// import Popover from '@material-ui/core/Popover';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import BrushIcon from '@material-ui/icons/Brush';
 import { push } from "connected-react-router";
 import Avatar from '@material-ui/core/Avatar';
-import PopOver from "./PopOver"
+import PopOver from "./PopOver";
 
 
 
@@ -70,37 +65,25 @@ const useStyles = makeStyles((theme) =>
       width: theme.spacing(4),
       height: theme.spacing(4),
     },
-
-
-
-
-
     }),
 );
-
 
 interface PROPS {
   handleDrawerToggle: any
 }
 
 const HeaderMenus: React.FC<PROPS> = (props) => {
-
-  const isSP = window.matchMedia('screen and (max-width: 767px)').matches;
-  const dispatch = useDispatch()
-  const uid = useSelector(getUserId)
-  const isSignedIn = useSelector(getIsSignedIn)
-  const avatar = useSelector(getUserAvatar)
-  const classes = useStyles()
-    const likesPost = useSelector(getPostsInFavorite)
-  let postInFavorite: string[] = []
-    // const [open, setOpen] = useState<boolean>(false)
+  const dispatch = useDispatch();
+  const uid = useSelector(getUserId);
+  const avatar = useSelector(getUserAvatar);
+  const classes = useStyles();
+  const likesPost = useSelector(getPostsInFavorite);
+  let postInFavorite: string[] = [];
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-  const [pushLength,setPushLength] = useState<number>(0)
-  const [type,setType] = useState("")
+  const [type, setType] = useState("");
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
-
 
 
   const handleClick = (type:string)=>(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -112,23 +95,15 @@ const HeaderMenus: React.FC<PROPS> = (props) => {
     setAnchorEl(null);
   };
 
-  console.log(postInFavorite)
 
   useEffect(() => {
-    if (isSignedIn) {
-      db.collection("users").doc(uid).collection("likes").onSnapshot((snapshot) => {
-
+      const unSub = db.collection("users").doc(uid).collection("likes").onSnapshot((snapshot) => {
         snapshot.docChanges().forEach(change => {
           const post: any = change.doc.data()
-          console.log(post)
-
           const changeType = change.type;
           switch (changeType) {
             case "added":
-              // Object.preventExtensions(postInFavorite)
-
               postInFavorite.push(post)
-
               break;
             case "modified":
               const index = postInFavorite.findIndex((post: any) => post.likesId === change.doc.id)
@@ -140,68 +115,61 @@ const HeaderMenus: React.FC<PROPS> = (props) => {
             default:
               break;
           }
-
         })
         dispatch(fetchPostsInFavorite(postInFavorite))
-
       })
-
+    return () => {
+      unSub()
     }
   }, []);
 
-  useEffect(() => {
-    db.collection("message").where("check", "==", false).onSnapshot((snapshot) => {
-     setPushLength(snapshot.size)
-    })
-  }, [])
 
   return (
     <div className={classes.headerMenu}>
 
       <PopOver open={open} anchorEl={anchorEl} handleClose={handleClose} id={id} type={type}/>
 
-          <Tooltip title="絵の描き方" interactive>
-           <IconButton onClick={()=>dispatch(push("/dojo"))}>
-
+        <Tooltip title="絵の描き方" interactive>
+          <IconButton onClick={()=>dispatch(push("/dojo"))}>
                   <BrushIcon style={{fontSize:"28px"}}/>
-
-        </IconButton>
+          </IconButton>
         </Tooltip>
-           <Tooltip title="検索" interactive>
-               <IconButton>
+        <Tooltip title="検索" interactive>
+        <IconButton>
               <SearchIcon style={{fontSize:"30px"}} onClick={ ()=>dispatch(push("/search"))}/>
         </IconButton>
         </Tooltip>
-
-         <Tooltip title="お知らせ" interactive>
+        <Tooltip title="お知らせ" interactive>
             <IconButton onClick={handleClick("push")}>
 
                   <NotificationsNoneIcon style={{fontSize:"28px"}}/>
 
           </IconButton>
-          </Tooltip>
+        </Tooltip>
+
       <div className="mobile_only" >
-           <Tooltip title="作品の登録" interactive>
+
+        <Tooltip title="作品の登録" interactive>
             <IconButton onClick={ ()=>dispatch(push("/posts/edit"))}>
 
                   <AddCircleIcon style={{fontSize:"28px"}}/>
 
           </IconButton>
-          </Tooltip>
-            <Tooltip title="お気に入り" interactive>
+        </Tooltip>
+        <Tooltip title="お気に入り" interactive>
           <IconButton onClick={() => dispatch(push("/likes"))}>
 
-           <Badge badgeContent={likesPost && likesPost.length} color="error">
+          <Badge badgeContent={likesPost && likesPost.length} color="error">
                   <FavoriteBorderIcon style={{fontSize:"28px"}}/>
               </Badge>
 
           </IconButton>
-            </Tooltip>
-         <Tooltip title="プロフィール" interactive>
+        </Tooltip>
+        <Tooltip title="プロフィール" interactive>
           <IconButton onClick={handleClick("profile")}>
           <Avatar className={classes.small} src={avatar} />
             </IconButton>
-            </Tooltip>
+        </Tooltip>
         </div>
 
       <IconButton  onClick = {(event)=>props.handleDrawerToggle(event)}>

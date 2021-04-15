@@ -1,13 +1,14 @@
 import React, { useCallback, useState } from "react";
 import { TextInput, PrimaryButton } from "../components/UI";
-import { auth } from "../firebase/index"
+import { auth } from "../firebase/index";
+import {SectionContainer,Title} from "assets/GlobalLayoutStyle"
 import { useDispatch } from "react-redux";
-import {useHistory} from "react-router-dom"
+import { useHistory } from "react-router-dom";
 
 const Reset: React.FC= () => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
- const history = useHistory()
+  const history = useHistory();
   const inputEmail = useCallback(
     (event) => {
       setEmail(event.target.value);
@@ -15,28 +16,30 @@ const Reset: React.FC= () => {
     [setEmail]
   );
 
-  const resetPassword= (email: string) => {
-  return async () => {
-    if (email === "") {
-   alert('メールアドレスの形式が不正です。')
-            return false
-    } else {
-      auth.sendPasswordResetEmail(email)
-        .then(() => {
-          alert("入力されたアドレスにパスワードリセット用のメールを送りました。")
-          history.push('/signin')
-        }).catch(() => {
-          alert("パスワードリセットに失敗しました。")
-        })
+  const resetPassword = (email: string) => {
+    return async () => {
+      if (email === "") {
+        alert('メールアドレスの形式が不正です。')
+        return false
+      } else {
+        auth.sendPasswordResetEmail(email)
+          .then(() => {
+            alert("入力されたアドレスにパスワードリセット用のメールを送りました。")
+            history.push('/signin')
+          }).catch(() => {
+            alert("パスワードリセットに失敗しました。")
+          })
+      }
     }
-  }
-}
+  };
+
   return (
-    <div className="c-section-container">
-      <h2 className="u-text__headline u-text-center">パスワードをリセット</h2>
+    <SectionContainer>
+      <Title>パスワードをリセット</Title>
       <div className="module-spacer--medium"></div>
 
       <TextInput
+        variant="outlined"
         fullWidth={true}
         label={"Email"}
         multiline={false}
@@ -57,7 +60,7 @@ const Reset: React.FC= () => {
           ログイン画面に戻る
         </p>
       </div>
-    </div>
+    </SectionContainer>
   );
 };
 

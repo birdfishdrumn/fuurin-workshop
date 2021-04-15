@@ -1,34 +1,19 @@
-import React,{useState,useEffect,memo} from 'react'
-import {db} from "../../firebase/index";
-import TagsInput from 'react-tagsinput'
-// import { ReactTagsInput } from "./types/tagsInput"
-import 'react-tagsinput/react-tagsinput.css'
-import Autosuggest from 'react-autosuggest'
+import React, { useState, memo } from 'react';
+import TagsInput from 'react-tagsinput';
+import 'react-tagsinput/react-tagsinput.css';
+import Autosuggest from 'react-autosuggest';
 
 type PROPS = {
   tags: string[];
   setTags:  React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-const TagArea: React.FC<PROPS> = memo(({ tags, setTags }) => {
-
-  const [tagMenu, setTagMenu] = useState<string[]>([])
-  useEffect(() => {
-    db.collection("tags").get().then((snapshot) => {
-      const tagList: string[] = []
-      snapshot.forEach((doc) => {
-        const data = doc.data()
-
-        const tag = data.tag
-        console.log(tag)
-        tagList.push(tag)
-      })
-      console.log(tagList)
-      setTagMenu(tagList)
-    })
-  }, [])
-  const states = tagMenu
+  const TagArea: React.FC<PROPS> = memo(({ tags, setTags }) => {
+    const [tagMenu, setTagMenu] = useState<string[]>([]);
+    const states = tagMenu
   // @ts-ignore
+
+
   const autocompleteRenderInput = ({ addTag, ...props }) => {
     // @ts-ignore
     const handleOnChange = (e, { newValue, method }) => {
@@ -37,15 +22,16 @@ const TagArea: React.FC<PROPS> = memo(({ tags, setTags }) => {
       } else {
         props.onChange(e)
       }
-    }
+    };
 
     const inputValue = (props.value && props.value.trim().toLowerCase()) || ''
     const inputLength = inputValue.length
-    console.log(states)
+
     let suggestions = states.filter((state) => {
       return state.toLowerCase().slice(0, inputLength) === inputValue
-    })
+    });
     //  stateがオブジェクトではなく配列の時
+
     return (
       // @ts-ignore
       <Autosuggest
@@ -65,7 +51,6 @@ const TagArea: React.FC<PROPS> = memo(({ tags, setTags }) => {
     )
   }
 
-  console.log(tags)
   // @ts-ignore
   return <TagsInput renderInput={autocompleteRenderInput} value={tags} onChange={(tags: any) => setTags(tags)} maxTags="5" style={{ width: "100%" }} />
 

@@ -23,7 +23,7 @@ const PrimaryButton = (props) => {
     <Button
       className={classes.button}
       variant="contained"
-        disabled={props.disabled}
+      disabled={props.disabled}
       onClick={() => props.onClick()}
     >
       {props.label}

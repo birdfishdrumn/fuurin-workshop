@@ -22,7 +22,7 @@ interface PROPS {
   label: string;
   value: string;
   required: boolean;
-}
+};
 
 
 const SelectBox: React.FC<PROPS> = (props) => {

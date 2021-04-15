@@ -1,39 +1,33 @@
 import { AppThunk, RootState,AppDispatch,store } from '../../store';
 import {fetchPostsAction,fetchUserPostsAction,deletePostAction} from "./postSlice"
 import {db,auth,FirebaseTimestamp  } from "../../firebase/index"
-import firebase from "firebase/app"
 import { push } from "connected-react-router";
-import { POST } from "../../types/posts"
+import {POST} from "types/posts"
 import { hideLoadingAction, showLoadingAction } from "../loadingSlice";
 import {snackbarOpenAction} from "../snackbar/snackbarSlice"
 
 
 const postsRef = db.collection("posts")
 
-export const deletePost = (id: string,uid:string) => {
-  return async (dispatch: AppDispatch,getState) => {
-
+export const deletePost = (id: string, uid: string) => {
+  return async (dispatch: AppDispatch) => {
     postsRef.doc(id).delete()
       .then(() => {
-        //getStateで現在のstoreの情報を取得する。ここでは現在のposslistを取得してprevPostsに代入
         const prevPosts = store.getState().post.post.userList;
         // 今回削除した以外の配列を残す
         const nextPosts = prevPosts.filter(post => post.id !== id)
         dispatch(deletePostAction(nextPosts))
       })
-        // db.collection("users").doc().collection("likes").where("postId", "==", id)
-
-
   }
-}
+};
 
 
-export const savePost = (id: string, name: string, description: string, category: string, images: any,allImages:any,username: string,avatar: string,uid:string,tags:string[],check:boolean): AppThunk => {
+export const savePost = (id: string, name: string, description: string, category: string, images: {[key:string]:string}[], allImages: {[key:string]:string}[], username: string, avatar: string, uid: string, tags: string[], check: boolean): AppThunk => {
   return async (dispatch: AppDispatch) => {
     try {
       dispatch(showLoadingAction("作品を登録しています"));
       const timestamp = FirebaseTimestamp.now()
-      const data: any = {
+      const data: POST = {
         category: category,
         description: description,
         name: name,
@@ -55,11 +49,9 @@ export const savePost = (id: string, name: string, description: string, category
         data.id = id;
       }
       // 新しく配列を定義してしまうので、constいらない　
-      console.log("失敗")
-      return postsRef.doc(id).set(data, {
+      postsRef.doc(id).set(data, {
         merge: true
       }).then(async () => {
-        console.log("失敗")
         // タグのみをタグコレクションに登録する処理
         // for分に配列で回ってきたタグを一つずつ展開してコレクションに入れていく。
         for (let i = 0; i < tags.length; i++) {
@@ -95,13 +87,10 @@ export const savePost = (id: string, name: string, description: string, category
             })
           }
         }
-
-
-
       }).then(() => {
         dispatch(push("/"))
-        dispatch(hideLoadingAction());
         dispatch(snackbarOpenAction({ text: "作品を登録しました", type: true }))
+        dispatch(hideLoadingAction());
       }
       ).catch((error) => {
         dispatch(hideLoadingAction())
@@ -109,41 +98,42 @@ export const savePost = (id: string, name: string, description: string, category
         throw new Error(error)
       })
     } catch (err) {
-           dispatch(snackbarOpenAction({ text: "処理に失敗しました", type: false }))
-             dispatch(hideLoadingAction())
-
+      dispatch(snackbarOpenAction({ text: "処理に失敗しました", type: false }))
+      dispatch(hideLoadingAction())
+      throw new Error(err)
     }
   }
-}
+};
+//------ユーザーそれぞれが投稿した作品を取得する-------
 
-export const fetchPosts = (id:string):AppThunk  => {
+export const fetchPosts = (id: string): AppThunk => {
   return async (dispatch: AppDispatch) => {
-    postsRef.where("uid","==",id).orderBy("updated_at", "desc").get()
+      dispatch(showLoadingAction("Loading..."));
+    postsRef.where("uid", "==", id).orderBy("updated_at", "desc").get()
       .then(snapshots => {
         const postList: any[] = []
         snapshots.forEach(snapshot => {
           const post = snapshot.data();
           postList.push(post)
         })
+          dispatch(hideLoadingAction());
         dispatch(fetchPostsAction(postList))
-    })
+      })
   }
-}
+};
 
-
+//------自分自身が投稿した作品を取得する。-------
 export const addUserPost = (uid: string) => {
-  return async (dispatch) => {
-       dispatch(showLoadingAction("Loading"));
-
-      db.collection("posts").where("uid", "==", uid).get().then((querySnapshot) => {
+  return async (dispatch: AppDispatch) => {
+    dispatch(showLoadingAction("Loading..."));
+    db.collection("posts").where("uid", "==", uid).get().then((querySnapshot) => {
       const postList = []
       querySnapshot.forEach((doc) => {
-         const data =doc.data();
+        const data = doc.data();
         postList.push(data)
-
       })
-            dispatch(hideLoadingAction());
-          dispatch(fetchUserPostsAction(postList))
+      dispatch(hideLoadingAction());
+      dispatch(fetchUserPostsAction(postList))
     })
   }
-}
+};

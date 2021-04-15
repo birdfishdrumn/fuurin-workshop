@@ -1,13 +1,11 @@
-import React,{useState,useEffect} from 'react'
-import { useDispatch, useSelector } from "react-redux";
-import {db,FirebaseTimestamp} from "firebase/index"
-import { makeStyles } from "@material-ui/core/styles";
-import { PUSH } from "types/push"
-import firebase from "firebase/app"
+import React, { useState, useEffect } from 'react';
+import { db, FirebaseTimestamp } from "firebase/index";
+import firebase from "firebase/app";
 import { BackgroundWhite,Title,BoldText,Text,SectionWrapping } from "assets/GlobalLayoutStyle";
 import { dateToString ,returnCodeToBr} from "functions/function";
 import CircularProgress from '@material-ui/core/CircularProgress';
-// import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { PUSH } from "types/push";
+
 
 interface PROPS {
   location:any
@@ -15,23 +13,22 @@ interface PROPS {
 
 const PushList:React.FC<PROPS> = ({location}) => {
 
-  const [pushItem, setPushItem] = useState <Partial<PUSH>>({
+  const [pushItem, setPushItem] = useState<Partial<PUSH>>({
     title: "",
     message: "",
     images: "",
-    date:FirebaseTimestamp.now()
-  })
-  const id = location.state
-
+    date: FirebaseTimestamp.now()
+  });
+  const id = location.state;
 
   useEffect(() => {
-    db.collection("message").doc(id).get().then((snapshot:firebase.firestore.DocumentData) => {
+    db.collection("message").doc(id).get().then((snapshot: firebase.firestore.DocumentData) => {
       const data = snapshot.data()
 
       setPushItem(data)
     })
 
-  }, [id])
+  }, [id]);
 
 
   return (
@@ -40,21 +37,26 @@ const PushList:React.FC<PROPS> = ({location}) => {
         <Title>お知らせ</Title>
 
         <div className="module--space-medium" />
+
         <BackgroundWhite>
-          {pushItem?
+          {pushItem
+            ?
             <>
               <Title>{pushItem.title}</Title>
-              <BoldText right>{dateToString(pushItem.date.toDate())}</BoldText>
+              <BoldText right>{dateToString(pushItem.date.toDate())}
+              </BoldText>
+
               <div className="module-spacer--medium" />
-          <Text left >{returnCodeToBr(pushItem.message)}</Text>
+
+               <Text left >{returnCodeToBr(pushItem.message)}</Text>
             </>
             :
              <CircularProgress color="inherit"  style={{ marginTop: "20vh" }}/>
           }
+
           <div className="module-spacer--medium" />
-          </BackgroundWhite>
 
-
+        </BackgroundWhite>
         </SectionWrapping>
       </div>
   )

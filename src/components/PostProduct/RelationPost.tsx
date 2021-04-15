@@ -1,26 +1,27 @@
-import React, { useEffect,useState }  from 'react'
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from "react-redux";
 import { PostCard} from "./index";
 import { GridList,Title} from "assets/GlobalLayoutStyle";
-import { db} from "../../firebase";
-// import { getPosts } from "../reducks/posts/
+import { db } from "firebase/index";
+import { POST } from "types/posts";
+
 interface PROPS {
   randomTag: string;
   tags: string[];
   id: string;
    changeRelation?:  (id: string) => void;
+};
 
-}
+const RelationPost: React.FC<PROPS> = (props) => {
 
-const RelationPost:React.FC<PROPS> = (props) => {
-  let randomTag = props.randomTag
-  const dispatch = useDispatch()
-  const [relationPosts,setRelationPosts] = useState([])
+  const [relationPosts, setRelationPosts] = useState<POST[]>([]);
+  let randomTag = props.randomTag;
+  const dispatch = useDispatch();
 
-  const fetchRelationPost = (randomTag) => {
+  const fetchRelationPost = (randomTag: string) => {
     return async () => {
-      await db.collection("posts").where("tags", "array-contains", randomTag).where("id","!=",props.id).limit(12).get().then((querySnapshot) => {
-          const postList = []
+      await db.collection("posts").where("tags", "array-contains", randomTag).where("id", "!=", props.id).limit(12).get().then((querySnapshot) => {
+        const postList = []
         querySnapshot.forEach((snapshot) => {
           const post = snapshot.data();
           postList.push(post)
@@ -28,21 +29,19 @@ const RelationPost:React.FC<PROPS> = (props) => {
         setRelationPosts(postList)
       })
     }
-  }
-
+  };
+  // もしランダムに設定されたタグに関連する作品があったら取得する。
     useEffect(() => {
       if (randomTag) {
         dispatch(fetchRelationPost(randomTag))
       }
     }, [props.tags]);
 
-  // const clearThisPost = relationPosts
   return (
     <section>
       <div className="module-spacer--medium" />
     <GridList>
       {relationPosts.length ?relationPosts.map((relation) => (
-
         <PostCard
           post = {relation}
           key={relation.id}
@@ -55,11 +54,8 @@ const RelationPost:React.FC<PROPS> = (props) => {
           avatar={relation.avatar}
           uid={relation.uid}
           changeRelation={props.changeRelation}
-          // relation
           />
-
       )
-
       ):<></>
     }
       </GridList>

@@ -1,17 +1,15 @@
-import React,{useEffect,useState} from 'react'
-import PostDetailModule from "components/PostProduct/PostDetailModule"
-import NotPushAuth from "NotPushAuth"
-import {useDispatch} from "react-redux"
+import React, { useEffect, useState } from 'react';
+import PostDetailModule from "components/PostProduct/PostDetailModule";
+import NotPushAuth from "NotPushAuth";
 
 const PostDetail = () => {
   const postId = window.location.pathname.split("/post/")[1];
-  const [id, setId] = useState<string>(postId)
- console.log(postId)
+  const [id, setId] = useState<string>(postId);
 
-useEffect(() => {
-setId(id)
-
-}, [postId])
+// postIdが切り替わるたび、再レンダリングをして新しいデータを取得する。
+  useEffect(() => {
+    setId(id)
+  }, [postId]);
 
   return (
     <div>

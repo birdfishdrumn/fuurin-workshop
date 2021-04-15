@@ -6,8 +6,8 @@ export type COMMENT = {
   id: string;
   uid: string;
   postId?: string;
-  reply?:boolean;
+  reply?: boolean;
   text: string;
   timestamp: firebase.firestore.Timestamp;
   username: string;
- }
+};

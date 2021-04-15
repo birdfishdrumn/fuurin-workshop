@@ -3,4 +3,4 @@ export type CATEGORY = {
   name: string;
   image: string;
   order: number;
-}
+};

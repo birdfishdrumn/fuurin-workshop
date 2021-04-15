@@ -2,14 +2,12 @@ import React, { useCallback, useState } from "react";
 import { TextInput, PrimaryButton } from "components/UI";
 import { signIn ,googleSignIn,twitterSignIn} from "reducks/users/operations";
 import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
-import { useSelector } from "react-redux"
-import { push } from "connected-react-router"
-import styled from "styled-components"
+import { push } from "connected-react-router";
+import styled from "styled-components";
 import { Divider } from "@material-ui/core";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {dialogStateChangeAction} from "reducks/dialog/dialogSlice"
-import { faGoogle,faTwitter,faFacebook } from '@fortawesome/free-brands-svg-icons'
+import { dialogCloseAction, dialogOpenAction } from "reducks/dialog/dialogSlice";
+import { faGoogle, faTwitter, faFacebook } from '@fortawesome/free-brands-svg-icons';
 
 const SignInWrapper = styled.div`
 width:100%;
@@ -27,14 +25,10 @@ justify-content:space-around;
 }
 `
 
-
-
 const SignIn: React.FC= (props: any) => {
-  const history = useHistory()
   const dispatch = useDispatch();
   const  [email, setEmail] = useState<string>(""),
-    [password, setPassword] = useState<string>("");
-
+         [password, setPassword] = useState<string>("");
 
 
   const inputEmail = useCallback(
@@ -43,6 +37,7 @@ const SignIn: React.FC= (props: any) => {
     },
     [setEmail]
   );
+
   const inputPassword = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setPassword(event.target.value);
@@ -50,15 +45,18 @@ const SignIn: React.FC= (props: any) => {
     [setPassword]
   );
 
-
   const signInAction = () => {
-
     dispatch(signIn(email, password))
-    //  props.history.push("/");
+  };
+
+  const passwordPush = () => {
+    dispatch(push("/signin/reset"))
+    dispatch(dialogCloseAction())
+
   }
+
   return (
     <SignInWrapper>
-
       <TextInput
         fullWidth={true}
         label={"Email"}
@@ -93,6 +91,7 @@ const SignIn: React.FC= (props: any) => {
             signInAction()
           }
         />
+
         <div className="module-spacer--medium" />
         <Divider />
         <div className="module-spacer--medium" />
@@ -103,10 +102,10 @@ const SignIn: React.FC= (props: any) => {
           </SNS>
        <div className="module-spacer--medium" />
 
-        <p className="pointer" onClick={() => dispatch(dialogStateChangeAction(true))}>
+        <p className="pointer" onClick={() =>  dispatch(dialogOpenAction({type:"signup",title:"アカウントを登録"}))}>
           新規登録はこちら
         </p>
-         <p className="pointer" onClick={() =>dispatch(push("/signin/reset"))}>
+         <p className="pointer" onClick={() =>passwordPush()}>
           パスワードを忘れた方はこちら
         </p>
       </div>

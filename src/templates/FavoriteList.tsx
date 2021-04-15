@@ -1,70 +1,62 @@
-import React,{useState,useEffect} from 'react'
-import { useDispatch, useSelector } from "react-redux";
-
-import { getPostsInFavorite,getUserId } from "../reducks/users/userSlice";
-import { FavoriteListItem,PostCard,FavoriteUserList } from "../components/PostProduct"
-import { SectionWrapper, ScrollItem, Title, BoldText,GridList, HelpButtonWrapper} from "assets/GlobalLayoutStyle"
-import {POST} from "types/posts"
-
-import { FavoriteNav, ImageStyleChangeIcon, HelpButton} from "components/UI/index"
-// import { DragDropContext, Droppable } from "react-beautiful-dnd";
-
+import React, { useState } from 'react';
+import { useSelector } from "react-redux";
+import { getPostsInFavorite } from "../reducks/users/userSlice";
+import { PostCard } from "../components/PostProduct";
+import { SectionWrapper, ScrollItem, Title, BoldText, GridList, HelpButtonWrapper } from "assets/GlobalLayoutStyle";
+import { FavoriteNav, ImageStyleChangeIcon, HelpButton } from "components/UI/index";
+import { FAVORITE } from "types/likes";
 const FavoriteList = () => {
 
-
-  const uid = useSelector(getUserId)
-  const [change, setChange] = useState<boolean>(false)
+  const [change, setChange] = useState<boolean>(false);
   // getPostsInFavoriteの処理により、お気に入りに登録された作品リストをレンダリングされた時点で取得できる。
-  const postInFavorite:Partial<POST[]> = useSelector(getPostsInFavorite);
-
-  console.log(postInFavorite)
+  const postInFavorite:FAVORITE[] = useSelector(getPostsInFavorite);
 
   return (
 
-      <SectionWrapper>
-           <HelpButtonWrapper>
-           <HelpButton type="favorite" name="お気に入りシステムについて"/>
+      <SectionWrapper top>
+          <HelpButtonWrapper>
+          <HelpButton type="favorite" name="お気に入りシステムについて"/>
         <Title>お気に入りリスト</Title>
-        </HelpButtonWrapper>
-      <FavoriteNav/>
+      </HelpButtonWrapper>
 
+      <FavoriteNav />
 
-        <ImageStyleChangeIcon setChange={setChange} />
+      <ImageStyleChangeIcon setChange={setChange} />
 
-            <div className="module-spacer--small" />
+      <div className="module-spacer--small" />
+
            <GridList change={change}>
-          {postInFavorite.length > 0 && (
-              postInFavorite.map((post: any) =>
-
-                 <ScrollItem>
-                  <PostCard
-                           change={change}
-             favorite
-              post={post}
-              key={post.id}
-              name={post.postId}
+            {postInFavorite.length > 0 && (
+              postInFavorite.map((post) =>
+              <ScrollItem  key={post.id}>
+               <PostCard
+                change={change}
+                favorite
+                post={post}
+                name={post.postId}
                 images={post.images}
                 allImages={post.allImages}
-              id={post.postId}
-              description={post.description}
-              username={post.username}
-              avatar={post.avatar}
-              uid={post.uid}
+                id={post.postId}
+                description={post.description}
+                uid={post.uid}
             />
               </ScrollItem>
               )
-          )}
+        )}
+
           </GridList>
 
       {!postInFavorite.length &&
-           <>
-             <div className="module-spacer--medium"/>
-          <BoldText>お気に入りに登録された作品がありません。</BoldText>
+        <>
+
+        <div className="module-spacer--medium" />
+
+          <BoldText  color={"dimgray"}>お気に入りに登録された作品がありません。</BoldText>
           </>
       }
 
+      <div style={{ height: "5vh" }} />
 
-      <div style={{height:"5vh"}}/>
       </SectionWrapper>
   )
 }

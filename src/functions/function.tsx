@@ -1,5 +1,6 @@
 import HTMLReactParser from "html-react-parser"
 
+
 export const dateToString = (dt) => {
     return dt.getFullYear() + '-'
         + ('00' + (dt.getMonth()+1)).slice(-2) + '-'
@@ -30,7 +31,6 @@ export const  returnCodeToBr = (text:string) => {
   }
 };
 
-export const openOutsideLink = (url:string) => {
-    // const url = "https://maruyosi.theshop.jp/"
-    window.open(url, '_blank')
-  }
+export const openOutsideLink = (url: string) => {
+  window.open(url, '_blank')
+};

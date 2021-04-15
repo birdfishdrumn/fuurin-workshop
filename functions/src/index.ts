@@ -62,21 +62,45 @@ exports.onWritePosts = functions
         batch.update(postDoc.ref, { username,avatar });
       });
 
-            const commentSnapshot = await db
+         const commentSnapshot = await db
         .collectionGroup("comments")
         .where("id", "==", userId)
         .get();
 
-            commentSnapshot.docs.forEach((comDoc: any) => {
+       commentSnapshot.docs.forEach((comDoc: any) => {
         const username = newUser.username ;
         console.log(comDoc)
         const avatar = newUser.avatar
         batch.update(comDoc.ref, { username,avatar });
-      });
+            });
+
+                 const likeUserSnapshot = await db
+        .collectionGroup("likeUser")
+        .where("uid", "==", userId)
+        .get();
+
+
+            likeUserSnapshot.docs.forEach((likeUserDoc: any) => {
+        const username = newUser.username ;
+              const avatar = newUser.avatar;
+               const profile = newUser.profile;
+
+        batch.update(likeUserDoc.ref, { username,avatar,profile });
+            });
+
+                 const replySnapshot = await db
+        .collectionGroup("reply")
+        .where("id", "==", userId)
+        .get();
+
+
+            replySnapshot.docs.forEach((replyDoc: any) => {
+        const username = newUser.username ;
+              const avatar = newUser.avatar;
+        batch.update(replyDoc.ref, { username,avatar });
+            });
 
       await batch.commit();
-
-
 
     } catch (err) {
       console.log(err);
@@ -133,6 +157,16 @@ exports.onDeleteUser = functions
         batch.delete(postDoc.ref);
       });
 
+          const reply = await db
+        .collectionGroup("reply")
+        .where("id", "==", userId)
+        .get();
+
+      reply.docs.forEach((replyDoc: any) => {
+        batch.delete(replyDoc.ref);
+      });
+
+
       await batch.commit();
 
 
@@ -153,7 +187,8 @@ exports.onDeletePost = functions
     }
     const postId = context.params.postId
     const firebaseTools = require('firebase-tools')
-
+     const db = admin.firestore();
+     const batch = db.batch();
     try {
       await firebaseTools.firestore
         .delete(`posts/${postId}/comments`, {
@@ -162,6 +197,21 @@ exports.onDeletePost = functions
           yes: true,
           token: functions.config().fb.token
         })
+
+      const likes = await db
+        .collectionGroup("likes")
+        .where("postId", "==", postId)
+        .get();
+
+      likes.docs.forEach((likesDoc: any) => {
+        batch.delete(likesDoc.ref);
+      });
+
+
+      await batch.commit();
+
+
+
     }catch (err) {
       console.error(err)
     }

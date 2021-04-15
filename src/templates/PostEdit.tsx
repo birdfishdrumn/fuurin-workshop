@@ -1,29 +1,23 @@
 import React, { useState, useCallback, useEffect,memo} from 'react'
-
 import { useDispatch,useSelector } from "react-redux";
-import { TextInput, SelectBox, PrimaryButton,WindBellDialog ,HelpDialog,HelpButton} from "../components/UI/index";
-import { db } from "../firebase/index"
-import {savePost} from "../reducks/posts/operations"
+import { TextInput, SelectBox, PrimaryButton,WindBellDialog ,HelpButton} from "components/UI/index";
+import { db } from "firebase/index"
+import {savePost} from "reducks/posts/operations"
 import { TagArea,ImageCropper } from "../components/PostProduct";
-import { getUsername, getUserAvatar, getUserId } from "../reducks/users/userSlice";
-import {PathItem} from "../types/posts"
+import { getUsername, getUserAvatar, getUserId } from "reducks/users/userSlice";
+import { errorOpenAction, errorCloseAction, getErrorState } from "reducks/errorSlice"
+import {PathItem} from "../types/windBellMaker"
 import FormControl from "@material-ui/core/FormControl";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Switch from "@material-ui/core/Switch";
-
-
 import { SectionContainer,Title,BoldText } from 'assets/GlobalLayoutStyle';
-import ULOCO from "assets/img/src/stripPattern/ULOCO.png"
-import { errorOpenAction, errorCloseAction, getErrorState } from "reducks/errorSlice"
-
 
 interface Categories {
   id: string;
   name: string;
 }
-
 
 interface PROPS {
   dialog?: boolean;
@@ -32,33 +26,28 @@ interface PROPS {
 }
 
 const PostEdit: React.FC<PROPS> = ({ dialog, handleClose }) => {
-  const dispatch = useDispatch();
-  // const classes = useStyles()
 
   let id = dialog ? "" : window.location.pathname.split("/posts/edit")[1];
 
   if (id) {
     id = id.split("/")[1];
   }
-
-
-
+  const dispatch = useDispatch();
   const username = useSelector(getUsername);
-  const error = useSelector(getErrorState)
+  const error = useSelector(getErrorState);
   const avatar = useSelector(getUserAvatar);
-  const uid = useSelector(getUserId)
+  const uid = useSelector(getUserId);
   const [name, setName] = useState<string>(""),
     [description, setDescription] = useState<string>(""),
     [category, setCategory] = useState<string>(""),
     [postUid, setPostUid] = useState<string>(""),
     [tags, setTags] = useState<string[]>([]),
-    [helpDialogOpen, setHelpDialogOpen] = useState<boolean>(false),
     [wishText, setWishText] = useState<string>(""),
     [dialogOpen, setDialogOpen] = useState<boolean>(false),
     [categories, setCategories] = useState<Categories[]>([]),
     [images, setImages] = useState<{ [key: string]: string }[]>([]),
     [strip, setStrip] = useState<string>(""),
-    [windBellImage, setWindBellImage] = useState<string>(ULOCO),
+    [windBellImage, setWindBellImage] = useState<string>(""),
     [allImages, setAllImages] = useState<{ [key: string]: string }[]>([]),
     [textLength, setTextLength] = useState<string>(""),
     [pathItem, setPathItem] = useState<PathItem>({
@@ -73,7 +62,7 @@ const PostEdit: React.FC<PROPS> = ({ dialog, handleClose }) => {
     setCheck((prev) => !prev);
   };
 
- const inputName = useCallback(
+  const inputName = useCallback(
     (event:React.ChangeEvent<HTMLInputElement>) => {
       setName(event.target.value);
     },
@@ -107,98 +96,81 @@ const PostEdit: React.FC<PROPS> = ({ dialog, handleClose }) => {
       setTextLength("first")
        } else if (16 < textLength  && textLength < 33) {
          setTextLength("second")
-
        }
        else {
          setTextLength("third")
     }
-
    if(12> textLength){
          setTextLength("short")
        }
     },
     [setWishText]
   );
-
   // ---------------風鈴メイカーのダイアログ---------
     const closeDialog = useCallback(():void => {
     setDialogOpen(false);
 
   },[]);
 
-
-
+// 編集時に以前のデータをセットする。
   useEffect(() => {
     if (id !== "") {
-            db.collection("posts")
+      db.collection("posts")
         .doc(id)
         .get()
         .then((snapshot) => {
           const data: any = snapshot.data();
-          const tags=data.tags
+          const tags = data.tags
           setImages(data.images);
           setAllImages(data.allImages);
           setName(data.name);
           setDescription(data.description);
           setCategory(data.category);
           setTags(data.tags)
-
         }
         )
-
-
     }
   }, []);
 
   // カテゴリー一覧
-useEffect(() => {
-  const unSub = db.collection("categories").orderBy("order", "desc").onSnapshot((snapshot: any) => {
-    setCategories(
-       snapshot.docs.map((doc :any)=>({
-         id: doc.data().id,
-         name: doc.data().name
-       }))
-    )
-    return () => {
-      unSub()
-    }
-  })
-}, [])
+  useEffect(() => {
+    const unSub = db.collection("categories").orderBy("order", "desc").onSnapshot((snapshot: any) => {
+      setCategories(
+        snapshot.docs.map((doc: any) => ({
+          id: doc.data().id,
+          name: doc.data().name
+        }))
+      )
+      return () => {
+        unSub()
+      }
+    })
+  }, []);
 
-
+  // 投稿者のuidを取得する
   useEffect(() => {
     if (id) {
       db.collection("posts").doc(id).get().then((snapshot) => {
-        const data: any = snapshot.data()
+        const data: any = snapshot.data();
         setPostUid(data.uid)
       })
     }
-  }, [])
+  }, []);
 // 投稿を完了する関数
-  const save = (id, name, description, category, images, allImages, username, avatar, uid, tags, check) => {
-dispatch(
-  savePost(
-              id,name,description,category,images,allImages,username,avatar,uid,tags,check
-                )
-)
-
-   handleClose && handleClose()
-  }
-
+  const save = () => {
+    dispatch(
+      savePost(id, name, description, category, images, allImages, username, avatar, uid, tags, check
+      ))
+    handleClose && handleClose()
+  };
+  //  投稿者のuidが自分のuidと同じなら編集画面の閲覧が可能
   if ( postUid === uid || !id ) {
     return (
     <div>
-
-
         <SectionContainer>
-                    <HelpButton name="作品の登録" type="register"/>
-
-            <Title>作品の登録・編集</Title>
-
-
-
-{/* <HelpModal title="お気に入りに登録しました" open={open} setOpen={setOpen} /> */}
- <TextInput
+          <HelpButton name="作品の登録" type="register"/>
+         <Title>作品の登録・編集</Title>
+         <TextInput
           fullWidth={true}
           label={"作品タイトル"}
           multiline={false}
@@ -209,7 +181,6 @@ dispatch(
               type={"text"}
               variant="outlined"
         />
-
         <TextInput
           fullWidth={true}
           label={"作品に込めた思い"}
@@ -221,40 +192,37 @@ dispatch(
               type={"text"}
                variant="outlined"
           />
-             {error && <BoldText color={"red"}>⚠️文字は280字以内でお願いします。</BoldText>}
+          {error &&
+            <BoldText color={"red"}>
+              ⚠️文字は280字以内でお願いします。
+            </BoldText>}
 
         <SelectBox
           label={"カテゴリー"}
           required={true}
           options={categories}
           select={setCategory}
-              value={category}
-
+          value={category}
           />
-
           <div className="module-spacer--medium" />
-
-
-
           <div className="center">
-
             <BoldText>風鈴本体のみの写真</BoldText>
               <div className="module-spacer--small" />
               <ImageCropper images={images} setImages={setImages}/>
             <div className="module-spacer--medium" />
 
             <BoldText>風鈴から短冊までの写真</BoldText>
-               <HelpButton name="風鈴メイカーの使い方" type="windBellMaker"/>
+            <HelpButton name="風鈴メイカーの使い方" type="windBellMaker"/>
 
               <PrimaryButton onClick={() => setDialogOpen(true)} label="風鈴メイカーを使う" />
 
 
               <WindBellDialog
-            textLength={textLength}
-                pathItem={pathItem}
-                setPathItem={setPathItem}
-                windBellImage={windBellImage}
-                setWindBellImage={setWindBellImage}
+              textLength={textLength}
+              pathItem={pathItem}
+              setPathItem={setPathItem}
+              windBellImage={windBellImage}
+              setWindBellImage={setWindBellImage}
               dialogOpen={dialogOpen}
               handleClose={
                 closeDialog
@@ -265,45 +233,35 @@ dispatch(
               inputWishText={inputWishText}
             />
 
-                <div className="module-spacer--medium" />
- <ImageCropper images={allImages} setImages={setAllImages}  all/>
             <div className="module-spacer--medium" />
-           <div style={{ textAlign: "left" }}>
-            <TagArea tags={tags} setTags={setTags}/>
+            {/* --------作品の写真を投稿する。------------*/}
+            <ImageCropper images={allImages} setImages={setAllImages} all />
+            <div className="module-spacer--medium" />
+
+            <div style={{ textAlign: "left" }}>
+
+              <TagArea tags={tags} setTags={setTags} />
+
             </div>
+
             <div className="module-spacer--medium" />
 
                <FormControl component="fieldset">
 
-      <FormGroup>
-      <FormControlLabel
-        control={<Switch checked={check} onChange={commentCheck} />}
-        label="コメントを非表示にする"
-      />
-      </FormGroup>
-              </FormControl>
+            <FormGroup>
+            <FormControlLabel
+              control={<Switch checked={check} onChange={commentCheck} />}
+              label="コメントを非表示にする"
+            />
+            </FormGroup>
+            </FormControl>
 
             <PrimaryButton
               disabled={name === "" || description==="" || category === "" || images.length === 0  || allImages.length === 0}
-            label={"作品を投稿！"}
-                onClick={() => save(
-                         id,
-                  name,
-                  description,
-                  category,
-                  images,
-                  allImages,
-                  username,
-                  avatar,
-                  uid,
-                  tags,
-                  check
-                )
-                }
-
+              label={"作品を投稿！"}
+              onClick={() => save()}
             />
           </div>
-
        </SectionContainer>
     </div>
   )
@@ -312,10 +270,8 @@ dispatch(
       <SectionContainer className="center">
             <CircularProgress color="inherit"  style={{ marginTop: "20vh" }}/>
       </SectionContainer>
-
     )
   }
-
 }
 
 export default PostEdit

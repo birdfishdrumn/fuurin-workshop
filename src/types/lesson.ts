@@ -4,7 +4,7 @@ export type LESSON = {
   title: string;
   description: string;
   id: string;
-}
+};
 
 export type SLIDE = {
   created_at?: firebase.firestore.Timestamp;
@@ -13,8 +13,8 @@ export type SLIDE = {
   id: string;
   category?: string;
   number?: number;
-     images: {
+  images: {
     id: string;
     path: string;
   }
-}
+};

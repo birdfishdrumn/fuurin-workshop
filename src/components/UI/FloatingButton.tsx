@@ -25,16 +25,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function FloatingActionButtons() {
 
- const style = {
-
-    top: 'auto',
-    right: 20,
-    bottom: 20,
-    left: 'auto',
-   position: 'fixed',
-    zIndex:999
-
-  };
   const classes = useStyles();
 
   return (

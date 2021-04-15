@@ -63,8 +63,6 @@ function getTextColor(style: TextColorStyle = 'default') {
 
 
 
-
-
 const TextStyle = css`
     -ms-writing-mode: tb-rl;
   writing-mode: vertical-rl;
@@ -102,10 +100,6 @@ export const StyledText = styled.p`
 `;
 
 
-
-//  const NormalText = props => {
-//   return <StyledText {...props} />;
-// };
 
 export const Svg = styled.svg`
   filter: drop-shadow(3px 3px 3px #000);
@@ -150,6 +144,10 @@ export const ImagePallet = styled.div`
 /* width:50px;
 height:50px; */
 object-fit:cover;
+${props => props.svg && `
+margin:0 auto;
+
+`}
 `
 export const Flex = styled.div`
 display:grid;
@@ -159,6 +157,16 @@ export const Image = styled.img`
 object-fit:cover;
 width:50px;
 height:50px;
+${props => props.svg && `
+width:53px;
+height:53px;
+border:0.5px solid black;
+margin:0 50px !important;
+cursor:pointer;
+&:hover{
+  background:#eee;
+}
+`}
 `
 export const Text = styled.p`
     -ms-writing-mode: tb-rl;

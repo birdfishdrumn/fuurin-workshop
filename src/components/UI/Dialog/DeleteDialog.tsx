@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React from 'react';
 import { withStyles,WithStyles,createStyles, Theme  } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -9,7 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import { deletePost } from "../../../reducks/posts/operations";
-import {useSelector,useDispatch} from "react-redux";
+import { useDispatch } from "react-redux";
 import { snackbarOpenAction } from "reducks/snackbar/snackbarSlice";
 
 const styles = (theme: Theme) =>
@@ -77,16 +77,17 @@ interface PROPS {
    const id = props.id;
    const uid = props.uid;
 
-   const handleDelete = async(id:string,uid:string):Promise<void> => {
+   const handleDelete = async (id: string, uid: string): Promise<void> => {
      dispatch(deletePost(id, uid))
      props.handleClose()
-     await dispatch(snackbarOpenAction({ text:"作品を削除しました。",type:true}))
-   }
+     await dispatch(snackbarOpenAction({ text: "作品を削除しました。", type: true }))
+   };
 
-   const handleChange = ():void => {
+   const handleChange = (): void => {
      props.handleClose()
      props.handleModalClose()
-   }
+   };
+
   return (
     <div>
 
@@ -108,7 +109,6 @@ interface PROPS {
             削除する
           </Button>
  :
-
      <Button  onClick={()=>handleDelete(id,uid)} color="primary">
             削除する
           </Button>

@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import {BoldText} from "assets/GlobalLayoutStyle"
+import React from 'react';
+import { Text } from "assets/GlobalLayoutStyle";
 import { withStyles,WithStyles,createStyles, Theme  } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
@@ -10,9 +9,10 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import {useSelector,useDispatch} from "react-redux";
-import { makeStyles } from "@material-ui/core/styles";
 import { SignIn, SignUp } from "components/PostProduct/index";
-import { dialogOpenAction,dialogCloseAction,getDialogState,getDialogType,getDialogTypeState,getDialogTitle } from "reducks/dialog/dialogSlice";
+import {  dialogCloseAction, getDialogState, getDialogType, getDialogTitle } from "reducks/dialog/dialogSlice";
+import { WindBellMakerHelp, AddProductHelp, SearchHelp, ProfileHelp, FavoriteHelp } from "components/HelpComponents/index";
+
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -29,15 +29,6 @@ const styles = (theme: Theme) =>
     },
   });
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-
-    // display: "inlineBlock"
-
-
-
-  },
-}))
 
 export interface DialogTitleProps extends WithStyles<typeof styles> {
   id: string;
@@ -74,40 +65,51 @@ const DialogActions = withStyles((theme: Theme) => ({
 }))(MuiDialogActions);
 
 
-
-const CustomDialog: React.FC = ({ }) => {
-    const [sign,setSign] = useState<boolean>(false)
-   const open = useSelector(getDialogState);
+const CustomDialog:React.FC = ({ }) => {
+  const open = useSelector(getDialogState);
   const type = useSelector(getDialogType);
-  const typeState = useSelector(getDialogTypeState)
-  const title = useSelector(getDialogTitle)
-   const classes = useStyles()
-   const dispatch=useDispatch()
-   const handleClose = () => {
-   dispatch(dialogCloseAction())
- }
+  const title = useSelector(getDialogTitle);
+
+  const dispatch = useDispatch();
+  const handleClose = () => {
+    dispatch(dialogCloseAction())
+  };
 
   return (
     <div>
-
-      <Dialog className={classes.root} onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
-             <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-          {title ? title : typeState ? "アカウントを登録" : "ログイン" }
+      <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
+         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+          {title}
         </DialogTitle>
         <DialogContent >
-          {type === "sign" &&
-          typeState ?  <SignUp/> :<SignIn/>
-
+          {type === "signin" &&
+            <SignIn/>
+           }
+          {type === "signup" &&
+            <SignUp/>
           }
-          {type === "favorite" &&
-            <BoldText>作品をお気に入りに登録しました。</BoldText>
-
+          {type === "favoriteAction" &&
+            <Text>作品をお気に入りに登録しました！</Text>
           }
-
+           {type === "confirm" &&
+            <Text>本人確認用のメールを送信しました。メールを確認してリンクで本人確認の登録を行ってください。またメールが届かない場合はメールアドレスが間違っているか、迷惑メールフォルダに振り当てられている可能性がありますのでご確認ください。</Text>
+          }
+              {type === "windBellMaker" &&
+                  <WindBellMakerHelp />
+            }
+            {type === "register" &&
+              <AddProductHelp/>
+            }
+              {type === "search" &&
+              <SearchHelp/>
+            }
+            {type === "profile" &&
+            <ProfileHelp/>}
+               {type === "favorite" &&
+            <FavoriteHelp/>}
         </DialogContent>
         <DialogActions>
-
-</DialogActions>
+       </DialogActions>
       </Dialog>
     </div>
   );
