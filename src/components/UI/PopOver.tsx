@@ -1,8 +1,7 @@
 import React from 'react'
 import Popover from '@material-ui/core/Popover';
-import { PopperWrapper } from "./style"
-import PushList from "./PopOverPushList"
-import PopOverProfile from "./PopOverProfile"
+import { PopperWrapper } from "components/Header/style"
+import { PopOverProfile, PopOverPushList } from "components/Header/index";
 
 interface PROPS  {
   open: boolean;
@@ -16,7 +15,7 @@ interface PROPS  {
 const PopOver:React.FC<PROPS> = ({open,anchorEl,handleClose,id,type}) => {
   return (
     <div>
-                 <Popover
+       <Popover
         id={id}
         open={open}
         anchorEl={anchorEl}
@@ -32,10 +31,10 @@ const PopOver:React.FC<PROPS> = ({open,anchorEl,handleClose,id,type}) => {
       >
         <PopperWrapper>
           {type === "push" &&
-               <PushList  handleClose={handleClose}/>
+            <PopOverPushList  handleClose={handleClose}/>
           }
               {type === "profile" &&
-             <PopOverProfile handleClose={handleClose}/>
+            <PopOverProfile handleClose={handleClose}/>
           }
       </PopperWrapper>
       </Popover>

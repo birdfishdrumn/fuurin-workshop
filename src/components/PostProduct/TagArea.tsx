@@ -41,7 +41,7 @@ type PROPS = {
         getSuggestionValue={(suggestion) => suggestion}
         renderSuggestion={(suggestion) => <span>{suggestion}</span>}
         // @ts-ignore
-        inputProps={{ ...props, onChange: handleOnChange, placeholder: "タグを入力してください" }}
+        inputProps={{ ...props, onChange: handleOnChange, placeholder: "タグ(魔除け、~と繋がりたい、など)" }}
         onSuggestionSelected={(e, { suggestion }) => {
           addTag(suggestion)
         }}

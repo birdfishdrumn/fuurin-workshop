@@ -115,7 +115,7 @@ const PopulationPost: React.FC<PROPS> = memo(({ top }) => {
           setUserList(userList)
           dispatch(hideLoadingAction());
         })
-    }
+    };
   };
 
   useEffect(() => {
@@ -140,19 +140,17 @@ const PopulationPost: React.FC<PROPS> = memo(({ top }) => {
               </Tabs>
             </AppBar>
             <TabPanel value={value} index={0}>
-
               <List className={classes.root}>
                 {postsList.length > 0 ?
 
                   postsList.map((post) => (
-                    <Ranking key={post.likesId}>
+                    <Ranking key={post.id}>
                       <PopulationList post={post} />
                     </Ranking>
                   )) : <div style={{
                     height: "100vh",
                     backgroundColor: "white"
                   }}></div>
-
                 }
               </List>
             </TabPanel>
@@ -197,7 +195,6 @@ const PopulationPost: React.FC<PROPS> = memo(({ top }) => {
               </ScrollItem>
             ))
             :
-            // ローディング中の表示
             <div style={{
               height: "100vh",
               backgroundColor: "#F5F5F5"

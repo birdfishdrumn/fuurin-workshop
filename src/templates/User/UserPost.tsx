@@ -30,20 +30,19 @@ const UserPost = () => {
 
   return (
     <SectionWrapper>
-
-
         <Title>作品の編集・削除</Title>
         <List className={classes.root}>
-        {posts.length > 0 ?
-          posts.map((post) => (
-            <UserPostItem key={post.id}
-           post={post}
-            />
-          ))
-          : <div className="center none_post"><SentimentDissatisfiedOutlinedIcon/><BoldText>投稿はまだありません</BoldText></div>
-        }
-       </List>
-
+            {posts.length > 0 ?
+              posts.map((post) => (
+                <UserPostItem key={post.id}
+              post={post}
+                />
+              ))
+          : <div className="center none_post">
+            <SentimentDissatisfiedOutlinedIcon /><BoldText color={"dimgray"}>投稿はまだありません</BoldText>
+            </div>
+            }
+      </List>
    </SectionWrapper>
   )
 }

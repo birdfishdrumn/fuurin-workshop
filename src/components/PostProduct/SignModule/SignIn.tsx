@@ -3,8 +3,7 @@ import { TextInput, PrimaryButton } from "components/UI";
 import { signIn ,googleSignIn,twitterSignIn} from "reducks/users/operations";
 import { useDispatch } from "react-redux";
 import { push } from "connected-react-router";
-import styled from "styled-components";
-import { Divider } from "@material-ui/core";
+import styled, { css }from "styled-components";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { dialogCloseAction, dialogOpenAction } from "reducks/dialog/dialogSlice";
 import { faGoogle, faTwitter, faFacebook } from '@fortawesome/free-brands-svg-icons';
@@ -24,12 +23,33 @@ justify-content:space-around;
  cursor: pointer;
 }
 `
+const BorderTitleMixin = css`
+ content: "";
+    height: 1px;
+    flex-grow: 1;
+    background-color: #eee;
+`
+
+const BorderTitle = styled.div`
+    display: flex;
+    color:dimgray;
+    align-items: center;
+    &:before{
+      ${BorderTitleMixin};
+    margin-right: 1rem;
+    }
+    &:after{
+            ${BorderTitleMixin};
+    margin-left: 1rem;
+    }
+
+`
+
 
 const SignIn: React.FC= (props: any) => {
   const dispatch = useDispatch();
   const  [email, setEmail] = useState<string>(""),
-         [password, setPassword] = useState<string>("");
-
+        [password, setPassword] = useState<string>("");
 
   const inputEmail = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,9 +65,6 @@ const SignIn: React.FC= (props: any) => {
     [setPassword]
   );
 
-  const signInAction = () => {
-    dispatch(signIn(email, password))
-  };
 
   const passwordPush = () => {
     dispatch(push("/signin/reset"))
@@ -79,6 +96,7 @@ const SignIn: React.FC= (props: any) => {
         type={"password"}
         variant="outlined"
         onChange={inputPassword}
+        error={password.match(/^[A-Za-z0-9]*$/) ? false : true}
       />
 
       <div className="center">
@@ -86,26 +104,27 @@ const SignIn: React.FC= (props: any) => {
         <PrimaryButton
           label={"ログイン"}
                 disabled={
-           email === "" || password === "" }
+          email === "" || password === "" || !password.match(/^[A-Za-z0-9]*$/)}
           onClick={() =>
-            signInAction()
+            dispatch(signIn(email, password))
           }
         />
 
         <div className="module-spacer--medium" />
-        <Divider />
+        <BorderTitle>簡単ログイン</BorderTitle>
         <div className="module-spacer--medium" />
+
         <SNS>
-          <li onClick={()=>dispatch(googleSignIn())}><FontAwesomeIcon style={{fontSize:"2rem"}}icon={faGoogle} /></li>
-          <li onClick={()=>dispatch(twitterSignIn())}><FontAwesomeIcon style={{fontSize:"2rem",color:"#1DA1F2"}}icon={faTwitter} /></li>
-          <li><FontAwesomeIcon style={{ fontSize: "2rem",color:"#3B5998" }} icon={faFacebook} /></li>
-          </SNS>
-       <div className="module-spacer--medium" />
+          <li onClick={()=>dispatch(googleSignIn())}><FontAwesomeIcon style={{fontSize:"2.2em"}}icon={faGoogle} /></li>
+          <li onClick={()=>dispatch(twitterSignIn())}><FontAwesomeIcon style={{fontSize:"2.2em",color:"#1DA1F2"}}icon={faTwitter} /></li>
+        </SNS>
+
+        <div className="module-spacer--medium" />
 
         <p className="pointer" onClick={() =>  dispatch(dialogOpenAction({type:"signup",title:"アカウントを登録"}))}>
           新規登録はこちら
         </p>
-         <p className="pointer" onClick={() =>passwordPush()}>
+        <p className="pointer" onClick={() =>passwordPush()}>
           パスワードを忘れた方はこちら
         </p>
       </div>

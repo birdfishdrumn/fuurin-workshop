@@ -30,24 +30,28 @@ const FavoriteUserList = () => {
 
     <SectionWrapper>
           <Title>お気に入りリスト</Title>
-             <FavoriteNav/>
-            {favoriteUser.length ? favoriteUser.map((user=>(
-            <FavoriteUser avatar={user.avatar}
-              username={user.username}
-              profile={user.profile}
-              uid={user.uid}
-          />
-             )
-           ))
-    :
-        <>
-             <div className="module-spacer--medium"/>
-          <BoldText color={"dimgray"}>
-            お気に入りに登録されたユーザーがいません。
-          </BoldText>
-        </>
-      }
-           </SectionWrapper>
+          <FavoriteNav/>
+              {favoriteUser.length ? favoriteUser.map((user=>(
+                <FavoriteUser avatar={user.avatar}
+                  username={user.username}
+                  profile={user.profile}
+                  uid={user.uid}
+                  key={user.uid}
+              />
+                )
+              ))
+                :
+              <>
+
+          <div className="module-spacer--medium" />
+
+                <BoldText color={"dimgray"}>
+                  お気に入りに登録されたユーザーがいません。
+                </BoldText>
+
+              </>
+              }
+    </SectionWrapper>
   )
 }
 

@@ -8,10 +8,10 @@ const useStyles = makeStyles({
     color: "#fff",
     fontSize: 16,
     fontWeight:"bold",
-    height: 48,
+    height: 36,
     marginButton: 20,
-    width: 220,
-    marginTop: 20,
+    width: 100,
+    // marginTop: 20,
    '&:hover': {
          background: "#006699",
       },

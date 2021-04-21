@@ -73,5 +73,8 @@ service cloud.firestore {
     allow read;
     allow write: if request.auth.uid != null;
   }
+    match /report/{reportId}{
+    allow write: if request.auth.uid != null
+  }
   }
 }

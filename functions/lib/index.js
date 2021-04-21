@@ -71,7 +71,7 @@ exports.onUpdateUser = functions
         });
         const replySnapshot = await db
             .collectionGroup("reply")
-            .where("id", "==", userId)
+            .where("uid", "==", userId)
             .get();
         replySnapshot.docs.forEach((replyDoc) => {
             const username = newUser.username;
@@ -131,7 +131,7 @@ exports.onDeleteUser = functions
         });
         const reply = await db
             .collectionGroup("reply")
-            .where("id", "==", userId)
+            .where("uid", "==", userId)
             .get();
         reply.docs.forEach((replyDoc) => {
             batch.delete(replyDoc.ref);
@@ -141,6 +141,7 @@ exports.onDeleteUser = functions
     catch (err) {
         console.error(err);
     }
+    ;
 });
 exports.onDeletePost = functions
     .region("asia-northeast1")

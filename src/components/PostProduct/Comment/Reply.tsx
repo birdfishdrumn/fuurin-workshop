@@ -1,11 +1,12 @@
 import React, { memo } from 'react';
-import Avatar from '@material-ui/core/Avatar';
 import { COMMENT } from "types/comment";
-import { PostComment, PostCommentUser, PostCommentText, CommentTime } from "./style";
+import { PostComment, PostCommentUser, PostCommentText, CommentTime,CommentMenu} from "./style";
 import moment from 'moment'; // #1
 import 'moment/locale/ja';
+import {Menu} from "components/UI/index"
 import CommentForm from "./CommentForm";
 import { makeStyles } from "@material-ui/core/styles";
+import Avatar from '@material-ui/core/Avatar';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -19,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
 interface PROPS {
   id: string;
+  postId: string;
   replies: COMMENT[];
   replyComment: (comId: any) => (e: any) => Promise<void>;
   setReply: React.Dispatch<React.SetStateAction<string>>
@@ -29,7 +31,7 @@ interface PROPS {
 
 
 
-const Reply:React.FC<PROPS> = memo(({ id, replies, replyComment, setReply, reply, avatar,isSignedIn}) => {
+const Reply:React.FC<PROPS> = memo(({ id, postId,replies, replyComment, setReply, reply, avatar,isSignedIn}) => {
   const classes = useStyles()
   return (
     <div>
@@ -44,7 +46,11 @@ const Reply:React.FC<PROPS> = memo(({ id, replies, replyComment, setReply, reply
               {moment(new Date(rep.timestamp?.toDate()).toLocaleString()).fromNow()}
 
             </CommentTime>
+
           </div>
+          <CommentMenu>
+            {isSignedIn && <Menu type="report" content={{ postId: postId, id: id }} id={rep.id} />}
+          </CommentMenu>
           <PostCommentText>{rep.text} </PostCommentText>
 
         </PostComment>
@@ -55,7 +61,6 @@ const Reply:React.FC<PROPS> = memo(({ id, replies, replyComment, setReply, reply
       </form>
       }
 
-      {/* <button onClick={fetchReplyComment(com.id)}>ff</button> */}
     </div>
   )
 });

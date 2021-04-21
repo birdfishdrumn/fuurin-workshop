@@ -17,11 +17,12 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import HelpIcon from '@material-ui/icons/Help';
 import HttpsIcon from '@material-ui/icons/Https';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import ContactMailIcon from '@material-ui/icons/ContactMail';
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder"
 import {  getUsername, getUserAvatar } from "reducks/users/userSlice";
 import BrushIcon from '@material-ui/icons/Brush';
 import { useHistory } from "react-router-dom";
-
+import { openOutsideLink } from "functions/function";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -128,15 +129,17 @@ const ClosableDrawer: React.FC<PROPS> = (props) => {
                 <ListItemText primary = {menu.label} />
               </ListItem>
             ))}
-
+            <ListItem button key="contact" onClick={() => openOutsideLink("https://docs.google.com/forms/d/e/1FAIpQLSfubjAQYCXXEdX0f4VbL-iVO4_z80vcLP5Tla-54TR0NLfr9A/viewform")}>
+              <ListItemIcon>
+                <ContactMailIcon />
+              </ListItemIcon>
+              <ListItemText primary={"お問い合わせ"} />
+            </ListItem>
             <ListItem button key="logout" onClick={() => dispatch(signOut())}>
-
-
               <ListItemIcon>
                 <ExitToAppIcon />
               </ListItemIcon>
               <ListItemText primary={"Logout"} />
-
             </ListItem>
           </List>
 </div>

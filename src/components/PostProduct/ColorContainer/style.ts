@@ -1,5 +1,6 @@
 import styled from "styled-components"
-import {BackgroundWhite} from "assets/GlobalLayoutStyle"
+import { BackgroundWhite } from "assets/GlobalLayoutStyle"
+import IconButton from "@material-ui/core/IconButton";
 export const ColorContainer = styled.div`
   display:flex;
   align-items:center;
@@ -62,6 +63,7 @@ export const SliderWrapper = styled.div`
     -webkit-overflow-scrolling: touch; /* スマホ対応のため必須 */
     >div{
           /* scroll-snap-align: center; */
+
     height: 100%;
     width: 90% !important;
     scroll-snap-align: start;
@@ -74,42 +76,50 @@ export const SliderWrapper = styled.div`
 `
 
 export const PalletWrapper = styled.div`
-  display:flex;
-  padding:20px;
    align-items:center;
   flex-wrap: ${props => (!props.scroll && "wrap")};
-    ${props => props.scroll && `
-   @media(max-width:767px){
-     flex-wrap:row;
-    overflow-x: auto;
-      white-space: nowrap;
-      -webkit-overflow-scrolling: touch;
-   };
-   `};
-
+   padding:0px 0 20px 0;
  >div{
    margin:${props=>(props.noneMargin ?  "0" :"12px")};
  };
 `
+// https://firebasestorage.googleapis.com/v0/b/instagram-react-a7035.appspot.com/o/tanzaku%2FEe9d0Zhcp5foKJMP?alt=media&token=d7ec1f69-a8d7-4f2f-a8e3-ccc158d5d200
 
 export const PalletBackground = styled.div`
-  background-image:url("https://firebasestorage.googleapis.com/v0/b/instagram-react-a7035.appspot.com/o/tanzaku%2FEe9d0Zhcp5foKJMP?alt=media&token=d7ec1f69-a8d7-4f2f-a8e3-ccc158d5d200");
-  border-radius:30px;
+    background-image:url("https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/sozai%2Fp0092_s.jpeg?alt=media&token=1b82375c-5730-4f8d-87cc-bbf00366ffce");
+    border-radius:30px;
     box-shadow: 0 0px 10px rgba(0,0,0,0.2);
-    position:fixed;
-    z-index:999 ;
-    bottom: 10px; /* 基準の位置を画面の一番下に指定する */
-right: 10px; /* 基準の位置を画面の一番右に指定する */
-max-width: 660px; /* 幅を指定する */
-width:100%;
-  @media(max-width:767px){
-    right: 0px;
-     bottom: 35px; /
+    position:relative;
+    max-width: 660px; /* 幅を指定する */
+    width:100%;
+    ${props => props.open ? `
+      position:fixed;
+      bottom: 10px;
+      right: 10px;
+      z-index:999;
+      @media(max-width:768px){
+        right:0;
+        bottom:35px;
+      }
+    `
+  :
+  `
+    margin:100px auto 0;
+  `
   }
+
 `
 
 export const ColorBackGround = styled(BackgroundWhite)`
+background-image:url("https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/sozai%2Fp0259_s.jpeg?alt=media&token=ad927c6c-1ba5-425a-94fe-6ae9814127c5") !important;
 @media(max-width:768px){
-  padding:5px;
+
+  padding:15px;
 }
+`
+export const CommentaryIcon = styled(IconButton)`
+ position:absolute;
+ right:5px;
+ top:0;
+ color:red;
 `

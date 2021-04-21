@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { TextInput, PrimaryButton } from "../components/UI";
-import { auth } from "../firebase/index";
 import {SectionContainer,Title} from "assets/GlobalLayoutStyle"
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { resetPassword } from "reducks/users/operations";
 
 const Reset: React.FC= () => {
   const dispatch = useDispatch();
@@ -16,28 +16,11 @@ const Reset: React.FC= () => {
     [setEmail]
   );
 
-  const resetPassword = (email: string) => {
-    return async () => {
-      if (email === "") {
-        alert('メールアドレスの形式が不正です。')
-        return false
-      } else {
-        auth.sendPasswordResetEmail(email)
-          .then(() => {
-            alert("入力されたアドレスにパスワードリセット用のメールを送りました。")
-            history.push('/signin')
-          }).catch(() => {
-            alert("パスワードリセットに失敗しました。")
-          })
-      }
-    }
-  };
 
   return (
     <SectionContainer>
       <Title>パスワードをリセット</Title>
       <div className="module-spacer--medium"></div>
-
       <TextInput
         variant="outlined"
         fullWidth={true}
@@ -55,10 +38,11 @@ const Reset: React.FC= () => {
           label={"パスワードをリセット"}
           onClick={() => dispatch(resetPassword(email))}
         />
-        <div className="module-spacer--medium" />
-        <p className="pointer" onClick={() => history.push("/signin")}>
-          ログイン画面に戻る
-        </p>
+        <br/>
+          <PrimaryButton
+          label={"戻る"}
+          onClick={() => history.goBack()}
+        />
       </div>
     </SectionContainer>
   );

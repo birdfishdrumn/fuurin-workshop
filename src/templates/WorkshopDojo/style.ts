@@ -1,5 +1,5 @@
-import styled from "styled-components"
-
+import styled from "styled-components";
+import { Text } from "assets/GlobalLayoutStyle";
 // ---------------WorkshopLesson---------------
 
 export const LessonBox = styled.div`
@@ -28,14 +28,14 @@ padding:10px 0 30px 0;
 `
 
 export const LessonWrapper = styled.div`
- width:100%;
- height:80%;
- background:white;
- padding:50px 10px;
-   box-shadow: 0 0px 10px rgba(0,0,0,0.2);
-   @media(max-width:768px){
-     padding:50px 0px;
-   }
+width:100%;
+height:80%;
+background:white;
+padding:50px 10px;
+box-shadow: 0 0px 10px rgba(0,0,0,0.2);
+@media(max-width:768px){
+  padding:50px 0px;
+}
 
 `
 
@@ -48,17 +48,23 @@ export const LessonColumn = styled.div`
     >div{
       margin:0 20px;
     }
- >div:first-child{
-  flex-basis:20%;
+    >div:first-child{
+      flex-basis:20%;
 
- }
- >div:last-child{
-   flex-basis:60%;
-   text-align:left;
- }
- @media(max-width:768px){
-   flex-direction:column;
- }
+    }
+    >div:last-child{
+      flex-basis:60%;
+      text-align:left;
+    }
+    @media(max-width:768px){
+      flex-direction:column;
+        >div{
+          margin:0 10px;
+        }
+        >div:first-child{
+          width:75%;
+    }
+    }
 `
 
 export const ProcessWrapper = styled.div`
@@ -73,8 +79,8 @@ export const ProcessWrapper = styled.div`
 
   }
   >div:last-child{
-       flex-basis:50%;
-       margin:auto 0;
+    flex-basis:50%;
+    margin:auto 0;
   }
   @media(max-width:768px){
     flex-direction:column;

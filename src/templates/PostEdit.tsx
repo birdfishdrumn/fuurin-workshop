@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useEffect,memo} from 'react'
+import React, { useState, useCallback, useEffect} from 'react'
 import { useDispatch,useSelector } from "react-redux";
-import { TextInput, SelectBox, PrimaryButton,WindBellDialog ,HelpButton} from "components/UI/index";
+import { TextInput, SelectBox, PrimaryButton,WindBellDialog ,FloatingButton,HelpButton} from "components/UI/index";
 import { db } from "firebase/index"
 import {savePost} from "reducks/posts/operations"
 import { TagArea,ImageCropper } from "../components/PostProduct";
@@ -12,7 +12,8 @@ import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Switch from "@material-ui/core/Switch";
-import { SectionContainer,Title,BoldText } from 'assets/GlobalLayoutStyle';
+import { SectionContainer,Title,BoldText,StyledBoldText,RequiredText } from 'assets/GlobalLayoutStyle';
+
 
 interface Categories {
   id: string;
@@ -57,7 +58,6 @@ const PostEdit: React.FC<PROPS> = ({ dialog, handleClose }) => {
     [check, setCheck] = useState<boolean>(false);
 
 
-
   const commentCheck = ():void => {
     setCheck((prev) => !prev);
   };
@@ -70,39 +70,39 @@ const PostEdit: React.FC<PROPS> = ({ dialog, handleClose }) => {
   );
 
   const inputDescription = useCallback(
-    (event:React.ChangeEvent<HTMLInputElement>) => {
+    (event: React.ChangeEvent<HTMLInputElement>) => {
       setDescription(event.target.value);
-           if (event.target.value.length > 280
-        ) {
-          dispatch(errorOpenAction())
-        }else{
-          dispatch(errorCloseAction())
-        }
+      if (event.target.value.length > 280
+      ) {
+        dispatch(errorOpenAction())
+      } else {
+        dispatch(errorCloseAction())
+      }
     },
     [setDescription]
   );
 
   // 願い事のイベントハンドラー
   const inputWishText = useCallback(
-    (event:React.ChangeEvent<HTMLInputElement>) => {
+    (event: React.ChangeEvent<HTMLInputElement>) => {
       setWishText(event.target.value);
-       const textLength = event.target.value.length
-// 願い事の文字数に合わせて、位置を調整する。
-    if (textLength >48) {
-      alert("文字は48字以内で入力してください")
-      event.preventDefault()
-    }
-       if (textLength <17) {
-      setTextLength("first")
-       } else if (16 < textLength  && textLength < 33) {
-         setTextLength("second")
-       }
-       else {
-         setTextLength("third")
-    }
-   if(12> textLength){
-         setTextLength("short")
-       }
+      const textLength = event.target.value.length
+      // 願い事の文字数に合わせて、位置を調整する。
+      if (textLength > 48) {
+        alert("文字は48字以内で入力してください")
+        event.preventDefault()
+      }
+      if (textLength < 17) {
+        setTextLength("first")
+      } else if (16 < textLength && textLength < 33) {
+        setTextLength("second")
+      }
+      else {
+        setTextLength("third")
+      }
+      if (12 > textLength) {
+        setTextLength("short")
+      }
     },
     [setWishText]
   );
@@ -163,98 +163,134 @@ const PostEdit: React.FC<PROPS> = ({ dialog, handleClose }) => {
       ))
     handleClose && handleClose()
   };
-  //  投稿者のuidが自分のuidと同じなら編集画面の閲覧が可能
+
+
   if ( postUid === uid || !id ) {
     return (
     <div>
         <SectionContainer>
-          <HelpButton name="作品の登録" type="register"/>
-         <Title>作品の登録・編集</Title>
-         <TextInput
-          fullWidth={true}
-          label={"作品タイトル"}
-          multiline={false}
-          required={true}
-          onChange={inputName}
-          rows={1}
-          value={name}
-              type={"text"}
-              variant="outlined"
-        />
-        <TextInput
-          fullWidth={true}
-          label={"作品に込めた思い"}
-          multiline={true}
-          required={true}
-          onChange={inputDescription}
-          rows={12}
-          value={description.slice(0,280)}
-              type={"text"}
-               variant="outlined"
+
+          <FloatingButton type="register" name="作品の登録"/>
+          <Title>作品の登録・編集</Title>
+
+          <div className="module-spacer--medium" />
+
+          <StyledBoldText>作品タイトル</StyledBoldText>
+          <RequiredText>必須</RequiredText>
+            <TextInput
+            fullWidth={true}
+            label={"12文字まで"}
+            multiline={false}
+            required={true}
+            error={name.length < 12 ? false : true}
+            onChange={inputName}
+            rows={1}
+            value={name}
+            type={"text"}
+            variant="outlined"
+            inputProps={{
+              maxLength: 12,
+            }}
           />
+          <StyledBoldText>作品説明</StyledBoldText>
+          <RequiredText>必須</RequiredText>
+            <TextInput
+            fullWidth={true}
+            label={"280文字以内"}
+            multiline={true}
+            required={true}
+            onChange={inputDescription}
+            rows={12}
+            value={description.slice(0,280)}
+            type={"text"}
+            variant="outlined"
+            />
+
           {error &&
             <BoldText color={"red"}>
               ⚠️文字は280字以内でお願いします。
             </BoldText>}
+          <StyledBoldText>カテゴリー</StyledBoldText>
+          <RequiredText>必須</RequiredText>
 
-        <SelectBox
-          label={"カテゴリー"}
-          required={true}
-          options={categories}
-          select={setCategory}
-          value={category}
-          />
-          <div className="module-spacer--medium" />
-          <div className="center">
-            <BoldText>風鈴本体のみの写真</BoldText>
-              <div className="module-spacer--small" />
-              <ImageCropper images={images} setImages={setImages}/>
             <div className="module-spacer--medium" />
 
-            <BoldText>風鈴から短冊までの写真</BoldText>
-            <HelpButton name="風鈴メイカーの使い方" type="windBellMaker"/>
+            <SelectBox
+              label={"カテゴリー"}
+              required={true}
+              options={categories}
+              select={setCategory}
+              value={category}
+              />
+
+            <div className="module-spacer--medium" />
+
+            <div className="center">
+
+            <StyledBoldText>風鈴本体のみの写真</StyledBoldText>
+
+            <RequiredText>必須</RequiredText>
+
+              <div className="module-spacer--medium" />
+
+            <ImageCropper images={images} setImages={setImages} />
+
+              <div className="module-spacer--large" />
+
+            <StyledBoldText>風鈴から短冊までの写真</StyledBoldText>
+            <RequiredText>必須</RequiredText>
+
+            <div className="module-spacer--medium" />
+
+              <HelpButton name="風鈴メイカーの使い方" type="windBellMaker"/>
 
               <PrimaryButton onClick={() => setDialogOpen(true)} label="風鈴メイカーを使う" />
 
-
-              <WindBellDialog
-              textLength={textLength}
-              pathItem={pathItem}
-              setPathItem={setPathItem}
-              windBellImage={windBellImage}
-              setWindBellImage={setWindBellImage}
-              dialogOpen={dialogOpen}
-              handleClose={
-                closeDialog
-              }
-              strip={strip}
-              setStrip={setStrip}
-              wishText={wishText}
-              inputWishText={inputWishText}
-            />
+                <WindBellDialog
+                textLength={textLength}
+                pathItem={pathItem}
+                setPathItem={setPathItem}
+                windBellImage={windBellImage}
+                setWindBellImage={setWindBellImage}
+                dialogOpen={dialogOpen}
+                handleClose={
+                  closeDialog
+                }
+                strip={strip}
+                setStrip={setStrip}
+                wishText={wishText}
+                inputWishText={inputWishText}
+              />
 
             <div className="module-spacer--medium" />
             {/* --------作品の写真を投稿する。------------*/}
             <ImageCropper images={allImages} setImages={setAllImages} all />
+
             <div className="module-spacer--medium" />
+
+            <RequiredText style={{marginTop:"10px"}} gray>任意</RequiredText>
 
             <div style={{ textAlign: "left" }}>
 
-              <TagArea tags={tags} setTags={setTags} />
+                <TagArea tags={tags} setTags={setTags} />
 
             </div>
 
             <div className="module-spacer--medium" />
-
-               <FormControl component="fieldset">
+            <StyledBoldText>コメントの有無</StyledBoldText><br />
+             <div className="module-spacer--small" />
+            <FormControl component="fieldset">
 
             <FormGroup>
             <FormControlLabel
               control={<Switch checked={check} onChange={commentCheck} />}
-              label="コメントを非表示にする"
+              label={check ? "非表示になっています"  : "表示になっています"}
             />
             </FormGroup>
             </FormControl>
+
+            <div className="module-spacer--medium" />
+            <br/>
 
             <PrimaryButton
               disabled={name === "" || description==="" || category === "" || images.length === 0  || allImages.length === 0}
@@ -262,7 +298,7 @@ const PostEdit: React.FC<PROPS> = ({ dialog, handleClose }) => {
               onClick={() => save()}
             />
           </div>
-       </SectionContainer>
+        </SectionContainer>
     </div>
   )
   } else {

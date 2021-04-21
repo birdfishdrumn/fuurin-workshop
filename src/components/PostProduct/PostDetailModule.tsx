@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react"
 import { useSelector,useDispatch } from "react-redux";
 import { db } from "firebase/index";
-import { Flex, SectionWrapper, Title, GridLow, BackgroundWhite, BoldText, StyledBoldText } from "assets/GlobalLayoutStyle";
+import { Flex, SectionWrapper, Title, Text,GridLow, BackgroundWhite, BoldText, StyledBoldText } from "assets/GlobalLayoutStyle";
 import { ImageSwiper,RelationPost,Comment,Favorite } from "components/PostProduct/index";
 import { dialogOpenAction } from "reducks/dialog/dialogSlice";
 import { getPostsInFavorite, getUserId, getUserAvatar, getUsername, getIsSignedIn } from "reducks/users/userSlice";
@@ -13,7 +13,7 @@ import 'moment/locale/ja'
 import { DetailWrapper, PostTag } from "templates/style";
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
-import { makeStyles ,createStyles} from "@material-ui/core/styles";
+import { makeStyles} from "@material-ui/core/styles";
 import Divider from '@material-ui/core/Divider';
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -23,12 +23,11 @@ import styled from "styled-components";
 import { POST } from "types/posts";
 import { FAVORITE } from "types/likes";
 
-const AvatarTitle = styled(Avatar)`
-display:inline-block;
-`
-const Username = styled.div`
+const Username = styled.p`
  margin-top:10px;
- margin-left:20px;
+ margin-left:5px;
+ font-size:0.85rem;
+ font-weight:bold;
 
 `
 const NoComment = styled.div`
@@ -36,44 +35,39 @@ const NoComment = styled.div`
 `
 // iconButtonを右端に寄せるcss
 const TitleContainer = styled.div`
- position:relative;
- >div:last-child{
-   position:absolute;
-   top:0;
-   right:0;
- }
+position:relative;
+>div:last-child{
+  position:absolute;
+  top:0;
+  right:0;
+}
 `
 
 const useStyles = makeStyles((theme) => ({
   sliderBox: {
     [theme.breakpoints.down("sm")]: {
       margin: "0 auto 24px auto",
-      // height: "auto",
       width: "90%"
     },
     [theme.breakpoints.up("sm")]: {
       margin: "0 auto",
       width: 400,
-      // height: 400
     }
   },
   media: {
     margin: "auto",
-    // position: "relative",
-
-
-    textAlign:"center",
+    textAlign: "center",
     '& > img': {
-        //  position: "relative",
-          margin:"auto",
+      margin: "auto",
       height: "70%",
-    borderRadius:5,
-    width:"70%",
+      borderRadius: 5,
+      width: "70%",
     },
   },
-    small: {
-    width: theme.spacing(3),
-    height: theme.spacing(3),
+  small: {
+    display:"inline-block",
+    width: theme.spacing(5),
+    height: theme.spacing(5),
     marginRight: theme.spacing(1),
   },
 }));
@@ -137,13 +131,13 @@ const PostDetailModule:React.FC<PROPS> = ({ productId, onClose,template }) => {
     }, 200);
   }, [setId]);
 
-  const searchTag = (tag: any):void => {
+  const searchTag = (tag: any): void => {
     dispatch(push(`/timeline/?tags=${tag}`))
     onClose && onClose()
   };
 
   return (
-     <SectionWrapper>
+    <SectionWrapper>
       {post ? (
         <>
           <TitleContainer>
@@ -157,66 +151,73 @@ const PostDetailModule:React.FC<PROPS> = ({ productId, onClose,template }) => {
           </TitleContainer>
 
           <Divider />
-             <div style={{height:"5vh"}}/>
+
+          <div style={{ height: "5vh" }} />
+
           <GridLow >
-             <div className={classes.sliderBox}>
+            <div className={classes.sliderBox}>
+
               <ImageSwiper images={post.images} />
-
-                    <div className="module-spacer--small" />
-
-                    <Flex between>
-                      <Flex cursor onClick={() => isSignedIn ?
-                          dispatch(push("/users/" + post.uid))
-                          :
-                          dispatch(dialogOpenAction({  type: "signin",title:"ログイン" }))
-                        }>
-                        <AvatarTitle src={post.avatar} />
-                      <Username>{post.username}</Username>
-                      </Flex>
-                      <Flex>
-                  {/* <Share text="tweet" url={id} /> */}
-                  <Menu type="share" url={id}/>
-                      <Favorite id={id} uid={uid} likesPostsArray={likesPostsArray} post={post} detail/>
-                      </Flex>
-                    </Flex>
-
-                    <Divider />
-
-                    < NoComment >
-
-                      {post.check !== true ?
-                        <Comment postUid={postUid} id={id} username={username} avatar={avatar} uid={uid}/>:
-                      <StyledBoldText>コメントは非表示になっています。</StyledBoldText>
-                      }
-                    </ NoComment>
-                  </div>
-                <DetailWrapper>
-                      <Divider className="downMd" />
-                      <div className="downMd" style={{ height: "5vh" }} />
-                      <BackgroundWhite>
-                  <Title min >作品の説明</Title>
-                  {/* 説明欄に改行を可能にする。 */}
-                        <p>{returnCodeToBr(post.description)}</p>
-                      </BackgroundWhite>
 
               <div className="module-spacer--small" />
 
-                    <div className={classes.media}>
-                      <img src={post.allImages[0].path}/>
-                    </div>
+                  <Flex between>
+                    <Flex cursor onClick={() => isSignedIn ?
+                            dispatch(push("/users/" + post.uid))
+                            :
+                            dispatch(dialogOpenAction({  type: "signin",title:"ログイン" }))
+                          }>
+                        <Avatar className={classes.small} src={post.avatar} />
+                        <Username>{post.username}</Username>
+                    </Flex>
+                    <Flex>
 
-                    <div className="module-spacer--small" />
+                    <Menu type="share" url={id} />
+
+                  <Favorite id={id} uid={uid} likesPostsArray={likesPostsArray} post={post} detail />
+                  {isSignedIn && <Menu type="report" id={id} />}
+
+                    </Flex>
+                  </Flex>
+
+                  <Divider />
+
+                  <NoComment >
+
+                    {post.check !== true ?
+                      <Comment postUid={postUid} id={id} username={username} avatar={avatar} uid={uid}/>:
+                    <StyledBoldText center>コメントは非表示になっています。</StyledBoldText>
+                    }
+                  </NoComment>
+            </div>
+
+            <DetailWrapper>
+            <Divider className="downMd" />
+            <div className="downMd" style={{ height: "5vh" }} />
+              <BackgroundWhite noneShadow>
+                  <BoldText>作品の説明</BoldText>
+                  {/* 説明欄に改行を可能にする。 */}
+              <Text>{returnCodeToBr(post.description)}</Text>
+              </BackgroundWhite>
+
+              <div className="module-spacer--small" />
+
+                <div className={classes.media}>
+                  <img src={post.allImages[0].path}/>
+                </div>
+
+                <div className="module-spacer--small" />
 
                   {/* タグ一覧 */}
-                  <PostTag>
-                    {post.tags?.length ? post.tags?.map((t,index) => (
-                    <li key={index} onClick={()=>searchTag(t)}>#{t}</li>
-                    ))
-                          :
-                          <BoldText><SentimentDissatisfiedOutlinedIcon style={{fontSize:"30px",marginBottom:"-8px",marginRight:"10px"}}/>タグがありません</BoldText>
-                    }
-                  </PostTag>
-                  </DetailWrapper>
+                <PostTag>
+                  {post.tags?.length ? post.tags?.map((t,index) => (
+                  <li key={index} onClick={()=>searchTag(t)}>#{t}</li>
+                  ))
+                  :
+                  <BoldText color={"dimgray"}><SentimentDissatisfiedOutlinedIcon style={{fontSize:"30px",marginBottom:"-8px",marginRight:"10px"}}/>タグがありません</BoldText>
+                  }
+                </PostTag>
+            </DetailWrapper>
           </GridLow>
           <div style={{ height: "5vh" }} />
 
@@ -225,23 +226,26 @@ const PostDetailModule:React.FC<PROPS> = ({ productId, onClose,template }) => {
           {post.tags.length > 0 ?
             <div >
             <RelationPost randomTag={randomTag} tags={tags} id={id} changeRelation={changeRelation}/>
-           </div>
+            </div>
             :
-            <Title min>関連作品はありません</Title>
+            <>
+            <div className="module-spacer--small" />
+              <Title min>関連作品はありません</Title>
+              </>
           }
               <div style={{height:"10vh"}}/>
-        </>
-      )
-       :
-        (
-        <div style={{ height: "100vh", }}>
+            </>
+            )
+          :
+          (
+          <div style={{ height: "100vh", }}>
             <CircularProgress color="inherit"  style={{ margin: "20vh 0" }}/>
-         </div>
-      )
-}
-  </SectionWrapper>
-)
-};
+          </div>
+          )
+        }
+      </SectionWrapper>
+    )
+  };
 
 
 export default PostDetailModule

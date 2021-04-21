@@ -50,7 +50,13 @@ export default function TransitionsModal() {
             <Divider/>
 
               {type === "userConfirm" &&
-                <p id="transition-modal-description">本人確認用のメールを送信しました。メールを確認してリンクで本人確認の登録を行ってください。またメールが届かない場合はメールアドレスが間違っているか、迷惑メールフォルダに振り当てられている可能性がありますのでご確認ください。</p>
+                <p id="transition-modal-description">本人確認用のメールを送信しました。メールを確認してリンクで本人確認の登録を行ってください。<br/>またメールが届かない場合はメールアドレスが間違っているか、迷惑メールフォルダに振り当てられている可能性がありますのでご確認ください。</p>
+            }
+            {type === "report" &&
+                <p id="transition-modal-description">ご報告ありがとうございます。該当のものを確認次第ご対応させていただきますのでよろしくお願いいたします。</p>
+            }
+                  {type === "reset" &&
+                <p id="transition-modal-description">ご報告ありがとうございます。該当のものを確認次第ご対応させていただきますのでよろしくお願いいたします。</p>
               }
           </div>
         </Fade>

@@ -4,12 +4,12 @@ import { hideLoadingAction, showLoadingAction } from "../reducks/loadingSlice";
 import { getRoute } from "reducks/users/userSlice";
 import { fetchPostsAction } from "../reducks/posts/postSlice";
 import { push } from "connected-react-router";
-import { PostCard} from "components/PostProduct";
+import { PostCard } from "components/PostProduct";
 import { db} from "firebase/index";
 import NotPushAuth from "NotPushAuth";
 import { PrimaryButton,ImageStyleChangeIcon} from "components/UI";
 import firebase from "firebase/app";
-import { GridList, Title, SectionWrapper, ScrollItem, BoldText, StyledLink, MinText } from "assets/GlobalLayoutStyle";
+import { GridList, Title, SectionWrapper, ScrollItem, BoldText, StyledLink, MinText,StyledImage } from "assets/GlobalLayoutStyle";
 import { TopCarouselWrapper, TopCarouselColumn } from "./style";
 import PopulationPost from "./PopulatePost";
 import { PostTag } from "./style";
@@ -19,6 +19,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import SentimentDissatisfiedOutlinedIcon from '@material-ui/icons/SentimentDissatisfiedOutlined';
 import count from "count-array-values";
 import { POST } from "types/posts";
+import { Fukusuke } from "assets/ImageIcon";
 
 
 
@@ -39,7 +40,7 @@ const PostList = () => {
   const categoryId: string = query.split("?category=")[1]; //カテゴリーのidの名称
 
   const category = /^\?category=/.test(query) ? query.split("?category=")[1] : "";
-   const tags = /^\?tags=/.test(query) ? query.split("?tags=")[1] : "";
+  const tags = /^\?tags=/.test(query) ? query.split("?tags=")[1] : "";
 
 
   useEffect(() => {
@@ -56,7 +57,7 @@ const PostList = () => {
         const post = snapshot.data();
         postList.push(post)
 
-      })
+      });
       // 最後に取得されたデータ
       const lastDoc = snapshots.docs[snapshots.docs.length - 1]
       setLastDoc(lastDoc)
@@ -89,7 +90,7 @@ const PostList = () => {
     setLoading(true);
     let query = postsRef.orderBy("updated_at", order);
     query = (category !== "") ? query.where("category", "==", category) : query;
-    query = (tags !== "") ? query.where("tags", "array-contains", tags) : query;    query.startAfter(lastDoc).limit(12).get()
+    query = (tags !== "") ? query.where("tags", "array-contains", tags) : query; query.startAfter(lastDoc).limit(12).get()
       .then((snapshots: firebase.firestore.DocumentData) => {
         const isCollectionEmpty = snapshots.size === 0;
         if (!isCollectionEmpty) {
@@ -113,7 +114,7 @@ const PostList = () => {
   // -------------人気のタグを表示ーーーーーーーーーーーーー
   const tagsList = postsList.map((post) => post.tags);
   const tagNum = count(tagsList.flat());
-  const tagNumSlice = tagNum.slice(0, 10);
+  const tagNumSlice = tagNum.slice(0, 20);
 
     // -------------人気のタグを表示ーーーーーーーーーーーーー
 
@@ -148,29 +149,42 @@ const PostList = () => {
                 <MinText min left>まずはこちらからサービスの始めかたについてご覧いただけます。早速江戸風鈴の体験を始めましょう！</MinText>
           </div>
             </TopCarouselColumn>
-
-          </StyledLink>
-
-      </TopCarouselWrapper>
+        </StyledLink>
+        </TopCarouselWrapper>
       </Carousel>
       }
       <div className="module-spacer--medium" />
 
+      {!category && !tags &&
+
+        postsList.length !== 0 &&
+          <>
+            <Title>人気のタグ</Title>
+              <PostTag top>
+              {tagNumSlice && tagNumSlice.map((t: any, index: number) => (
+                <li key={index} onClick={() => tagSearch(t)}>#{t.value}</li>
+              ))}
+              </PostTag>
+
+        <div className="module-spacer--medium" />
+
+          </>
+      }
+
       {!category && !tags && <Title>新着作品</Title>}
       <ImageStyleChangeIcon changeSort={changeSort} setChange={setChange} />
 
-     <div className="module-spacer--medium"/>
+      <div className="module-spacer--medium"/>
 
       {tags && <BoldText>「{tags}」の検索結果</BoldText>}
       {category && <BoldText>「{catName}」の検索結果</BoldText>}
 
-     <div className="module-spacer--small"/>
+      <div className="module-spacer--small"/>
 
       <GridList change={change}>
-
         {postsList.length > 0 ?
           postsList.map((post) => (
-                  <ScrollItem key={post.id}>
+              <ScrollItem key={post.id}>
                   <PostCard
                     change={change}
                     post={post}
@@ -184,16 +198,21 @@ const PostList = () => {
                     avatar={post.avatar}
                     uid={post.uid}
                 />
-                  </ScrollItem>
+              </ScrollItem>
           ))
           :
           // ローディング中の表示
           <div style={{
-            height: "50vh",
+            height: "1s0vh",
             backgroundColor:"#FFFAFA"
           }}></div>
         }
       </GridList>
+
+      {!postsList.length && <> <StyledImage width={"100"} min alt="福助" src={Fukusuke} />
+      <BoldText color={"dimgray"}>申し訳ございません。<br/>投稿がまだありません。</BoldText>
+      </>}
+
       {/* -----------もっとみるのLOADING---------------- */}
       <div className="center">
         {loading &&
@@ -211,7 +230,7 @@ const PostList = () => {
         />}
       {/* -----------もっとみるのLOADING---------------- */}
       <div className="module-spacer--medium"/>
-      {isEmpty && <><SentimentDissatisfiedOutlinedIcon /><h1>これ以上投稿はありません...</h1></>}
+      {isEmpty && <><SentimentDissatisfiedOutlinedIcon /><BoldText color={"dimgray"}>これ以上投稿はありません...</BoldText></>}
 
       {!category && !tags &&
         <>
@@ -219,21 +238,9 @@ const PostList = () => {
 
         <PopulationPost top />
 
-      <div className="module-spacer--medium"/>
-
-        {postsList.length !== 0 &&
-          <>
-          <Title>人気のタグ</Title>
-            <PostTag top>
-            {tagNumSlice && tagNumSlice.map((t:any,index:number) => (
-              <li key={index} onClick={()=>tagSearch(t)}>#{t.value}</li>
-            ))}
-            </PostTag>
-        </>
-        }
         </>
       }
- </SectionWrapper>
+    </SectionWrapper>
   )
 }
 

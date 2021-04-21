@@ -16,56 +16,56 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 import BrushIcon from '@material-ui/icons/Brush';
 import { push } from "connected-react-router";
 import Avatar from '@material-ui/core/Avatar';
-import PopOver from "./PopOver";
+import {PopOver} from "components/UI/index";
 
 
 
 const useStyles = makeStyles((theme) =>
   createStyles({
-     root: {
-    width: '100%',
-    maxWidth: 500,
+    root: {
+      width: '100%',
+      maxWidth: 500,
       backgroundColor: theme.palette.background.paper,
-    position: 'absolute',
+      position: 'absolute',
       overflow: 'auto',
       top: 60,
       // left: 500,
-   paddingBottom:0,
-   paddingTop:0,
+      paddingBottom: 0,
+      paddingTop: 0,
       maxHeight: 300,
       cursor: "pointer",
 
     },
     searchText: {
-       '&:hover': {
-         background: "#eee",
+      '&:hover': {
+        background: "#eee",
       },
     },
     headerMenu: {
-         display: 'flex',
-      },
-        searchField: {
-          alignItems: 'center',
-          justifyContent:"center",
-            display: 'flex',
-            marginRight: 32,
-          textAlign: "center",
-           position: 'relative',
-          width: 500,
-          borderRadius:20,
-            focus:500
+      display: 'flex',
     },
-          popRoot: {
+    searchField: {
+      alignItems: 'center',
+      justifyContent: "center",
+      display: 'flex',
+      marginRight: 32,
+      textAlign: "center",
+      position: 'relative',
+      width: 500,
+      borderRadius: 20,
+      focus: 500
+    },
+    popRoot: {
       width: 500,
     },
     typography: {
       padding: theme.spacing(2),
     },
-         small: {
+    small: {
       width: theme.spacing(4),
       height: theme.spacing(4),
     },
-    }),
+  }),
 );
 
 interface PROPS {
@@ -131,7 +131,7 @@ const HeaderMenus: React.FC<PROPS> = (props) => {
 
         <Tooltip title="絵の描き方" interactive>
           <IconButton onClick={()=>dispatch(push("/dojo"))}>
-                  <BrushIcon style={{fontSize:"28px"}}/>
+                  <BrushIcon style={{fontSize:"25px"}}/>
           </IconButton>
         </Tooltip>
         <Tooltip title="検索" interactive>
@@ -142,7 +142,7 @@ const HeaderMenus: React.FC<PROPS> = (props) => {
         <Tooltip title="お知らせ" interactive>
             <IconButton onClick={handleClick("push")}>
 
-                  <NotificationsNoneIcon style={{fontSize:"28px"}}/>
+                  <NotificationsNoneIcon style={{fontSize:"25px"}}/>
 
           </IconButton>
         </Tooltip>
@@ -152,7 +152,7 @@ const HeaderMenus: React.FC<PROPS> = (props) => {
         <Tooltip title="作品の登録" interactive>
             <IconButton onClick={ ()=>dispatch(push("/posts/edit"))}>
 
-                  <AddCircleIcon style={{fontSize:"28px"}}/>
+                  <AddCircleIcon style={{fontSize:"25px"}}/>
 
           </IconButton>
         </Tooltip>
@@ -160,7 +160,7 @@ const HeaderMenus: React.FC<PROPS> = (props) => {
           <IconButton onClick={() => dispatch(push("/likes"))}>
 
           <Badge badgeContent={likesPost && likesPost.length} color="error">
-                  <FavoriteBorderIcon style={{fontSize:"28px"}}/>
+                  <FavoriteBorderIcon style={{fontSize:"25px"}}/>
               </Badge>
 
           </IconButton>
@@ -173,7 +173,7 @@ const HeaderMenus: React.FC<PROPS> = (props) => {
         </div>
 
       <IconButton  onClick = {(event)=>props.handleDrawerToggle(event)}>
-        <MenuIcon style={{fontSize:"28px"}}/>
+        <MenuIcon style={{fontSize:"25px"}}/>
         </IconButton>
     </div>
   )

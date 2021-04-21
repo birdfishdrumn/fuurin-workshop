@@ -7,7 +7,10 @@ export const dialogSlice = createSlice({
     dialog: {
       title:"",
       state: false,
-      type:""
+      type: "",
+      id: "",
+      content: {}
+
     }
   },
   reducers: {
@@ -25,6 +28,7 @@ export const dialogSlice = createSlice({
 export const {dialogOpenAction,dialogCloseAction} = dialogSlice.actions;
 export const getDialogState = (state: RootState) => state.dialog.dialog.state;
 export const getDialogTitle = (state: RootState )=> state.dialog.dialog.title;
-export const getDialogType = (state: RootState )=> state.dialog.dialog.type;
-
+export const getDialogType = (state: RootState) => state.dialog.dialog.type;
+export const getDialogId = (state: RootState )=> state.dialog.dialog.id;
+export const getDialogContent = (state: RootState )=> state.dialog.dialog.content;
 export default dialogSlice.reducer

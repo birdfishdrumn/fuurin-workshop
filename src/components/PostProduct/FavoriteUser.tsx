@@ -54,7 +54,7 @@ export default function FavoriteUser({avatar,username,profile,uid}) {
                 className={classes.inline}
                 color="textPrimary"
               >
-             {profile}
+              {profile}
               </Typography>
             </React.Fragment>
           }

@@ -5,7 +5,9 @@ export type PathItem = {
   viewBox: string;
 };
 
-export type WINDBELLMAKERTYPE = {
+
+
+export type WINDBELLMAKERTYPE =  {
   textLength: string;
   dialogOpen?: boolean;
   handleClose?: () => void;
@@ -18,5 +20,6 @@ export type WINDBELLMAKERTYPE = {
 
   wishText: string;
   inputWishText: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  uploadImage?: (e: any) => void
+  uploadImage?: (e: any) => void;
+  setBackground?:React.Dispatch<React.SetStateAction<string>>;
 };

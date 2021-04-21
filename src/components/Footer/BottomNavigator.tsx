@@ -15,24 +15,29 @@ import {useSelector} from "react-redux"
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    zIndex:999,
+    zIndex: 999,
     [theme.breakpoints.down("sm")]: {
-         maxWidth: "100%",
-    position: "fixed !important",
+      // maxWidth: "100%",
+      position: "fixed !important",
       bottom: 0,
-          width: "100%"
-
+      width: "100%"
     },
     [theme.breakpoints.up("sm")]: {
-    display:"none"
-
+      display: "none"
     },
+    button:{
+      padding:0
+    }
   },
-     small: {
-      width: theme.spacing(4),
-      height: theme.spacing(4),
-    },
-}))
+  small: {
+    width: theme.spacing(4),
+    height: theme.spacing(4),
+  },
+  action: {
+    minWidth: 40,
+    padding:"6px"
+  }
+}));
 
 const BottomNavigator = () => {
   const dispatch = useDispatch()
@@ -50,7 +55,7 @@ const BottomNavigator = () => {
 
   return (
     <>
-      <BottomNavigation
+     <BottomNavigation
       value={value}
       onChange={(event, newValue) => {
         setValue(newValue);
@@ -58,22 +63,27 @@ const BottomNavigator = () => {
       showLabels
       className={classes.root}
     >
-      <BottomNavigationAction label="ホーム"
-              onClick={()=>dispatch(push("/timeline"))}
-        icon={< HomeIcon />} />
-      <BottomNavigationAction label="検索"
-      onClick={()=>dispatch(push("/search"))}
-        icon={<SearchIcon />} />
-       <BottomNavigationAction label="投稿"
-      onClick={()=>handleClickOpen()}
-        icon={<AddIcon />} />
-      <BottomNavigationAction label="お気に入り"
-           onClick={()=>dispatch(push("/likes"))}
-        icon=
-        {<FavoriteIcon />} />
-      <BottomNavigationAction
-             onClick={()=>dispatch(push("/user/mypage"))}
-          icon={<Avatar className={classes.small} src={avatar}/>} />
+        <BottomNavigationAction label="ホーム"
+            className={classes.action}
+            onClick={()=>dispatch(push("/timeline"))}
+            icon={< HomeIcon />} />
+        <BottomNavigationAction label="検索"
+           className={classes.action}
+            onClick={()=>dispatch(push("/search"))}
+            icon={<SearchIcon />} />
+        <BottomNavigationAction label="投稿"
+           className={classes.action}
+            onClick={()=>handleClickOpen()}
+            icon={<AddIcon />} />
+        <BottomNavigationAction label="お気に入り"
+           className={classes.action}
+            onClick={()=>dispatch(push("/likes"))}
+            icon=
+            {<FavoriteIcon />} />
+        <BottomNavigationAction
+           className={classes.action}
+              onClick={()=>dispatch(push("/user/mypage"))}
+              icon={<Avatar className={classes.small} src={avatar}/>} />
       </BottomNavigation>
       <AddPostModal open={open} handleClose={handleClose}/>
       </>

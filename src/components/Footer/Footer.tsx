@@ -19,7 +19,8 @@ const Footer = () => {
         <li onClick={()=>dispatch(push("/terms"))}>利用規約</li>
         <li onClick={()=>dispatch(push("/policy"))}>プライバシーポリシー</li>
         <li onClick={() => dispatch(push("/workshopkit"))}>体験キットのご購入</li>
-        <li onClick={()=>dispatch(push("/about"))}>江戸風鈴</li>
+        <li onClick={() => dispatch(push("/about"))}>江戸風鈴</li>
+        <li onClick={()=>openOutsideLink("https://docs.google.com/forms/d/e/1FAIpQLSfubjAQYCXXEdX0f4VbL-iVO4_z80vcLP5Tla-54TR0NLfr9A/viewform")}>お問い合わせ</li>
 			</FooterNav>
       <FooterNav sns>
         <li onClick={()=>openOutsideLink("https://twitter.com/maruyosi_fuurin")}><TwitterIcon style={{ fontSize: "30px" }}/></li>

@@ -18,6 +18,8 @@ interface PROPS {
   type: string;
   onChange: (e:React.ChangeEvent<HTMLInputElement>) => void;
   variant: string;
+  inputProps?: any;
+  error?: boolean;
 }
 
 const TextInput:React.FC<PROPS> = (props) => {
@@ -35,6 +37,8 @@ const TextInput:React.FC<PROPS> = (props) => {
       type={props.type}
       onChange={props.onChange}
       variant={props.variant}
+      inputProps={props.inputProps}
+      error={props.error}
     />
   );
 };

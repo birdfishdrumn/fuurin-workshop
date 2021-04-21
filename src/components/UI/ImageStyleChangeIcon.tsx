@@ -15,26 +15,26 @@ const ImageStyleChangeIcon:React.FC<PROPS> = ({setChange,changeSort}) => {
   return (
     <div>
         <IconFlex>
-        {changeSort &&
-          <>
-               <Tooltip title="新しい準" interactive>
-           <li onClick={()=>changeSort("asc")}><WhiteIcon><ArrowDownwardIcon fontSize="large"  /></WhiteIcon></li>
-        </Tooltip>
-           <Tooltip title="古い順" interactive>
-           <li onClick={()=>changeSort("desc")}><WhiteIcon><ArrowUpwardIcon fontSize="large" /></WhiteIcon></li>
-          </Tooltip>
-          </>
-        }
-        <Tooltip title="グリッド" interactive>
-          <li  onClick={() =>setChange(false) }>
-            <WhiteIcon><GridOnIcon fontSize="large" /></WhiteIcon>
-            </li>
-        </Tooltip>
-        <Tooltip title="短冊まで" interactive>
-          <li  onClick={() =>setChange(true) }>
-            <WhiteIcon ><ViewColumnIcon fontSize="large" /></WhiteIcon>
-            </li>
-        </Tooltip>
+          {changeSort &&
+            <>
+              <Tooltip title="新しい準" interactive>
+                <li onClick={()=>changeSort("asc")}><WhiteIcon><ArrowDownwardIcon fontSize="large"  /></WhiteIcon></li>
+              </Tooltip>
+              <Tooltip title="古い順" interactive>
+                <li onClick={()=>changeSort("desc")}><WhiteIcon><ArrowUpwardIcon fontSize="large" /></WhiteIcon></li>
+              </Tooltip>
+            </>
+          }
+            <Tooltip title="グリッド" interactive>
+              <li  onClick={() =>setChange(false) }>
+              <WhiteIcon><GridOnIcon fontSize="large" /></WhiteIcon>
+              </li>
+            </Tooltip>
+            <Tooltip title="短冊まで" interactive>
+              <li  onClick={() =>setChange(true) }>
+              <WhiteIcon ><ViewColumnIcon fontSize="large" /></WhiteIcon>
+              </li>
+            </Tooltip>
         </IconFlex>
 
     </div>

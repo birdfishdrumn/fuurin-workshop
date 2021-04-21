@@ -11,6 +11,14 @@ const useStyle = makeStyles({
     minWidth: 128,
     width: "100%",
   },
+  label: {
+    padding: "0 10px",
+    zIndex:1
+  },
+  form: {
+    background: "white",
+    // zIndex:-4
+  }
 });
 
 interface PROPS {
@@ -29,8 +37,10 @@ const SelectBox: React.FC<PROPS> = (props) => {
   const classes = useStyle();
   return (
     <FormControl className={classes.FormControl}>
-      <InputLabel>{props.label}</InputLabel>
+      <InputLabel className={classes.label}>{props.label}</InputLabel>
       <Select
+        className={classes.form}
+        variant="outlined"
         required={props.required}
         value={props.value}
         onChange={(event) => props.select(event.target.value)}

@@ -1,7 +1,8 @@
 import styled, { css }from "styled-components";
 import { Link } from 'react-router-dom'
 import IconButton from "@material-ui/core/IconButton"
-
+import TwitterIcon from '@material-ui/icons/Twitter';
+import InstagramIcon from '@material-ui/icons/Instagram';
 // ----------UI-------------
 export const StyledLink = styled(Link)`
  text-decoration:none;
@@ -16,8 +17,11 @@ ${props => props.cursor && `
 `
 export const WhiteIcon = styled(IconButton)`
  background:white;
-  box-shadow: 2px 2px 4px gray;
-margin:${props => (props.noMargin ? "5px" : "15px")};
+ box-shadow: 2px 2px 4px gray;
+ margin:${props => (props.noMargin ? "5px" : "15px")};
+ @media(max-width:768px){
+   margin:10px;
+ }
 &:hover{
   background:#33CCCC;
   color:white;
@@ -25,40 +29,52 @@ margin:${props => (props.noMargin ? "5px" : "15px")};
     color:white;
   }
 }
-
 `
 
 // -------TEXT----------
-
+export const UnderLineText = styled.span`
+ background: linear-gradient(transparent 70%, #FF99CC 70%);
+`
 export const Title = styled.h2`
   color:${props => (props.dimgray ? "dimgray" : "#2F4F4F")};
   margin:0 auto;
-  padding:${props => (props.min ? "20px 0" :"30px 25px 20px 25px"  )};
+  padding:${props => (props.min ? "10px 0" :"30px 25px 20px 25px"  )};
   font-weight:bold;
-  font-size:${props =>(props.min ? "1.4rem" : "1.6rem" )};
+  font-size:${props =>(props.min ? "1.3rem" : "1.6rem" )};
 text-align:${props => (props.left ? "left" : "center")};
+${props => props.firstLetter && `
+  ::first-letter {
+  font-size: 180%;
+  font-style: italic;
+  margin-right:5px;
+  color:#00CED1;
+}
+`}
 ${props => props.pointer && `
  cursor:pointer;
 `}
 @media(max-width:768px){
-    font-size:${props =>(props.min ? "1.2rem" : "1.6rem" )};
+    font-size:${props =>(props.min ? "1.2rem" : "1.5rem" )};
 }
 `
 
 export const BackgroundWhiteTitle = styled(Title)`
-   padding:15px;
+ padding:15px;
+
 `
 
 export const Text = styled.p`
 
  text-align:${props => (props.left ? "left" : "center")} ;
  margin:0 15px;
- font-weight:600;
+ font-weight:300;
  color:${props=>(props.white ? "white" : "dimgray")};
  font-size:${props=>(props.large ? "1.2rem" : "1.1rem")};
  padding:20px 0;
+ text-shadow:${props => props.shadow && "1px 1px 2px black"};
+ line-height:1.8rem;
 @media(max-width:768px){
-  font-size:1.0rem;
+  font-size:1rem;
 }
 `
 
@@ -69,7 +85,7 @@ export const MinText = styled.p`
  font-weight:500;
  color:${props=>(props.red ? "red" : "dimgray")};
  font-size:0.9rem;
- padding:10px 0;
+ padding:${props => (props.nonePadding ? "0":"10px 0")};
  @media(max-width:768px){
    font-size:${props => (props.min && "0.8rem")};
  }
@@ -85,7 +101,7 @@ export const MainTitle = styled.div`
   }
 `
 export const Main = styled.div`
-       padding: ${props=>(props.auth ? "70px 0" : "70px 0 0 0 ")};
+ padding: ${props=>(props.auth ? "70px 0" : "70px 0 0 0 ")};
 `
 
 export const  HelpNav = styled.ul`
@@ -98,22 +114,40 @@ export const  HelpNav = styled.ul`
 
 export const BoldText = styled.p`
 font-weight:bolder;
-font-size:${props => (props.min ? "0.7rem" : "1rem")};
+font-size:${props => (props.min ? "0.8rem" : "1rem")};
 text-align:center;
 color:${props => props.color};
- text-align:${props => (props.left && "left")} ;
- text-align:${props => (props.right && "right")} ;
- ${props => props.image && `
-   width:45%;
-   margin:10px auto;
-   @media(max-width:768px){
-     width:80%;
-
-   }
- `};
+text-align:${props => (props.left && "left")} ;
+text-align:${props => (props.right && "right")} ;
+${props => props.image && `
+  width:45%;
+  margin:10px auto;
+  @media(max-width:768px){
+    width:80%;
+  }
+`};
+${props => props.pointer && `
+  cursor:pointer;
+`}
 `
-export const StyledBoldText= BoldText.withComponent('span')
+export const  StyledBoldText= styled(BoldText.withComponent('span'))`
+  ${props => !props.center && `
+    float:left;
+  `}
+`;
 
+export const RequiredText = styled.span`
+  /* display:inline-block; */
+  color:white;
+  background:${props=>(props.gray ? "#C0C0C0" : "red")};
+  padding:3px;
+  border-radius:5px;
+  font-size:0.8rem;
+  font-weight:bold;
+  float:left;
+  margin:0 7px;
+  align-items:center;
+`
 export const NumberTitle = styled(Title)`
 position:relative;
 padding: 2px 5px 2px 25px;
@@ -192,15 +226,13 @@ export const SectionWrapping = styled.section`
     position: relative;
     padding: 0 20px;
     text-align: center;
-    /* width: 100%; */
-     width: calc(100% - 2rem);
+    width: calc(100% - 2rem);
 
-     background-color:${props => (props.white && "white")};
-     @media(max-width:768px){
-       padding: 0;
-     }
+    background-color:${props => (props.white && "white")};
+    @media(max-width:768px){
+      padding: 0;
+    }
 `
-
 
 
 export const GridList = styled.div `
@@ -213,7 +245,6 @@ export const GridList = styled.div `
       -webkit-overflow-scrolling: touch;
    }
   `
-
   : `
 list-style:none;
  display:grid;
@@ -238,8 +269,8 @@ list-style:none;
 export const GridLow = styled.div`
     margin:0 auto;
     @media(min-width:1024px){
-       width:1024px;
-         display: flex;
+    width:1024px;
+    display: flex;
 
     flex-flow: row wrap;
     justify-content: center;
@@ -252,7 +283,7 @@ export const SectionContainer = styled.div`
     position: relative;
     margin: ${props => (props.margin ? "70px auto" :  "0 auto")};
     text-align:center;
-    max-width: 400px;
+    max-width: 500px;
     padding: 5px;
     height: auto;
     width: calc(100% - 2rem);
@@ -266,16 +297,14 @@ export const TwoColumn = styled.div`
   }
 `
 
-
-
 export const SimpleGrid = styled.div`
 
     margin:0 auto;
-         display: grid;
-         max-width:${props=>(props.two && "700px")};
-         grid-gap:${props=>(props.two ? "100px":"60px")};
+    display: grid;
+    max-width:${props=>(props.two && "700px")};
+    grid-gap:${props=>(props.two ? "100px":"60px")};
       grid-template-columns:${props=>(props.two ? "1fr 1fr" : "1fr 1fr 1fr")};
-       @media(max-width:767px){
+    @media(max-width:767px){
  grid-template-columns:1fr;
  }
  >div{
@@ -283,7 +312,7 @@ export const SimpleGrid = styled.div`
 
  }
 `
-
+// --------------Flex----------------------
 export const IconFlex = styled.div`
 display:flex;
 list-style:none;
@@ -298,7 +327,7 @@ justify-content:${props => (props.between ? "space-between" : "center")};
       padding:${props=>(props.padding && "30px")};
 >div{
        /* padding:${props=>(props.padding && "30px")}; */
-  margin:10px 30px;
+  margin:10px 20px;
   cursor:pointer;
     ${({ isActive }) => isActive ? `
     color:red;
@@ -312,8 +341,7 @@ justify-content:${props => (props.between ? "space-between" : "center")};
 `
 
 export const ScrollMixin = css`
-         overflow-x: auto;
-      /* white-space: nowrap; */
+      overflow-x: auto;
       -webkit-overflow-scrolling: touch;
 `
 
@@ -323,13 +351,22 @@ export const Scroll = styled.div `
       -webkit-overflow-scrolling: touch;
 `
 export const ScrollItem = styled.li `
-     display: inline-block;
-     width:${props=>(props.width && "250px")};
-     margin:10px;
+    display: inline-block;
+    width:${props=>(props.width && "250px")};
+    margin:10px;
+`
+
+export const ImageFlex = styled.div`
+  /* ${ScrollMixin}; */
+  display:flex;
+  margin:20px 0;
+  @media(max-width:768px){
+    flex-direction:column;
+  }
 `
 
 export const ScrollFlex = styled.div`
-  /* ${ScrollMixin}; */
+  ${ScrollMixin};
   display:flex;
 >img{
   margin:20px 40px;
@@ -365,7 +402,7 @@ export const BackgroundWhite = styled.div`
  padding:${props => (props.large ? "30px" : "20px")};
  margin:0 auto;
  /* max-width:95% !important; */
-  box-shadow: 0 0px 10px rgba(0,0,0,0.2);
+  box-shadow: ${props=>!props.noneShadow && "0 0px 10px rgba(0, 0, 0, 0.2)"};
  width:100% !important;
  border-radius:10px;
  @media(max-width:768px){
@@ -398,11 +435,13 @@ export const ListDesign = styled.ol`
  padding:20px 0 10px 15px;
   margin-left:20px;
   font-weight: bold;
-  font-size:1.4rem;
+  font-size:1.3rem;
   line-height: 30px;
   text-align:left;
   color:#2F4F4F;
-
+ @media(max-width:768px){
+   font-size:1.2rem;
+ }
 }
 li:before{
   counter-increment: list;
@@ -439,4 +478,17 @@ export const StyledImage = styled.img`
 export const CircleImage = styled.img`
  border-radius:50%;
  width:90%;
+`
+
+export const ColorTwitterIcon = styled(TwitterIcon)`
+  color:#00aced;
+`
+
+export const ColorInstagramIcon = styled(InstagramIcon)`
+border-radius: 5px;
+padding:2px;
+color:white;
+background: linear-gradient(to right, #5478f2 0%, #f23f79 60%, orange 100%);
+display: inline-block;
+cursor: pointer;
 `

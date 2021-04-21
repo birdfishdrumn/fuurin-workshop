@@ -23,7 +23,8 @@ const Router = () => {
       <Route exact path={"/timeline"} component={PostList} />
       <Route exact path={"/population"} component={PopulatePost} />
       <Route exact path={"/ServiceGuide"} component={ServiceGuide} />
-       <Auth>
+
+      <Auth>
             <Route exact path={"/push/:id"} component={PushPage} />
             <Route exact path={"/setting"} component={Setting} />
             <Route path={"/posts/edit(/:id)?"} component={PostEdit} />
@@ -43,7 +44,7 @@ const Router = () => {
             <Route exact path={"/likesUser"} component={FavoriteUserList} />
             <div style={{ height: "100px" }} />
               {/* <Route path={"/*"} component={Page404}/> */}
-       </Auth>
+      </Auth>
       </Switch>
   )
 }

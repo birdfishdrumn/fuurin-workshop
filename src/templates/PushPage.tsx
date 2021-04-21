@@ -39,22 +39,22 @@ const PushList:React.FC<PROPS> = ({location}) => {
         <div className="module--space-medium" />
 
         <BackgroundWhite>
-          {pushItem
-            ?
-            <>
-              <Title>{pushItem.title}</Title>
-              <BoldText right>{dateToString(pushItem.date.toDate())}
-              </BoldText>
+            {pushItem
+              ?
+              <>
+                <Title>{pushItem.title}</Title>
+                <BoldText right>{dateToString(pushItem.date.toDate())}
+                </BoldText>
 
-              <div className="module-spacer--medium" />
+                <div className="module-spacer--medium" />
 
-               <Text left >{returnCodeToBr(pushItem.message)}</Text>
-            </>
-            :
-             <CircularProgress color="inherit"  style={{ marginTop: "20vh" }}/>
-          }
+                <Text left >{returnCodeToBr(pushItem.message)}</Text>
+              </>
+              :
+              <CircularProgress color="inherit"  style={{ marginTop: "20vh" }}/>
+            }
 
-          <div className="module-spacer--medium" />
+            <div className="module-spacer--medium" />
 
         </BackgroundWhite>
         </SectionWrapping>

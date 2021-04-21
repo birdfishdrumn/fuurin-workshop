@@ -9,8 +9,8 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import {useSelector,useDispatch} from "react-redux";
-import { SignIn, SignUp } from "components/PostProduct/index";
-import {  dialogCloseAction, getDialogState, getDialogType, getDialogTitle } from "reducks/dialog/dialogSlice";
+import { SignIn, SignUp,Report } from "components/PostProduct/index";
+import {  dialogCloseAction, getDialogState, getDialogType, getDialogTitle, getDialogContent,getDialogId } from "reducks/dialog/dialogSlice";
 import { WindBellMakerHelp, AddProductHelp, SearchHelp, ProfileHelp, FavoriteHelp } from "components/HelpComponents/index";
 
 
@@ -69,6 +69,8 @@ const CustomDialog:React.FC = ({ }) => {
   const open = useSelector(getDialogState);
   const type = useSelector(getDialogType);
   const title = useSelector(getDialogTitle);
+  const id = useSelector(getDialogId);
+   const content = useSelector(getDialogContent);
 
   const dispatch = useDispatch();
   const handleClose = () => {
@@ -91,22 +93,26 @@ const CustomDialog:React.FC = ({ }) => {
           {type === "favoriteAction" &&
             <Text>作品をお気に入りに登録しました！</Text>
           }
-           {type === "confirm" &&
+          {type === "confirm" &&
             <Text>本人確認用のメールを送信しました。メールを確認してリンクで本人確認の登録を行ってください。またメールが届かない場合はメールアドレスが間違っているか、迷惑メールフォルダに振り当てられている可能性がありますのでご確認ください。</Text>
           }
-              {type === "windBellMaker" &&
-                  <WindBellMakerHelp />
-            }
-            {type === "register" &&
-              <AddProductHelp/>
-            }
-              {type === "search" &&
-              <SearchHelp/>
-            }
-            {type === "profile" &&
-            <ProfileHelp/>}
-               {type === "favorite" &&
-            <FavoriteHelp/>}
+          {type === "windBellMaker" &&
+                <WindBellMakerHelp />
+          }
+          {type === "register" &&
+            <AddProductHelp/>
+          }
+            {type === "search" &&
+            <SearchHelp/>
+          }
+          {type === "profile" &&
+          <ProfileHelp/>}
+          {type === "favorite" &&
+
+            <FavoriteHelp />}
+          {type === "report" &&
+            <Report id={id} content={content}/>
+          }
         </DialogContent>
         <DialogActions>
        </DialogActions>

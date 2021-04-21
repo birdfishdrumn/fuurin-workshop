@@ -1,14 +1,15 @@
 import React, { useState,useCallback } from "react";
-import { makeStyles } from "@material-ui/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
 import logo from "assets/img/icons/logo2.png";
 import { useSelector,useDispatch } from "react-redux";
 import { getIsSignedIn } from "reducks/users/userSlice";
 import { useHistory } from "react-router-dom";
+import { BoldText } from "assets/GlobalLayoutStyle";
+import { ConfirmModal } from "components/UI/index";
 import {HeaderMenus,ClosableDrawer} from "./index"
 import Button from "@material-ui/core/Button";
-import { ConfirmModal } from "components/UI/index";
+import { makeStyles } from "@material-ui/styles";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
 import SearchIcon from "@material-ui/icons/Search";
 import IconButton from "@material-ui/core/IconButton";
 import { dialogOpenAction } from "reducks/dialog/dialogSlice";
@@ -70,9 +71,10 @@ const Header: React.FC = () => {
    <div className={classes.root}>
       <AppBar position="fixed" className={classes.menuBar}>
         <Toolbar className={classes.toolbar}>
-          <Logo>
-            <img src={logo} alt="ec" width="128px" onClick={() =>isSignedIn  ? history.push("/timeline") : history.push("/")}/>
-            </Logo>
+          <Logo onClick={() =>isSignedIn  ? history.push("/timeline") : history.push("/")}>
+            {/* <img src={logo} alt="ec" width="128px" /> */}
+            <BoldText pointer style={{marginTop:"10px"}}>ふうりん体験</BoldText>
+          </Logo>
           {isSignedIn ? (
             <div className ={classes.iconButtons}>
               <HeaderMenus handleDrawerToggle={handleDrawerToggle}/>

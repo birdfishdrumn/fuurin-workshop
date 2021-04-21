@@ -17,6 +17,7 @@ import Button from '@material-ui/core/Button';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import InstagramIcon from '@material-ui/icons/Instagram';
+import SentimentDissatisfiedOutlinedIcon from '@material-ui/icons/SentimentDissatisfiedOutlined';
 import {POST} from "types/posts"
 
 
@@ -65,7 +66,6 @@ const UserPage = () => {
     db.collection("users").doc(uid).get().then((snapshot: firebase.firestore.DocumentData) => {
       if (snapshot.data()) {
         const data = snapshot.data()
-        console.log(data)
         const username = data.username
         const avatar = data.avatar
         const profile = data.profile
@@ -106,8 +106,8 @@ const UserPage = () => {
     const id = uid
     // ＾ーーーすでにフォローしていたら場合の処理
     if (favoriteUserArray && favoriteUserArray.includes(uid)) {
-    userRef.doc(myUserId).collection("likeUser").doc(id).delete().then(() => {
-      userRef.doc(myUserId).update({
+      userRef.doc(myUserId).collection("likeUser").doc(id).delete().then(() => {
+        userRef.doc(myUserId).update({
           favoriteUser: firebase.firestore.FieldValue.arrayRemove(uid)
         })
       })
@@ -116,8 +116,8 @@ const UserPage = () => {
         userFavoriteCount: firebase.firestore.FieldValue.increment(-1)
       })
     } else {
-        // ＾ーーーすでにフォローしてない場合の処理
-    userRef.doc(myUserId).collection("likeUser").doc(id).set({
+      // ＾ーーーすでにフォローしてない場合の処理
+      userRef.doc(myUserId).collection("likeUser").doc(id).set({
         username: username,
         uid: uid,
         avatar: avatar,
@@ -126,7 +126,7 @@ const UserPage = () => {
         merge: true
       }
       ).then(() => {
-      userRef.doc(myUserId).update({
+        userRef.doc(myUserId).update({
           favoriteUser: firebase.firestore.FieldValue.arrayUnion(uid)
         })
       })
@@ -145,17 +145,18 @@ const UserPage = () => {
 
           {isSignedIn && myUserId !== uid &&
             <Button
-            startIcon={favoriteUserArray &&  favoriteUserArray.includes(uid) ? <CheckIcon/> :<FavoriteIcon/>}
-            variant={favoriteUserArray &&  favoriteUserArray.includes(uid) ? "contained":"outlined"}
-            onClick={addFavoriteUser}
-            className={favoriteUserArray &&  favoriteUserArray.includes(uid) ? classes.whiteButton : classes.button}
-            color="primary"
-          >
-            {favoriteUserArray && favoriteUserArray.includes(uid) ? "お気に入り済" : "ユーザーをお気に入り"}
-          </Button>
+              startIcon={favoriteUserArray &&  favoriteUserArray.includes(uid) ? <CheckIcon/> :<FavoriteIcon/>}
+              variant={favoriteUserArray &&  favoriteUserArray.includes(uid) ? "contained":"outlined"}
+              onClick={addFavoriteUser}
+              className={favoriteUserArray &&  favoriteUserArray.includes(uid) ? classes.whiteButton : classes.button}
+              color="primary"
+            >
+              {favoriteUserArray && favoriteUserArray.includes(uid) ? "お気に入り済" : "ユーザーをお気に入り"}
+            </Button>
           }
 
           <div className="module-spacer--extra-small" />
+
           {url && <>
             <BoldText>{username}さんの活動</BoldText>
             <BoldText min ><a href={url} target="_blank" rel="noopener noreferrer">{url}</a></BoldText>
@@ -168,9 +169,7 @@ const UserPage = () => {
             {instagram &&
             <a href={instagram} target="_blank" rel="noopener noreferrer"><InstagramIcon style={{ fontSize: "30px" }}/></a>
             }
-            </Sns>
-
-
+          </Sns>
         </div>
         <div>
           <Title left black>{username ? username : "noname"}</Title>
@@ -185,34 +184,34 @@ const UserPage = () => {
 
           <div className="module-spacer--extra-small" />
 
-          <GridList change={change}>
+        <GridList change={change}>
 
-          {posts.length > 0 ?
-            posts.map((post) => (
-              <ScrollItem key={post.id}>
-              <PostCard
-                    change={change}
-                    post={post}
-                    key={post.id}
-                    name={post.name}
-                    images={post.images}
-                    allImages={post.allImages}
-                    id={post.id}
-                    description={post.description}
-                    username={post.username}
-                    avatar={post.avatar}
-                    uid={post.uid}
-                  />
-              </ScrollItem>
-          ))
-          :
-          // ローディング中の表示
-          <div style={{
-            height: "10vh",
-            backgroundColor:"#FFFAFA"
-          }}></div>
-         }
+            {posts.length > 0 &&
+              posts.map((post) => (
+                <ScrollItem key={post.id}>
+                  <PostCard
+                      change={change}
+                      post={post}
+                      key={post.id}
+                      name={post.name}
+                      images={post.images}
+                      allImages={post.allImages}
+                      id={post.id}
+                      description={post.description}
+                      username={post.username}
+                      avatar={post.avatar}
+                      uid={post.uid}
+                    />
+                </ScrollItem>
+            ))
+            }
         </GridList>
+
+      {!posts.length &&
+        <div className="center">
+            <SentimentDissatisfiedOutlinedIcon /><BoldText color={"dimgray"}>投稿はまだありません</BoldText>
+        </div>
+      }
     </SectionWrapper>
   )
 }

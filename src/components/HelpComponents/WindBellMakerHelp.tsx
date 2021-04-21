@@ -15,13 +15,12 @@ const WindBellMakerHelp:React.FC<PROPS> = ({cropper}) => {
         <li>
           {cropper &&
             <>
-              <Title min left black><QuestionIcon />写真はどうやって取りますか？</Title>
+          <Title min left black><QuestionIcon />写真はどうやって取りますか？</Title>
           <Text left>
             風鈴メイカーに使う写真はできるだけ白い背景に風鈴を吊るた状態で、揺らさない状態で取ります。
             背景は白でないと、切り取った後の背景が白いので、少し違和感が出てしまうのでお気をつけください。
             <WindBellMaterial/>
           </Text>
-
           <Title min left black><QuestionIcon />どこからどこまで切り抜けば良いでしょうか？</Title>
           <Text left>切り抜く箇所は風鈴の左上から右下までギリギリに切り抜いてください。切り抜いた後にいくつかのパターンの中から、その風鈴にあった形を選んでください。
 
@@ -42,17 +41,19 @@ const WindBellMakerHelp:React.FC<PROPS> = ({cropper}) => {
             <WindBellMaterial/>
           </Text>
 
-          <Title min left black><QuestionIcon />どこからどこまで切り抜けば良いでしょうか？</Title>
+          <Title min left black><QuestionIcon />どこからどこまで切り抜けば良いでしょうか？
+          </Title>
           <Text left>切り抜く箇所は風鈴の左上から右下までギリギリに切り抜いてください。切り抜いた後にいくつかのパターンの中から、その風鈴にあった形を選んでください。
 
           </Text>
-
           <ImageWrapper>
           <img src="https://firebasestorage.googleapis.com/v0/b/instagram-react-a7035.appspot.com/o/sozai%2Fcut_example.png?alt=media&token=49cf422b-e83d-433f-ae01-22c5b6f29d93"/>
             <BoldText left image color={"dimgray"}  >上半分の端に合わせた状態で切り抜きます。また風鈴の上部の穴にある突起は無視して切り抜いてください。</BoldText>
           </ImageWrapper>
-          <Title min left black><QuestionIcon />お願い事は日本語だけですか？</Title>
-           <Text left>お願い事には基本的には日本語のみの入力を想定しておりますが、中国語など漢字であれば大丈夫です。英語も可能ですが、縦書きに少し違和感があること、文字の位置調整がプログラムの使用上ずれてしまう事があるので調整しつつ入力してください。</Text>
+          <Title min left black><QuestionIcon />お願い事は日本語だけですか？
+          </Title>
+          <Text left>お願い事には基本的には日本語のみの入力を想定しておりますが、中国語など漢字であれば大丈夫です。英語も可能ですが、縦書きに少し違和感があること、文字の位置調整がプログラムの使用上ずれてしまう事があるので調整しつつ入力してください。
+          </Text>
           <Title min left black><QuestionIcon />短冊のデザインはオリジナルのデータでしょうか？</Title>
           <Text left>短冊のデータはフリーの素材を使わせていただいております。詳しくは素材のページよりご覧ください。</Text>
           <Title min left black><QuestionIcon />切り取った写真に違和感があります。</Title>

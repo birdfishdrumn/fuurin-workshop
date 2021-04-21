@@ -15,7 +15,7 @@ const Auth: React.FC<AppProps> = ({ children,notUseEffect } ) => {
 
   useEffect(() => {
    if (!notUseEffect && !isSignedIn) {
-      dispatch(listenAuthState());
+      dispatch(listenAuthState(false));
     }
   }, []);
   // もしサインインしてなければ空のjsxを返し、してるのなら子要素を返す

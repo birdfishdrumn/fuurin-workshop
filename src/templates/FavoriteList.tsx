@@ -14,10 +14,9 @@ const FavoriteList = () => {
   return (
 
       <SectionWrapper top>
-          <HelpButtonWrapper>
-          <HelpButton type="favorite" name="お気に入りシステムについて"/>
+
         <Title>お気に入りリスト</Title>
-      </HelpButtonWrapper>
+
 
       <FavoriteNav />
 
@@ -25,21 +24,20 @@ const FavoriteList = () => {
 
       <div className="module-spacer--small" />
 
-           <GridList change={change}>
+          <GridList change={change}>
             {postInFavorite.length > 0 && (
               postInFavorite.map((post) =>
-              <ScrollItem  key={post.id}>
-               <PostCard
-                change={change}
-                favorite
-                post={post}
-                name={post.postId}
-                images={post.images}
-                allImages={post.allImages}
-                id={post.postId}
-                description={post.description}
-                uid={post.uid}
-            />
+              <ScrollItem  key={post.postId}>
+                <PostCard
+                  change={change}
+                  favorite
+                  post={post}
+                  images={post.images}
+                  allImages={post.allImages}
+                  id={post.postId}
+                  description={post.description}
+                  uid={post.uid}
+                />
               </ScrollItem>
               )
         )}

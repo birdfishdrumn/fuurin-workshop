@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components"
 
 type TextColorStyle = 'default' | 'white' | 'blue' | 'pink';
-type TextFontStyle = 'StdN' | 'Mincho' | 'default' | 'Hannotate'| 'Wawati';
+type TextFontStyle = 'StdN' | 'Mincho' | 'default' | 'Ryumin'| 'Wawati';
 export interface StyleProps {
   textstyle?: TextColorStyle | any;
   fontstyle?: TextFontStyle | any;
@@ -16,20 +16,12 @@ function getTextFont(style: TextFontStyle = 'default') {
        `;
     case 'StdN':
       return css`
-      font-family:'ヒラギノ角ゴ StdN','Hiragino Kaku Gothic StdN';
+      font-family:"游ゴシック体", "YuGothic", "游ゴシック", "Yu Gothic", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "メイリオ", "Meiryo",sans-serif;
 
       `;
     case 'Mincho':
       return css`
-       font-family:'ヒラギノ明朝 ProN','Hiragino Mincho ProN';
-      `;
-      case 'Hannotate':
-      return css`
-      font-family:"Comic Sans MS";
-      `;
-     case 'Wawati':
-      return css`
-      font-family:'Wawati SC';
+       font-family:"ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
       `;
   }
 }
@@ -64,34 +56,34 @@ function getTextColor(style: TextColorStyle = 'default') {
 
 
 const TextStyle = css`
-    -ms-writing-mode: tb-rl;
+  -ms-writing-mode: tb-rl;
   writing-mode: vertical-rl;
   position:absolute;
-  top:300px;
-  left:35%;
+  top:337px;//短冊の願い事の位置調整
+  left:37%;
   text-align:left;
   font-size:0.8rem;
-  font-weight:bold;
+  font-weight:900;
   height:240px;
    ${(props: StyleProps) => getTextFont(props.fontstyle)};
 
     ${(props: StyleProps) => getTextColor(props.textstyle)};
-     ${props => {
-   switch (props.textLength) {
-            case "short":
-         return `
-           font-size:1.2rem;
-         top:312px;
-        left:41.5%;`
+    ${props => {
+    switch (props.textLength) {
+    case "short":
+      return `
+        font-size:1.2rem;
+      top:337px;
+        left:43.5%;`
       case "first":
-        return ` left:43%;`
+        return ` left:45.5%;`
       case "second":
-          return ` left:40%;`
-       case "third":
-        return ` left:35%;`
+          return ` left:41%;`
+      case "third":
+        return ` left:37%;`
     }
     return "left:43%;"
-}};
+}}
 `
 
 export const StyledText = styled.p`
@@ -115,16 +107,15 @@ margin:0 auto;
    position:absolute;
 
    /* box-shadow:1px 1px 2px black; */
-left:28px;
-top:37px;
+left:27.0px;
+top:63px;
 
  }
+ /* 短冊の位置 */
   >div:nth-child(2){
-   position:absolute;
-
-   /* box-shadow:1px 1px 2px black; */
-left:18.5px;
-top:265px;
+  position:absolute;
+  left:24px;
+  top:303px;
 
  }
  @media(max-width:768px){
@@ -150,22 +141,21 @@ margin:0 auto;
 `}
 `
 export const Flex = styled.div`
+width:100% !important;
 display:grid;
-grid-template-columns:${props => (props.shape ? "8fr" : "repeat(auto-fill,40px)")};
+grid-template-columns:${props => (props.shape ? "repeat(5, 1fr)" : "repeat(auto-fill,40px)")};
 `
+
 export const Image = styled.img`
 object-fit:cover;
 width:50px;
 height:50px;
+
 ${props => props.svg && `
-width:53px;
-height:53px;
-border:0.5px solid black;
-margin:0 50px !important;
+background:#eee;
 cursor:pointer;
-&:hover{
-  background:#eee;
-}
+margin:5px;
+border-radius:10px;
 `}
 `
 export const Text = styled.p`
@@ -186,13 +176,4 @@ export const Color = styled.div`
  width:50px;
  height:50px;
  background:${props=>props.color};
-   /* ${props => {
-    switch (props.color) {
-      case "white":
-        return `background:white !important;`
-      case "blue":
-        return `background:blue;`
-    }
-    return "background:black;"
-}}; */
 `

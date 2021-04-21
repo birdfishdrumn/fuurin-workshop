@@ -9,7 +9,6 @@ const useStyles = makeStyles({
     background: "white",
     padding: 16,
     borderRadius: "10px",
-    boxShadow: "0 0px 10px rgba(0,0,0,0.2)"
   },
   label: {
     marginLeft: 0,

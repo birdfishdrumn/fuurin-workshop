@@ -6,22 +6,16 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 import { COLORS } from "types/colors";
 interface PROPS {
   color: COLORS;
-  addFavoriteColor?: (colorId: string, colorTitle: string, resultColor: string) => void
   board?: boolean;
 }
 
 
-const ColorContainerBox:React.FC<PROPS> = ({ color,addFavoriteColor,board }) => {
+const ColorContainerBox:React.FC<PROPS> = ({ color,board }) => {
 
   return (
        <div key={color.id}>
-                <BoldText sub>{color.colorTitle}</BoldText>
+      <BoldText color={"dimgray"} min sub>{color.colorTitle}</BoldText>
       <ColorContainer>
-        {!board &&
-               <IconButton onClick={()=>addFavoriteColor(color.id,color.colorTitle,color.resultColor)}>
-                    <AddCircleIcon/>
-                  </IconButton>
-        }
                   <ColorBox>
                     <Color color={color.color1} size={color.quantity1} />
                     </ColorBox>

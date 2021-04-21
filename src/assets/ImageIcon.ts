@@ -1,0 +1,1 @@
+export const Fukusuke = "https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/sozai%2F%E7%A6%8F%E5%8A%A9%E4%BA%BA%E5%BD%A2%E3%81%AE%E3%83%95%E3%83%AA%E3%83%BC%E3%82%A4%E3%83%A9%E3%82%B9%E3%83%88.png?alt=media&token=760d55eb-e6f6-4eeb-8344-c18833c40b48"

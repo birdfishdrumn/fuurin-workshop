@@ -5,13 +5,18 @@ export const PostComment = styled.div`
 >div:first-child{
     display: flex;
 }
-   position:relative;
+  position:relative;
   align-items: center;
   word-break: break-all;
   margin: 10px 0;
   margin-left:${props=>(props.reply && "25px")};
   padding:10px 0;
-  max-width: 100%;
+  min-width: 300px;
+  width:100%;
+  justify-content:space-between;
+  @media(max-width:450px){
+   min-width:100%;
+  }
 
 `
 export const PostCommentIcon = styled(MessageIcon)`

@@ -1,25 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { SectionWrapping, Title, Text } from "assets/GlobalLayoutStyle";
+import { SectionWrapping, Title,StyledImage,BoldText} from "assets/GlobalLayoutStyle";
 import { LessonBox, LessonImage, LessonText } from "./style";
 import Swiper from 'react-id-swiper';
 import { FloatingButton } from "components/UI/index";
 import { db } from "firebase/index";
+import { Fukusuke } from "assets/ImageIcon";
 import { SLIDE } from "types/lesson";
 
 
 const WorkShopDojo = () => {
-   const params = {
-      pagination: {
-        el: '.swiper-pagination',
-        type: 'fraction',
-      },
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
+  const params = {
+    pagination: {
+      el: '.swiper-pagination',
+      type: 'fraction',
+    },
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
 
-        },
-          rebuildOnUpdate: true,
-      }
+    },
+    rebuildOnUpdate: true,
+  };
+
   const [slide,setSlide] = useState<SLIDE[]>([])
   let id =window.location.pathname.split("/lesson")[1];
 
@@ -41,14 +43,14 @@ const WorkShopDojo = () => {
     return () => {
       unSub()
     }
-  },[]);
-
+  }, []);
+  console.log(slide)
 
   return (
     <SectionWrapping>
       <Title>絵付け体験道場</Title>
       <div className="module-spacer--medium" />
-      <Swiper {...params}>
+      {/* <Swiper {...params}>
         {slide.map((s) => (
            <LessonBox key={s.id}>
             <LessonImage src={s.images.path} />
@@ -56,8 +58,10 @@ const WorkShopDojo = () => {
             <LessonText left>{s.description}</LessonText>
         </LessonBox>
         ))}
-      </Swiper>
-     <FloatingButton/>
+      </Swiper> */}
+      {/* <FloatingButton/> */}
+      <StyledImage width={"100"} min alt="福助" src={Fukusuke} />
+      <BoldText color={"dimgray"}>申し訳ございません。<br/>ただいま準備中です。</BoldText>
     </SectionWrapping>
   )
 }

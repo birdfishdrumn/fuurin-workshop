@@ -57,8 +57,8 @@ const RelationPost: React.FC<PROPS> = (props) => {
           />
       )
       ):<></>
-    }
-      </GridList>
+      }
+    </GridList>
       {relationPosts.length === 0 && <Title min>関連作品はありません</Title>}
       </section>
   )

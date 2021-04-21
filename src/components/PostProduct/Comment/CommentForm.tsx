@@ -1,17 +1,17 @@
 import React from 'react'
 import {PostCommentForm, PostCommentInput,  CommentPostButton} from "./style"
-import { makeStyles ,createStyles} from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import SendIcon from "@material-ui/icons/Send"
 import Avatar from '@material-ui/core/Avatar';
 
 const useStyles = makeStyles((theme) => ({
 
-    small: {
+  small: {
     width: theme.spacing(4),
     height: theme.spacing(4),
     marginRight: theme.spacing(2),
-       marginTop: "5px",
-    cursor:"pointer"
+    marginTop: "5px",
+    cursor: "pointer"
   },
 }));
 
@@ -42,7 +42,7 @@ const CommentForm: React.FC<PROPS> = ({ avatar, comment, setComment, reply, setR
             />
             <CommentPostButton
               disabled={!comment}
-               comment = {comment}
+              comment = {comment}
               type="submit"
 >
             <SendIcon/>

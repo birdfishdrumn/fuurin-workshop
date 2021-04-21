@@ -62,9 +62,9 @@ const changeStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("sm")]: {
       margin: "8px",
       width: "200px",
-      height: "500px",
+      height: "450px",
       display: "inlineBlock",
-            cursor:"pointer"
+      cursor: "pointer"
 
     },
     [theme.breakpoints.up("md")]: {
@@ -79,17 +79,21 @@ const changeStyles = makeStyles((theme) => ({
   },
   content: {
     display: "flex",
-   justifyContent:"space-between",
+    justifyContent: "space-between",
     textAlign: "left",
+    cursor: "pointer",
     "&:last-child": {
       paddingBottom: "16px",
     },
   },
   media: {
     height: 500,
-    width:200,
+    width: 200,
     paddingTop: "100%",
-    position: "relative"
+    position: "relative",
+    [theme.breakpoints.down("sm")]: {
+  height: 450,
+}
   },
 
 }));
@@ -132,7 +136,7 @@ const PostCard: React.FC<Partial<POST>> =memo((props) => {
   };
   return (
     <div>
- <    Card className={change ? changeClass.root : classes.root}>
+      <Card className={change ? changeClass.root : classes.root}>
         <CardMedia
           // 複数登録した画像のうちの最初のものを選択
           className={change ? changeClass.media : classes.media}
@@ -142,16 +146,16 @@ const PostCard: React.FC<Partial<POST>> =memo((props) => {
           {/* お気に入りリストから取得した場合 */}
           { !props.favorite && !change &&
             <>
-            <Avatar
-              src={props.avatar}
-              aria-label="recipe"
-              className={classes.avatar}
-              onClick={handleClickUserPage}
-            />
-               <div className={classes.favorite}>
+              <Avatar
+                src={props.avatar}
+                aria-label="recipe"
+                className={classes.avatar}
+                onClick={handleClickUserPage}
+              />
+                <div className={classes.favorite}>
 
-              {<Favorite id={id} uid={uid} likesPostsArray={likesPostsArray} post={post} />}
-            </div>
+                {<Favorite id={id} uid={uid} likesPostsArray={likesPostsArray} post={post} />}
+              </div>
                   </>}
         </CardMedia>
       </Card>

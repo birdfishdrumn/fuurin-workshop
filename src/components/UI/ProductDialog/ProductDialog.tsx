@@ -11,7 +11,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 const useStyles = makeStyles((theme) => ({
   content: {
     padding: 0,
-    background: "#F5F5f5"
+    background: "#FFFAFA"
   }
 }));
 

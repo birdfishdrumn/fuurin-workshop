@@ -82,9 +82,13 @@ margin:100px 0;
 `
 
 export const MaxImage = styled(Max)`
-  background-image: url(${props => props.img});
-/* background-repeat: no-repeat; */
+  background: linear-gradient(25deg, rgba(0, 0, 0, 0.9), rgba(0, 255, 0, 0.6)) ,url(${props => props.img});
+  /* background: linear-gradient(#FF3333, white 40%,#99FF00 ); */
 background-size:contain;
+background-position: 50% 75%;
+@media(max-width:768px){
+  background-position: 70% 50%;
+}
 
 `
 
@@ -188,7 +192,7 @@ export const RankingMixin = css`
     position:absolute;
   }
 `
-export const Ranking = styled.li`
+export const Ranking = styled.div`
 :nth-child(1){
 >li{
 >div:first-child{

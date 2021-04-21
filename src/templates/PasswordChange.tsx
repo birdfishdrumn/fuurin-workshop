@@ -29,7 +29,7 @@ const PasswordChange = () => {
 
   return (
     <div>
-      <SectionWrapping>
+     <SectionWrapping>
         <Title>パスワードの変更</Title>
         <Text Flex left>こちらではパスワードを変更する事が可能です。現在のパスワード情報が必須になりますので、入力後新しい6桁以上のパスワードを入力してください。</Text>
         <BoldText left color={"red"}>※googleやsnsアカウント情報使用している場合は変更の必要はありませんのでご了承下さい。</BoldText>
@@ -65,7 +65,7 @@ const PasswordChange = () => {
         <PrimaryButton label={"変更する"}
           onClick={() => changePassword(currentPassword,newPassword)}
         />
-        </SectionWrapping>
+      </SectionWrapping>
     </div>
   )
 }

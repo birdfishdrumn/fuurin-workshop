@@ -17,9 +17,8 @@ const EdofuurinHelp = () => {
         <Title min left black><QuestionIcon />風鈴に気泡があります。</Title>
         <Text left>江戸風鈴は昔ながらの宙吹きという方法で一つ一つ風鈴を製作しております。その為少しだけ泡などが入ってしまうことがあります。こればっかりは手作りの「味」としてお楽しみしていただけらなと思います。</Text>
         <Title min left black><QuestionIcon />江戸風鈴はどんな特徴がありますか?
-
         </Title>
-         <Text left>江戸風鈴は口がギザギザ、宙吹き、内側から絵を描くという特徴があります。詳しくはこちらのホームページをご覧ください。</Text>
+        <Text left>江戸風鈴は口がギザギザ、宙吹き、内側から絵を描くという特徴があります。詳しくはこちらのホームページをご覧ください。</Text>
             <PrimaryButton
             onClick={()=>openOutsideLink("https://edo-fuurin.com/about")}
             label="江戸風鈴について"

@@ -10,7 +10,6 @@ import {useSelector,useDispatch} from "react-redux";
 import {getUserId} from "reducks/users/userSlice";
 import { db } from "firebase/index"
 import { push } from "connected-react-router"
-import { FAVORITE} from "types/likes";
 
 const useStyles = makeStyles({
   list: {

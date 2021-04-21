@@ -88,7 +88,7 @@ export const savePost = (id: string, name: string, description: string, category
           }
         }
       }).then(() => {
-        dispatch(push("/"))
+        dispatch(push("/timeline"))
         dispatch(snackbarOpenAction({ text: "作品を登録しました", type: true }))
         dispatch(hideLoadingAction());
       }

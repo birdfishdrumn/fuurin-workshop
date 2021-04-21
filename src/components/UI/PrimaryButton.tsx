@@ -11,9 +11,9 @@ const useStyles = makeStyles({
     height: 48,
     marginButton: 20,
     width: 220,
-    marginTop: 20,
-   '&:hover': {
-         background: "#006699",
+    margin: "20px 10px 0 10px",
+    '&:hover': {
+    background: "#006699",
       },
   },
 });
@@ -23,7 +23,7 @@ const PrimaryButton = (props) => {
     <Button
       className={classes.button}
       variant="contained"
-      disabled={props.disabled}
+disabled={props.disabled}
       onClick={() => props.onClick()}
     >
       {props.label}

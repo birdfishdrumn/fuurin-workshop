@@ -11,8 +11,14 @@ const HelpIconWrapper = styled.div`
 const StyledIconButton= styled(IconButton)`
   margin-bottom:-20px;
   position:absolute;
-  right:5px;
+  right:${props=>(props.noneRightSpace ? "0":"60px")};
   top:15px;
+  @media(max-width:768px){
+  right:-15px;
+  top:15px;
+  margin-bottom:-20px;
+  }
+
 `
 
 interface PROPS {
@@ -20,15 +26,16 @@ interface PROPS {
   name: string;
   cropper?: boolean;
   onClick?: any;
+  noneRightSpace?: boolean;
 }
 
-const HelpButton: React.FC<PROPS> = ({ type, name}) => {
+const HelpButton: React.FC<PROPS> = ({ type, name,noneRightSpace}) => {
   const dispatch = useDispatch()
   return (
     <div>
         <HelpIconWrapper>
-                 <StyledIconButton onClick={()=>dispatch(dialogOpenAction({type:type,title:name}))}>
-              <ContactSupportIcon style={{ fontSize: "35px" }}/>
+              <StyledIconButton onClick={()=>dispatch(dialogOpenAction({type:type,title:name})) } noneRightSpace={noneRightSpace}>
+              <ContactSupportIcon style={{ fontSize: "25px" }}/>
             </StyledIconButton>
       </HelpIconWrapper>
 

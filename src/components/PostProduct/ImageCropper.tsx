@@ -1,5 +1,5 @@
-import React, { useState, useEffect,useCallback,memo } from "react";
-import { storage } from "../../firebase";
+import React, { useState,useCallback,memo } from "react";
+import { storage } from "firebase/index";
 import { makeStyles,withStyles,WithStyles,createStyles, Theme   } from "@material-ui/core/styles";
 import { useTheme } from '@material-ui/core/styles';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
@@ -13,10 +13,9 @@ import {
   Divider,
   DialogContent,
   DialogActions,
-//  DialogTitle,
   Backdrop
 } from "@material-ui/core";
-import { NormalButton } from "components/UI";
+import { EventButton } from "components/UI";
 import loadImage from 'blueimp-load-image';
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
@@ -103,7 +102,6 @@ const UpLoadTest:React.FC<PROPS> = memo(({ images, setImages,all }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [image, setImage] = useState<string>("");
-  // const [Images, setImages] = useState("");
   const [error, setError] = useState<string>("");
   const [progress, setProgress] = useState<number>(100);
   const classes = useStyles(); //Material-ui
@@ -114,7 +112,6 @@ const UpLoadTest:React.FC<PROPS> = memo(({ images, setImages,all }) => {
   const handleImage = (e: any) => {
     setError("");
     try {
-
       e.preventDefault();
       let files;
       if (e.dataTransfer) {
@@ -122,7 +119,7 @@ const UpLoadTest:React.FC<PROPS> = memo(({ images, setImages,all }) => {
       } else if (e.target) {
         files = e.target.files;
       }
-      const reader:any = new FileReader();
+      const reader: any = new FileReader();
       reader.onload = () => {
         setImage(reader.result);
       };
@@ -138,60 +135,57 @@ const UpLoadTest:React.FC<PROPS> = memo(({ images, setImages,all }) => {
 
   const getCropData = async (e) => {
     e.preventDefault();
-    if (typeof cropper !== "undefined" ) {
+    if (typeof cropper !== "undefined") {
       //デフォルトのPNGはファイルサイズが大きいのでjpegにする
       let imagedata: any = await cropper.getCroppedCanvas().toDataURL("image/jpeg");
       //console.log(imagedata); //バイナリーが見たい人は出力すると見れます
-        // 小さい画像に変換
-
+      // 小さい画像に変換
       const canvas = await loadImage(imagedata, {
-                maxWidth: 1000,
-                canvas: true,
+        maxWidth: 1000,
+        canvas: true,
       });
 
-      const S="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-      const N=16;
-      const fileName = Array.from(crypto.getRandomValues(new Uint32Array(N))).map((n)=>S[n%S.length]).join('')
+      const S = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const N = 16;
+      const fileName = Array.from(crypto.getRandomValues(new Uint32Array(N))).map((n) => S[n % S.length]).join('')
 
       // アップロード処理
-      console.log("アップロード処理");
       // @ts-ignore
       canvas.image.toBlob((imagedata) => {
-      const storageRef = storage.ref("images/test/"); //どのフォルダの配下に入れるかを設定
-      const imagesRef = storageRef.child(fileName); //ファイル名
-      console.log("ファイルをアップする行為");
-      const upLoadTask = imagesRef.put(imagedata)
-      console.log("タスク実行前");
-      setOpenCircularProgress(true);
-      upLoadTask.on(
-        "state_changed",
-        (snapshot) => {
-          console.log("snapshot", snapshot);
-          const percent =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log(percent + "% done");
-          setProgress(percent);
-        },
-        (error) => {
-          console.log("err", error);
-          setError("ファイルアップに失敗しました。" + error);
-          setProgress(100); //実行中のバーを消す
-          setOpen(false);
-          setOpenCircularProgress(false);
-        },
-        () => {
-          // setImages("");
-          upLoadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-            console.log("File available at", downloadURL);
-            // setImages(downloadURL);
-            const newImage={id:fileName,path:downloadURL}
-                setImages((prevState => [...prevState,newImage]));
+        const storageRef = storage.ref("images/test/"); //どのフォルダの配下に入れるかを設定
+        const imagesRef = storageRef.child(fileName); //ファイル名
+
+        const upLoadTask = imagesRef.put(imagedata)
+
+        setOpenCircularProgress(true);
+        upLoadTask.on(
+          "state_changed",
+          (snapshot) => {
+
+            const percent =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+            setProgress(percent);
+          },
+          (error) => {
+
+            setError("ファイルアップに失敗しました。" + error);
+            setProgress(100); //実行中のバーを消す
             setOpen(false);
             setOpenCircularProgress(false);
-          });
-        }
-      );
-      },"image/jpeg")
+          },
+          () => {
+            // setImages("");
+            upLoadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+              // setImages(downloadURL);
+              const newImage = { id: fileName, path: downloadURL }
+              setImages((prevState => [...prevState, newImage]));
+              setOpen(false);
+              setOpenCircularProgress(false);
+            });
+          }
+        );
+      }, "image/jpeg")
     }
     return;
   };
@@ -219,26 +213,29 @@ const UpLoadTest:React.FC<PROPS> = memo(({ images, setImages,all }) => {
   return (
     <div>
       <div className={classes.iconFlex}>
-
-      {error && <div>{error}</div>}
-                   <IconButton style={{padding:"0px", cursor:"pointer"}} >
-                    <label>
-                        <AddToPhotosIcon style={{fontSize:"40px"}} />
-                        <input className="u-display-none" type="file" id="image" onChange={handleImage}/>
-                    </label>
-        </IconButton>
+        {error && <div>{error}</div>}
+          <IconButton style={{padding:"0px", cursor:"pointer"}} >
+            <label>
+              <AddToPhotosIcon style={{fontSize:"40px"}} />
+              <input className="u-display-none" type="file" id="image" onChange={handleImage}/>
+            </label>
+          </IconButton>
         </div>
+      <div>
 
-       <div>
-            <div className="p-grid__list-images" >
+          <div className="p-grid__list-images" >
 
-                {images.length > 0 ? (
-                    images.map(image => <ImagePreview delete={deleteImage} id={image.id} path={image.path} key={image.id} all={all}  />))
-                 : <div className="center border gray"><PhotoCameraIcon /><BoldText left>画像は2枚以上登録することが可能です。</BoldText></div>
-                }
-            </div>
-
-        </div>
+            {images.length > 0 ?
+              (
+                images.map(image => <ImagePreview delete={deleteImage} id={image.id} path={image.path} key={image.id} all={all}  />))
+              :
+              <div className="center border gray"><PhotoCameraIcon color="inherit"/>
+                {all ?
+                  <BoldText color={"dimgray"} left>画像は一枚のみ反映されます。</BoldText> :
+                  <BoldText color={"dimgray"} left>画像は2枚以上登録することが可能です。</BoldText>} </div>
+            }
+          </div>
+      </div>
       <Dialog
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -250,43 +247,48 @@ const UpLoadTest:React.FC<PROPS> = memo(({ images, setImages,all }) => {
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
-          timeout: 500
+        timeout: 500
         }}
       >
         <div className={classes.paper}>
           <DialogTitle id="customized-dialog-title" onClose={handleClose}>
             画像の切り抜き
           </DialogTitle>
-          <Divider/>
-           <DialogContent className={classes.content}>
-          <Cropper
-            style={{ height: 450, width: "100%" }}
-            initialAspectRatio={1}
-            aspectRatio={all ? 3/6 : 1}
-            preview=".img-preview"
-            src={image}
-            viewMode={1}
-            guides={true}
-            minCropBoxHeight={150}
-            minCropBoxWidth={150}
-            background={false}
-            responsive={true}
-            autoCropArea={1}
-            checkOrientation={false}
-            onInitialized={(instance) => {
-              setCropper(instance);
-            }}
-            />
-            </DialogContent>
-          <Divider/>
+
+          <Divider />
+
+          <DialogContent className={classes.content}>
+              <Cropper
+                style={{ height: 450, width: "100%" }}
+                initialAspectRatio={1}
+                aspectRatio={all ? 3/6 : 1}
+                preview=".img-preview"
+                src={image}
+                viewMode={1}
+                guides={true}
+                minCropBoxHeight={150}
+                minCropBoxWidth={150}
+                background={false}
+                responsive={true}
+                autoCropArea={1}
+                checkOrientation={false}
+                onInitialized={(instance) => {
+                  setCropper(instance);
+                }}
+                />
+          </DialogContent>
+
+          <Divider />
+
           <DialogActions>
 
-            <NormalButton
-              onClick={getCropData}
-              label="切り取り"/>
+           <IconButton  onClick={getCropData} style={{padding:"0px", cursor:"pointer"}} >
+              <img alt="切り抜く" src="https://firebasestorage.googleapis.com/v0/b/fuurin-paint-workshop.appspot.com/o/sozai%2F%E3%81%AF%E3%81%95%E3%81%BF%E3%81%AE%E3%82%A2%E3%82%A4%E3%82%B3%E3%83%B3%E7%B4%A0%E6%9D%90%209%20(1).svg?alt=media&token=eb6c19e6-e6c8-476e-873f-129276aae954" style={{width:"50px",marginRight:"10px"}} />
+          </IconButton>
           </DialogActions>
         </div>
       </Dialog>
+      {/* ローディングのダイアログ */}
       <Dialog
         className={classes.modal}
         open={openCircularProgress}
@@ -294,7 +296,7 @@ const UpLoadTest:React.FC<PROPS> = memo(({ images, setImages,all }) => {
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
-          timeout: 500
+        timeout: 500
         }}
       >
         <div className={classes.paper} style={{ textAlign: "center" }}>

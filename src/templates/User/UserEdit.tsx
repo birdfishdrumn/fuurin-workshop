@@ -1,18 +1,19 @@
 import React, { useState, useCallback } from 'react';
 import { useDispatch,useSelector } from "react-redux";
-import { TextInput, PrimaryButton } from "../../components/UI/index";
-import { db, storage, FirebaseTimestamp, auth } from "../../firebase/index";
-import { getUsername, getUserAvatar, getUserId, getUserUrl, updateUserAction, getUserProfile,getEmail,getUserTwitter,getUserInstagram } from "../../reducks/users/userSlice";
+import { TextInput, PrimaryButton } from "components/UI/index";
+import { db, storage, FirebaseTimestamp, auth } from "firebase/index";
+import { getUsername, getUserAvatar, getUserId, getUserUrl, updateUserAction, getUserProfile, getEmail, getUserTwitter, getUserInstagram } from "reducks/users/userSlice";
+import { hideLoadingAction, showLoadingAction } from "reducks/loadingSlice";
+import { snackbarOpenAction } from "reducks/snackbar/snackbarSlice";
+import { errorOpenAction,errorCloseAction,getErrorState } from "reducks/errorSlice";
 import { Avatar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
 import IconButton from "@material-ui/core/IconButton";
-import { hideLoadingAction, showLoadingAction } from "../../reducks/loadingSlice";
-import { snackbarOpenAction } from "reducks/snackbar/snackbarSlice";
 import { push } from "connected-react-router";
 import loadImage from 'blueimp-load-image';
 import { Title,BoldText,SectionContainer } from 'assets/GlobalLayoutStyle';
-import { errorOpenAction,errorCloseAction,getErrorState } from "reducks/errorSlice";
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -22,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     margin: "auto"
   },
   hideIcon: {
-     textAlign: "center",
+  textAlign: "center",
   display: "none"
   }
 }));
@@ -58,10 +59,10 @@ const UserEdit: React.FC<PROPS> = ({ setting }) => {
   const handleInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setValue({
       ...values,
-     [event.target.name]: event.target.value
+      [event.target.name]: event.target.value
     });
     console.log(event.target.value)
-  },[setValue]);
+  }, [setValue]);
 
 
   const inputProfile = useCallback(
@@ -79,39 +80,46 @@ const UserEdit: React.FC<PROPS> = ({ setting }) => {
 
   const onChangeImageHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
     // ![0]はTypeScriptの使用でnull,undefinedではないことを示す。登録された0番目の配列を返す。
-    dispatch(showLoadingAction("uploading..."))
-    const file: any = e.target.files![0];
-    let blob = new Blob([file], { type: "image/jpeg" });
-    // 1000pxに圧縮して投稿
-    const canvas = await loadImage(blob, {
-      maxWidth: 1000,
-      canvas: true,
-    });
-    // Generate random 16 digits strings
-    const S = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    const N = 16;
-    const fileName = Array.from(crypto.getRandomValues(new Uint32Array(N))).map((n) => S[n % S.length]).join('');
-    //  @ts-ignore
-    canvas.image.toBlob((blob: any) => {
-      const uploadRef = storage.ref('avatars').child(fileName);
-      const uploadTask = uploadRef.put(blob);
 
-      uploadTask.then(() => {
-        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-          const newImage = downloadURL;
-          setAvatar(newImage)
-          dispatch(hideLoadingAction())
-        });
-      }).catch(() => {
-        dispatch(hideLoadingAction())
+
+      const file: any = e.target.files![0];
+      let blob = new Blob([file], { type: "image/jpeg" });
+      // 1000pxに圧縮して投稿
+      const canvas = await loadImage(blob, {
+        maxWidth: 1000,
+        canvas: true,
       });
-    }, "image/jpeg");
+      // Generate random 16 digits strings
+      const S = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const N = 16;
+      const fileName = Array.from(crypto.getRandomValues(new Uint32Array(N))).map((n) => S[n % S.length]).join('');
+      //  @ts-ignore
+    canvas.image.toBlob((blob: any) => {
+            dispatch(showLoadingAction("uploading..."))
+        const uploadRef = storage.ref('avatars').child(fileName);
+        const uploadTask = uploadRef.put(blob);
+
+        uploadTask.then(() => {
+          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+            const newImage = downloadURL;
+            setAvatar(newImage)
+            dispatch(hideLoadingAction())
+          }).catch(() => {
+            dispatch(hideLoadingAction())
+            dispatch(snackbarOpenAction({ text: "更新に失敗しました。再度時間が経ってからお試しください。", type: false }))
+          });
+        }).catch(() => {
+          dispatch(hideLoadingAction())
+          dispatch(snackbarOpenAction({ text: "更新に失敗しました。再度時間が経ってからお試しください。", type: false }))
+        });
+      }, "image/jpeg");
+
   };
 
-  const updateUser = async(avatar: string, username: string,profile:string,url:string,twitter:string,instagram:string) => {
-    dispatch(showLoadingAction("プロフィールを更新"))
-    const timestamp = FirebaseTimestamp.now()
-   const firstLogin={firstLogin:false}
+  const updateUser = async (avatar: string, username: string, profile: string, url: string, twitter: string, instagram: string) => {
+    dispatch(showLoadingAction("プロフィールを更新"));
+    const timestamp = FirebaseTimestamp.now();
+    const firstLogin = { firstLogin: false };
     const baseData = {
       updated_at: timestamp,
       username: username,
@@ -120,27 +128,26 @@ const UserEdit: React.FC<PROPS> = ({ setting }) => {
       profile: profile,
       url: url,
       email: currentEmail,
-      twitter:twitter &&  "https://twitter.com/" + twitter,
+      twitter: twitter && "https://twitter.com/" + twitter,
       instagram: instagram && "https://instagram.com/" + instagram,
-    }
-  // 初回ログインの場合はfirstがtrueになる。
+    };
+    // 初回ログインの場合はfirstがtrueになる。
     const userInitialData =
-    !setting ?
-       baseData
+      !setting ?
+        baseData
         :
-        Object.assign(baseData, firstLogin)
+        Object.assign(baseData, firstLogin);
 
-    const user:any =auth.currentUser;
-     user.updateProfile({
+    const user: any = auth.currentUser;
+    user.updateProfile({
       displayName: username,
       photoURL: avatar,
-
-    }).then(function() {
-     console.log("success")
+    }).then(function () {
+      console.log("success")
     }).catch((error: any) => {
-          dispatch(hideLoadingAction())
-          dispatch(snackbarOpenAction({text: "更新に失敗しました。再度時間が経ってからお試しください。",type:false}))
-  });
+      dispatch(hideLoadingAction())
+      dispatch(snackbarOpenAction({ text: "更新に失敗しました。再度時間が経ってからお試しください。", type: false }))
+    });
 
     await dispatch(updateUserAction(userInitialData));
     // user情報を書き換えた後に、過去の情報が全て書き換えられる処理
@@ -150,14 +157,14 @@ const UserEdit: React.FC<PROPS> = ({ setting }) => {
         dispatch(hideLoadingAction())
         dispatch(snackbarOpenAction({ text: "プロフィールの更新をしました！", type: true }))
       } else {
-        dispatch(push("/"))
+        dispatch(push("/timeline"))
         dispatch(hideLoadingAction())
         dispatch(snackbarOpenAction({ text: "設定が完了しました！はじめましょう！", type: true }))
       }
-      }).catch(() => {
-        dispatch(hideLoadingAction())
-        dispatch(snackbarOpenAction({text: "更新に失敗しました。再度時間が経ってからお試しください。",type:false}))
-        });
+    }).catch(() => {
+      dispatch(hideLoadingAction())
+      dispatch(snackbarOpenAction({ text: "更新に失敗しました。再度時間が経ってからお試しください。", type: false }))
+    });
   };
 
 
@@ -177,14 +184,15 @@ const UserEdit: React.FC<PROPS> = ({ setting }) => {
                 />
                   </label>
             </IconButton>
-          <BoldText>タップして変更</BoldText>
+            <BoldText>タップして変更</BoldText>
           </Box>
 
           <div className="module-spacer--medium" />
 
           <TextInput
           fullWidth={false}
-          label={"お名前"}
+          label={"お名前(12文字まで)"}
+          error={values.username.length < 12 ? false : true}
           multiline={false}
           required={true}
           onChange={handleInputChange}
@@ -193,6 +201,9 @@ const UserEdit: React.FC<PROPS> = ({ setting }) => {
           value={values.username}
           variant="outlined"
           type={"text"}
+          inputProps={{
+              maxLength: 12,
+          }}
         />
           <TextInput
           fullWidth={true}
@@ -205,7 +216,9 @@ const UserEdit: React.FC<PROPS> = ({ setting }) => {
           value={profile.slice(0,200)}
           type={"text"}
           />
-          {error && <BoldText color={"red"}>⚠️文字は200字以内でお願いします。</BoldText>}
+        {error && <BoldText color={"red"}>⚠️文字は200字以内でお願いします。</BoldText>}
+        {!setting &&
+          <>
           <TextInput
           fullWidth={true}
           label={"活動しているsns,webサイトのurl"}
@@ -244,6 +257,8 @@ const UserEdit: React.FC<PROPS> = ({ setting }) => {
           value={values.instagram}
           type={"text"}
           />
+          </>
+        }
           <div className="module-spacer--small" />
           <div className="center">
 

@@ -71,18 +71,18 @@ const FavoriteListItem: React.FC<Partial<FAVORITE>> = ({post}) => {
     <>
       <ListItem className={classes.list}  onClick={()=>dispatch(push(`/post/${id}`))}>
         <div>
-        <Rank>
-            <img className = {classes.image} src={image} alt="作品画像"/>
-        </Rank>
+          <Rank>
+              <img className = {classes.image} src={image} alt="作品画像"/>
+          </Rank>
         </div>
-         <div className={classes.listContent}>
+        <div className={classes.listContent}>
           <div className={classes.avatarContent}>
-                 <Avatar src={post.avatar} aria-label="recipe" className={classes.small}/>
-         <p className={classes.username}>{username}</p>
+            <Avatar src={post.avatar} aria-label="recipe" className={classes.small}/>
+            <p className={classes.username}>{username}</p>
           </div>
 
-        <div className={classes.text}>
-          {name}
+          <div className={classes.text}>
+            {name}
           </div>
         </div>
       </ListItem>

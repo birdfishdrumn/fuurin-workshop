@@ -19,41 +19,41 @@ const Favorite:React.FC<Partial<FAVORITE>> = ({id,uid,likesPostsArray,post,detai
 
   const addToFavorite = useCallback((event: any) => {
     // if (!userPost) {
-      event.stopPropagation();
-      const timeStamp = FirebaseTimestamp.now();
-      // いいね済みの作品を押した場合削除する
-      if (likesPostsArray.includes(id)) {
-        return db.collection("users").doc(uid).collection("likes").where("postId", "==", id).get().then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            const dataId = doc.data().likesId
-            return db.collection("users").doc(uid)
-              .collection('likes').doc(dataId)
-              .delete()
-          })
-        }).then(() => {
-          db.collection("posts").doc(id).update({
-            likes: firebase.firestore.FieldValue.arrayRemove(uid),
-            count: firebase.firestore.FieldValue.increment(-1)
-          })
+    event.stopPropagation();
+    const timeStamp = FirebaseTimestamp.now();
+    // いいね済みの作品を押した場合削除する
+    if (likesPostsArray.includes(id)) {
+      return db.collection("users").doc(uid).collection("likes").where("postId", "==", id).get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const dataId = doc.data().likesId
+          return db.collection("users").doc(uid)
+            .collection('likes').doc(dataId)
+            .delete()
         })
-      };
-      // いいねしてない商品をデータベースに追加
-      dispatch(addPostToFavorite({
-        added_at: timeStamp,
-        description: post.description,
-        images: post.images,
-        allImages: post.allImages,
-        name: post.name,
-        postId: post.id,
-      }, uid));
-    // 投稿に1カウントしていいねしたuidを追加する。
-      db.collection("posts").doc(id).set({
-        likes: firebase.firestore.FieldValue.arrayUnion(uid),
-        count: firebase.firestore.FieldValue.increment(1)
-      }, {
-        merge: true
+      }).then(() => {
+        db.collection("posts").doc(id).update({
+          likes: firebase.firestore.FieldValue.arrayRemove(uid),
+          count: firebase.firestore.FieldValue.increment(-1)
+        })
       })
-    detail && dispatch(dialogOpenAction({type:"favoriteAction",title:"作品をお気に入りに登録"}))
+    };
+    // いいねしてない商品をデータベースに追加
+    dispatch(addPostToFavorite({
+      added_at: timeStamp,
+      description: post.description,
+      images: post.images,
+      allImages: post.allImages,
+      name: post.name,
+      postId: post.id,
+    }, uid));
+    // 投稿に1カウントしていいねしたuidを追加する。
+    db.collection("posts").doc(id).set({
+      likes: firebase.firestore.FieldValue.arrayUnion(uid),
+      count: firebase.firestore.FieldValue.increment(1)
+    }, {
+      merge: true
+    })
+    detail && dispatch(dialogOpenAction({ type: "favoriteAction", title: "作品をお気に入りに登録" }))
     　
     // }
   }, [likesPostsArray]);
@@ -61,21 +61,18 @@ const Favorite:React.FC<Partial<FAVORITE>> = ({id,uid,likesPostsArray,post,detai
 
   return (
     <div>
-        <FavoriteWrapper>
-
+      <FavoriteWrapper>
         {isSignedIn && (
           <>
-                  <IconButton onClick={addToFavorite} style={{paddingRight:"0"}}>
-          {<FavoriteStyle isActive = {likesPostsArray.includes(id) && true} />
-        }
+          <IconButton onClick={addToFavorite} style={{paddingRight:"0"}}>
+            <FavoriteStyle isActive = {likesPostsArray.includes(id) && true} />
 
-         <FavoriteCount> {post.uid === uid && post.likes ? post.likes.length : <></>}</FavoriteCount>
+            <FavoriteCount> {post.uid === uid && post.likes ? post.likes.length : <></>}</FavoriteCount>
 
-                  </IconButton>
+          </IconButton>
             </>
-       )}
+        )}
       </FavoriteWrapper>
-
     </div>
   )
 }
