@@ -4,22 +4,21 @@ import { RootState } from 'store';
 export const errorSlice = createSlice({
   name: 'error',
   initialState: {
-    error:{
-        state: false,
-    }
+    error: {
+      state: false,
+    },
   },
   reducers: {
-     errorOpenAction: (state) => {
+    errorOpenAction: (state) => {
       state.error.state = true;
     },
-    errorCloseAction:state=> {
+    errorCloseAction: (state) => {
       state.error.state = false;
     },
   },
 });
 
-export const {errorOpenAction,errorCloseAction} = errorSlice.actions;
-export const getErrorState = (state: RootState )=> state.error.error.state;
+export const { errorOpenAction, errorCloseAction } = errorSlice.actions;
+export const getErrorState = (state: RootState) => state.error.error.state;
 
-
-export default errorSlice.reducer
+export default errorSlice.reducer;

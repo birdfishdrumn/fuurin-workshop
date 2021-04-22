@@ -2,8 +2,13 @@ import React from 'react';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { useSelector, useDispatch } from "react-redux";
-import { getSnackbarState, getSnackbarText, getSnackbarType, snackbarCloseAction } from "reducks/snackbar/snackbarSlice"
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  getSnackbarState,
+  getSnackbarText,
+  getSnackbarType,
+  snackbarCloseAction,
+} from 'reducks/snackbar/snackbarSlice';
 
 function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -29,24 +34,26 @@ export default function CustomizedSnackbars() {
     if (reason === 'clickaway') {
       return;
     }
-  dispatch(snackbarCloseAction());
+    dispatch(snackbarCloseAction());
   };
 
   return (
     <div className={classes.root}>
-      <Snackbar open={open} autoHideDuration={7000} onClose={handleClose}
-
-       anchorOrigin={{ vertical:"top", horizontal:"center" }}
+      <Snackbar
+        open={open}
+        autoHideDuration={7000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        {!error ?
-           <Alert onClose={handleClose} severity="error">
-          {message}
+        {!error ? (
+          <Alert onClose={handleClose} severity="error">
+            {message}
           </Alert>
-          :
-             <Alert onClose={handleClose} severity="success">
-          {message}
+        ) : (
+          <Alert onClose={handleClose} severity="success">
+            {message}
           </Alert>
-      }
+        )}
       </Snackbar>
     </div>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { withStyles,WithStyles,createStyles, Theme  } from '@material-ui/core/styles';
+import { withStyles, WithStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
@@ -8,9 +8,6 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import { deletePost } from "../../../reducks/posts/operations";
-import { useDispatch } from "react-redux";
-import { snackbarOpenAction } from "reducks/snackbar/snackbarSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -61,42 +58,34 @@ const DialogActions = withStyles((theme: Theme) => ({
 
 interface PROPS {
   title?: string;
-  id?: string;
-  uid?: string;
-  handleClose: () => void
+
+  handleClose: () => void;
   product?: boolean;
   openModal: boolean;
   handleModalClose?: () => void;
 }
 
- const  CustomDialog:React.FC<PROPS> = (props) =>{
+const CustomDialog: React.FC<PROPS> = (props) => {
   // const [open, setOpen] =useState(true);
-   const dispatch = useDispatch()
 
 
-   const id = props.id;
-   const uid = props.uid;
-
-   const handleDelete = async (id: string, uid: string): Promise<void> => {
-     dispatch(deletePost(id, uid))
-     props.handleClose()
-     await dispatch(snackbarOpenAction({ text: "作品を削除しました。", type: true }))
-   };
-
-   const handleChange = (): void => {
-     props.handleClose()
-     props.handleModalClose()
-   };
+  const handleChange = (): void => {
+    props.handleClose();
+    props.handleModalClose();
+  };
 
   return (
     <div>
-
-      <Dialog onClose={props.handleClose} aria-labelledby="customized-dialog-title" open={props.openModal}>
-        <DialogTitle id="customized-dialog-title" onClose={props.product ? props.handleModalClose : props.handleClose}>
-          {props.product ?
-          "登録の破棄":"作品の削除"
-        }
-
+      <Dialog
+        onClose={props.handleClose}
+        aria-labelledby="customized-dialog-title"
+        open={props.openModal}
+      >
+        <DialogTitle
+          id="customized-dialog-title"
+          onClose={props.product ? props.handleModalClose : props.handleClose}
+        >
+       登録の破棄
         </DialogTitle>
         <DialogContent dividers>
           <Typography gutterBottom>
@@ -104,20 +93,14 @@ interface PROPS {
           </Typography>
         </DialogContent>
         <DialogActions>
-          {props.product ?
             <Button onClick={handleChange} color="primary">
-            削除する
-          </Button>
- :
-     <Button  onClick={()=>handleDelete(id,uid)} color="primary">
-            削除する
-          </Button>
-}
+              削除する
+            </Button>
 
-</DialogActions>
+        </DialogActions>
       </Dialog>
     </div>
   );
-}
+};
 
-export default CustomDialog
+export default CustomDialog;

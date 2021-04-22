@@ -1,20 +1,15 @@
 // ページ遷移なしでログイン中かどうか判断するコンポーネント
-import React, { useEffect } from "react";
-import { useDispatch  } from "react-redux";
-import { listenAuthNotState } from "./reducks/users/operations";
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { listenAuthNotState } from './reducks/users/operations';
 
-
-const NotPushAuth: React.FC = ( ) => {
+const NotPushAuth: React.FC = () => {
   const dispatch = useDispatch();
   useEffect(() => {
-      dispatch(listenAuthNotState());
+    dispatch(listenAuthNotState());
   }, []);
 
-  return (
-      <>
-      </>
-    )
-
+  return <></>;
 };
 
 export default NotPushAuth;

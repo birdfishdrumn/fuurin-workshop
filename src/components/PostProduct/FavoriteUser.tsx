@@ -6,42 +6,41 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
-import { useDispatch } from "react-redux"
-import { push } from "connected-react-router";
+import { useDispatch } from 'react-redux';
+import { push } from 'connected-react-router';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      margin:"20px auto",
+      margin: '20px auto',
       width: '100%',
       maxWidth: '700px',
       backgroundColor: theme.palette.background.paper,
-       boxShadow: "0 0px 10px rgba(0,0,0,0.2)",
-      cursor:"pointer"
+      boxShadow: '0 0px 10px rgba(0,0,0,0.2)',
+      cursor: 'pointer',
     },
-     large: {
+    large: {
       width: theme.spacing(10),
       height: theme.spacing(10),
-
     },
     inline: {
       display: 'inline',
     },
     list: {
-      marginLeft: "20px",
-      fontWeight:"bold"
-    }
-  }),
+      marginLeft: '20px',
+      fontWeight: 'bold',
+    },
+  })
 );
 
-export default function FavoriteUser({avatar,username,profile,uid}) {
+export default function FavoriteUser({ avatar, username, profile, uid }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   return (
-    <List className={classes.root} onClick={()=>dispatch(push("/users/" + uid))}>
+    <List className={classes.root} onClick={() => dispatch(push('/users/' + uid))}>
       <ListItem alignItems="flex-start">
         <ListItemAvatar>
-          <Avatar className={classes.large} alt="Remy Sharp" src={avatar}/>
+          <Avatar className={classes.large} alt="Remy Sharp" src={avatar} />
         </ListItemAvatar>
         <ListItemText
           className={classes.list}
@@ -54,7 +53,7 @@ export default function FavoriteUser({avatar,username,profile,uid}) {
                 className={classes.inline}
                 color="textPrimary"
               >
-              {profile}
+                {profile}
               </Typography>
             </React.Fragment>
           }

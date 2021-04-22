@@ -2,54 +2,53 @@ import React from 'react';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import {makeStyles} from "@material-ui/core/styles";
+import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
-import { useDispatch} from "react-redux";
-import { push } from "connected-react-router";
-import styled from "styled-components";
-import { FAVORITE } from "types/likes";
-
+import { useDispatch } from 'react-redux';
+import { push } from 'connected-react-router';
+import styled from 'styled-components';
+import { FAVORITE } from 'types/likes';
 
 const Rank = styled(ListItemAvatar)`
-width:100%;
-`
+  width: 100%;
+`;
 
 const useStyles = makeStyles((theme) => ({
   list: {
     height: 228,
-    background: "white",
+    background: 'white',
     // padding: "20px 0 20px 0",
-    cursor: "pointer",
+    cursor: 'pointer',
     '&:hover': {
-      background: "#eee",
-      transition: "0.5s"
+      background: '#eee',
+      transition: '0.5s',
     },
   },
   listContent: {
-    display: "column",
+    display: 'column',
     // margin:"0 auto"
-    marginLeft: "30px",
-    width: "80%"
+    marginLeft: '30px',
+    width: '80%',
   },
   avatarContent: {
-    display: "flex"
+    display: 'flex',
   },
   image: {
-    objectFit: "cover",
+    objectFit: 'cover',
     margin: 16,
     height: 126,
     width: 126,
-    cursor: "pointer",
-    borderRadius: "10%"
+    cursor: 'pointer',
+    borderRadius: '10%',
   },
   text: {
-    width: "100%",
-    fontSize: "1.3rem",
+    width: '100%',
+    fontSize: '1.3rem',
   },
   username: {
-    fontSize: "15px",
-    color: "grey",
-    marginLeft: "5px"
+    fontSize: '15px',
+    color: 'grey',
+    marginLeft: '5px',
   },
   small: {
     width: theme.spacing(3),
@@ -58,9 +57,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
-const FavoriteListItem: React.FC<Partial<FAVORITE>> = ({post}) => {
-  const classes = useStyles()
+const FavoriteListItem: React.FC<Partial<FAVORITE>> = ({ post }) => {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const name = post.name;
   const username = post.username;
@@ -69,27 +67,24 @@ const FavoriteListItem: React.FC<Partial<FAVORITE>> = ({post}) => {
 
   return (
     <>
-      <ListItem className={classes.list}  onClick={()=>dispatch(push(`/post/${id}`))}>
+      <ListItem className={classes.list} onClick={() => dispatch(push(`/post/${id}`))}>
         <div>
           <Rank>
-              <img className = {classes.image} src={image} alt="作品画像"/>
+            <img className={classes.image} src={image} alt="作品画像" />
           </Rank>
         </div>
         <div className={classes.listContent}>
           <div className={classes.avatarContent}>
-            <Avatar src={post.avatar} aria-label="recipe" className={classes.small}/>
+            <Avatar src={post.avatar} aria-label="recipe" className={classes.small} />
             <p className={classes.username}>{username}</p>
           </div>
 
-          <div className={classes.text}>
-            {name}
-          </div>
+          <div className={classes.text}>{name}</div>
         </div>
       </ListItem>
-      <Divider/>
+      <Divider />
     </>
+  );
+};
 
-  )
-}
-
-export default FavoriteListItem
+export default FavoriteListItem;

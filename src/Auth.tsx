@@ -1,20 +1,18 @@
-import React, {  useEffect } from "react";
-import { getIsSignedIn } from "./reducks/users/userSlice";
-import { useDispatch , useSelector } from "react-redux";
-import { listenAuthState } from "./reducks/users/operations";
-
+import React, { useEffect } from 'react';
+import { getIsSignedIn } from './reducks/users/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { listenAuthState } from './reducks/users/operations';
 
 interface AppProps {
-  children?: any
+  children?: any;
   notUseEffect?: boolean;
 }
-const Auth: React.FC<AppProps> = ({ children,notUseEffect } ) => {
+const Auth: React.FC<AppProps> = ({ children, notUseEffect }) => {
   const dispatch = useDispatch();
   const isSignedIn = useSelector(getIsSignedIn);
 
-
   useEffect(() => {
-   if (!notUseEffect && !isSignedIn) {
+    if (!notUseEffect && !isSignedIn) {
       dispatch(listenAuthState(false));
     }
   }, []);
@@ -24,7 +22,7 @@ const Auth: React.FC<AppProps> = ({ children,notUseEffect } ) => {
     return <></>;
   } else {
     // サインインしてれば子要素を返す・
-    return  children  ;
+    return children;
   }
 };
 

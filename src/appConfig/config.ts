@@ -1,1 +1,1 @@
-export const baseUrl = "https://fuurin-paint-workshop.web.app/"
+export const baseUrl = 'https://fuurin-paint-workshop.web.app/';

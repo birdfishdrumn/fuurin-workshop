@@ -1,4 +1,3 @@
-
 export type COLORS = {
   colorTitle: string;
   colorType: string;

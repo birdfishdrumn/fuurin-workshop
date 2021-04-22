@@ -1,13 +1,13 @@
-import React, { useCallback, useState } from "react";
-import { TextInput, PrimaryButton } from "../components/UI";
-import {SectionContainer,Title} from "assets/GlobalLayoutStyle"
-import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
-import { resetPassword } from "reducks/users/operations";
+import React, { useCallback, useState } from 'react';
+import { TextInput, PrimaryButton } from '../components/UI';
+import { SectionContainer, Title } from 'assets/GlobalLayoutStyle';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { resetPassword } from 'reducks/users/operations';
 
-const Reset: React.FC= () => {
+const Reset: React.FC = () => {
   const dispatch = useDispatch();
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const history = useHistory();
   const inputEmail = useCallback(
     (event) => {
@@ -16,7 +16,6 @@ const Reset: React.FC= () => {
     [setEmail]
   );
 
-
   return (
     <SectionContainer>
       <Title>パスワードをリセット</Title>
@@ -24,25 +23,22 @@ const Reset: React.FC= () => {
       <TextInput
         variant="outlined"
         fullWidth={true}
-        label={"Email"}
+        label={'Email'}
         multiline={false}
         required={true}
         rows={1}
         value={email}
-        type={"email"}
+        type={'email'}
         onChange={inputEmail}
       />
 
       <div className="center">
         <PrimaryButton
-          label={"パスワードをリセット"}
+          label={'パスワードをリセット'}
           onClick={() => dispatch(resetPassword(email))}
         />
-        <br/>
-          <PrimaryButton
-          label={"戻る"}
-          onClick={() => history.goBack()}
-        />
+        <br />
+        <PrimaryButton label={'戻る'} onClick={() => history.goBack()} />
       </div>
     </SectionContainer>
   );

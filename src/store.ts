@@ -9,7 +9,6 @@ import dialogReducer from './reducks/dialog/dialogSlice';
 import loadingReducer from './reducks/loadingSlice';
 import errorReducer from './reducks/errorSlice';
 
-
 export const history = createBrowserHistory();
 export const store = configureStore({
   reducer: {
@@ -31,9 +30,8 @@ export const store = configureStore({
     }).concat(routerMiddleware(history)),
 });
 
-
 export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch
+export type AppDispatch = typeof store.dispatch;
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,
   RootState,

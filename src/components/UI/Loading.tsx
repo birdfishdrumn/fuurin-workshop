@@ -1,28 +1,27 @@
-import React  from "react";
+import React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import {useSelector} from "react-redux";
-import {getLoadingState, getLoadingText} from "reducks/loadingSlice";
+import { useSelector } from 'react-redux';
+import { getLoadingState, getLoadingText } from 'reducks/loadingSlice';
 
 interface CHILDREN {
-  children?: any
+  children?: any;
 }
 
-const Loading: React.FC<CHILDREN> = ({children}) => {
+const Loading: React.FC<CHILDREN> = ({ children }) => {
+  const isBeingLoaded = useSelector(getLoadingState);
+  const loadingText = useSelector(getLoadingText);
 
-    const isBeingLoaded = useSelector(getLoadingState);
-    const loadingText  = useSelector(getLoadingText)
-
-    return (
-        <>
-            {(isBeingLoaded) && (
-                <section className="c-section__loading">
-                    <CircularProgress color="inherit"/>
-                    <p>{loadingText}</p>
-                </section>
-            )}
-            {children}
-        </>
-    );
+  return (
+    <>
+      {isBeingLoaded && (
+        <section className="c-section__loading">
+          <CircularProgress color="inherit" />
+          <p>{loadingText}</p>
+        </section>
+      )}
+      {children}
+    </>
+  );
 };
 
-export default Loading
+export default Loading;

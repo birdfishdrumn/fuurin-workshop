@@ -1,11 +1,10 @@
-import React from "react";
-import TextField from "@material-ui/core/TextField";
-import styled from "styled-components"
-
+import React from 'react';
+import TextField from '@material-ui/core/TextField';
+import styled from 'styled-components';
 
 const StyledInput = styled(TextField)`
-  margin:15px 0;
-`
+  margin: 15px 0;
+`;
 interface PROPS {
   fullWidth: boolean;
   label: string;
@@ -16,16 +15,17 @@ interface PROPS {
   rows: number;
   value: string;
   type: string;
-  onChange: (e:React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   variant: string;
   inputProps?: any;
   error?: boolean;
+  helperText?: string;
 }
 
-const TextInput:React.FC<PROPS> = (props) => {
+const TextInput: React.FC<PROPS> = (props) => {
   return (
     <StyledInput
-      style={{background:"white"}}
+      style={{ background: 'white' }}
       fullWidth={props.fullWidth}
       label={props.label}
       margin="dense"
@@ -39,6 +39,7 @@ const TextInput:React.FC<PROPS> = (props) => {
       variant={props.variant}
       inputProps={props.inputProps}
       error={props.error}
+      helperText={props.helperText}
     />
   );
 };

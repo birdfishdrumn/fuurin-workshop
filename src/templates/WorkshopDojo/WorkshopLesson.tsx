@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { SectionWrapping, Title,StyledImage,BoldText} from "assets/GlobalLayoutStyle";
-import { LessonBox, LessonImage, LessonText } from "./style";
+import { SectionWrapping, Title, StyledImage, BoldText } from 'assets/GlobalLayoutStyle';
+import { LessonBox, LessonImage, LessonText } from './style';
 import Swiper from 'react-id-swiper';
-import { FloatingButton } from "components/UI/index";
-import { db } from "firebase/index";
-import { Fukusuke } from "assets/ImageIcon";
-import { SLIDE } from "types/lesson";
-
+import { FloatingButton } from 'components/UI/index';
+import { db } from 'firebase/index';
+import { Fukusuke } from 'assets/ImageIcon';
+import { SLIDE } from 'types/lesson';
 
 const WorkShopDojo = () => {
   const params = {
@@ -17,34 +16,38 @@ const WorkShopDojo = () => {
     navigation: {
       nextEl: '.swiper-button-next',
       prevEl: '.swiper-button-prev',
-
     },
     rebuildOnUpdate: true,
   };
 
-  const [slide,setSlide] = useState<SLIDE[]>([])
-  let id =window.location.pathname.split("/lesson")[1];
+  const [slide, setSlide] = useState<SLIDE[]>([]);
+  let id = window.location.pathname.split('/lesson')[1];
 
   if (id) {
-    id = id.split("/")[1];
+    id = id.split('/')[1];
   }
 
   useEffect(() => {
-    const unSub = db.collection("lessons").doc(id).collection("slide").orderBy("number", "asc").onSnapshot((snapshot) => {
-      setSlide(
-        snapshot.docs.map((doc) => ({
-          id: doc.data().id,
-          title: doc.data().title,
-          images: doc.data().images,
-          description: doc.data().description
-        }))
-      )
-    })
+    const unSub = db
+      .collection('lessons')
+      .doc(id)
+      .collection('slide')
+      .orderBy('number', 'asc')
+      .onSnapshot((snapshot) => {
+        setSlide(
+          snapshot.docs.map((doc) => ({
+            id: doc.data().id,
+            title: doc.data().title,
+            images: doc.data().images,
+            description: doc.data().description,
+          }))
+        );
+      });
     return () => {
-      unSub()
-    }
+      unSub();
+    };
   }, []);
-  console.log(slide)
+  console.log(slide);
 
   return (
     <SectionWrapping>
@@ -60,10 +63,14 @@ const WorkShopDojo = () => {
         ))}
       </Swiper> */}
       {/* <FloatingButton/> */}
-      <StyledImage width={"100"} min alt="福助" src={Fukusuke} />
-      <BoldText color={"dimgray"}>申し訳ございません。<br/>ただいま準備中です。</BoldText>
+      <StyledImage width={'100'} min alt="福助" src={Fukusuke} />
+      <BoldText color={'dimgray'}>
+        申し訳ございません。
+        <br />
+        ただいま準備中です。
+      </BoldText>
     </SectionWrapping>
-  )
-}
+  );
+};
 
-export default WorkShopDojo
+export default WorkShopDojo;

@@ -1,5 +1,5 @@
-import firebase from "firebase/app"
-import { POST } from "./posts"
+import firebase from 'firebase/app';
+import { POST } from './posts';
 
 type Extension = {
   detail?: boolean;
@@ -11,8 +11,8 @@ type Extension = {
 export type FAVORITE = Extension & {
   added_at?: firebase.firestore.Timestamp;
   description: string;
-  images: { [key: string]: string }[]
-  allImages: { [key: string]: string }[]
+  images: { [key: string]: string }[];
+  allImages: { [key: string]: string }[];
   name: string;
   postId: string;
   likesId: string;

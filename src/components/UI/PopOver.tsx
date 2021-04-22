@@ -1,21 +1,20 @@
-import React from 'react'
+import React from 'react';
 import Popover from '@material-ui/core/Popover';
-import { PopperWrapper } from "components/Header/style"
-import { PopOverProfile, PopOverPushList } from "components/Header/index";
+import { PopperWrapper } from 'components/Header/style';
+import { PopOverProfile, PopOverPushList } from 'components/Header/index';
 
-interface PROPS  {
+interface PROPS {
   open: boolean;
   anchorEl: HTMLButtonElement;
-  handleClose: ()=> void;
+  handleClose: () => void;
   id: string;
   type: string;
 }
 
-
-const PopOver:React.FC<PROPS> = ({open,anchorEl,handleClose,id,type}) => {
+const PopOver: React.FC<PROPS> = ({ open, anchorEl, handleClose, id, type }) => {
   return (
     <div>
-       <Popover
+      <Popover
         id={id}
         open={open}
         anchorEl={anchorEl}
@@ -30,16 +29,12 @@ const PopOver:React.FC<PROPS> = ({open,anchorEl,handleClose,id,type}) => {
         }}
       >
         <PopperWrapper>
-          {type === "push" &&
-            <PopOverPushList  handleClose={handleClose}/>
-          }
-              {type === "profile" &&
-            <PopOverProfile handleClose={handleClose}/>
-          }
-      </PopperWrapper>
+          {type === 'push' && <PopOverPushList handleClose={handleClose} />}
+          {type === 'profile' && <PopOverProfile handleClose={handleClose} />}
+        </PopperWrapper>
       </Popover>
     </div>
-  )
-}
+  );
+};
 
-export default PopOver
+export default PopOver;

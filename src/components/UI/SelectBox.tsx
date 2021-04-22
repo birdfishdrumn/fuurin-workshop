@@ -1,24 +1,24 @@
-import React from "react";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import { makeStyles } from "@material-ui/core";
+import React from 'react';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import { makeStyles } from '@material-ui/core';
 
 const useStyle = makeStyles({
   FormControl: {
     marginBottom: 16,
     minWidth: 128,
-    width: "100%",
+    width: '100%',
   },
   label: {
-    padding: "0 10px",
-    zIndex:1
+    padding: '0 10px',
+    zIndex: 1,
   },
   form: {
-    background: "white",
+    background: 'white',
     // zIndex:-4
-  }
+  },
 });
 
 interface PROPS {
@@ -30,8 +30,7 @@ interface PROPS {
   label: string;
   value: string;
   required: boolean;
-};
-
+}
 
 const SelectBox: React.FC<PROPS> = (props) => {
   const classes = useStyle();

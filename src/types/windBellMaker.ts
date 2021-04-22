@@ -1,18 +1,16 @@
-import * as React from 'react'
+import * as React from 'react';
 
 export type PathItem = {
   path: string;
   viewBox: string;
 };
 
-
-
-export type WINDBELLMAKERTYPE =  {
+export type WINDBELLMAKERTYPE = {
   textLength: string;
   dialogOpen?: boolean;
   handleClose?: () => void;
   windBellImage: string;
-  setWindBellImage: React.Dispatch<React.SetStateAction<string>>
+  setWindBellImage: React.Dispatch<React.SetStateAction<string>>;
   pathItem: PathItem;
   setPathItem: React.Dispatch<React.SetStateAction<PathItem>>;
   strip: string;
@@ -21,5 +19,5 @@ export type WINDBELLMAKERTYPE =  {
   wishText: string;
   inputWishText: (event: React.ChangeEvent<HTMLInputElement>) => void;
   uploadImage?: (e: any) => void;
-  setBackground?:React.Dispatch<React.SetStateAction<string>>;
+  setBackground?: React.Dispatch<React.SetStateAction<string>>;
 };
