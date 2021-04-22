@@ -18,7 +18,6 @@ import {
   getDialogTitle,
   getDialogContent,
   getDialogId,
-  getDialogFunction
 } from 'reducks/dialog/dialogSlice';
 import {
   WindBellMakerHelp,
@@ -86,11 +85,9 @@ const CustomDialog: React.FC = ({}) => {
   const title = useSelector(getDialogTitle);
   const id = useSelector(getDialogId);
   const content = useSelector(getDialogContent);
-  const func= useSelector(getDialogFunction);
   const dispatch = useDispatch();
   const handleClose = () => {
     dispatch(dialogCloseAction());
-    func && func()
   };
 
   const handleDelete = async (id: string): Promise<void> => {
